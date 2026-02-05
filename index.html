@@ -1,159 +1,778 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kayo Porto | Consultoria Online</title>
-
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', Arial, sans-serif;
-    }
-
-    body {
-      background: #0a0e27;
-      color: #ffffff;
-      line-height: 1.6;
-    }
-
-    section {
-      width: 100%;
-      padding: 80px 8%;
-    }
-
-    .hero {
-      background: linear-gradient(to right, #0a0e27 50%, transparent),
-                  url("kayo_inicial.png") no-repeat right center;
-      background-size: contain;
-      min-height: 90vh;
-      display: flex;
-      align-items: center;
-    }
-
-    .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 20px;
-    }
-
-    .hero p {
-      max-width: 520px;
-      opacity: 0.9;
-    }
-
-    .btns {
-      margin-top: 30px;
-      display: flex;
-      gap: 15px;
-    }
-
-    .btn {
-      background: #e0c14c;
-      color: #000;
-      padding: 14px 26px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .sobre {
-      background: #0a0e27;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: center;
-    }
-
-    .sobre img {
-      width: 100%;
-      border-radius: 12px;
-    }
-
-    .cta {
-      background: #e0c14c;
-      color: #000;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: center;
-      gap: 40px;
-    }
-
-    .cta img {
-      width: 100%;
-      border-radius: 12px;
-    }
-
-    .cta .btn {
-      background: #0a0e27;
-      color: #fff;
-      display: inline-block;
-      margin-top: 25px;
-    }
-
-    @media (max-width: 900px) {
-      .hero {
-        background-position: center bottom;
-        background-size: cover;
-        text-align: center;
-      }
-
-      .sobre,
-      .cta {
-        grid-template-columns: 1fr;
-        text-align: center;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <title>Kayo Porto | Consultoria Online - Personal Trainer</title>
+    <meta name="description" content="Consultoria online de personal trainer especializado em ganho de massa, performance e acompanhamento personalizado. Treino, dieta, leitura de exames e mindset coaching.">
+    <meta name="keywords" content="personal trainer, consultoria online, musculação, ganho de massa, treino, dieta personalizada">
+    <meta name="author" content="Kayo Porto">
+    <meta property="og:title" content="Kayo Porto | Consultoria Online - Personal Trainer">
+    <meta property="og:description" content="Transforme seu corpo com consultoria online profissional. Treino, dieta e acompanhamento personalizado.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Kayo Porto | Consultoria Online">
+    <meta name="twitter:description" content="Consultoria online de personal trainer especializado">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' font-weight='bold' fill='%23D4AF37'>K</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #0A0E27;
+            color: #E8E8E8;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+        }
+        
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #D4AF37;
+            text-decoration: none;
+        }
+        
+        nav ul {
+            display: none;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        @media (min-width: 768px) {
+            nav ul {
+                display: flex;
+            }
+        }
+        
+        nav a {
+            color: #E8E8E8;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: #D4AF37;
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, #D4AF37 0%, #E8C547 100%);
+            color: #0A0E27;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+        }
+        
+        .hero {
+            margin-top: 80px;
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #0A0E27 0%, #1a1f3a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .hero .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (min-width: 768px) {
+            .hero .container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .hero-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #E8E8E8;
+            line-height: 1.2;
+        }
+        
+        @media (min-width: 768px) {
+            .hero-content h1 {
+                font-size: 3.5rem;
+            }
+        }
+        
+        .hero-content p {
+            font-size: 1.1rem;
+            color: #B0B0B0;
+            margin-bottom: 2rem;
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .services {
+            padding: 4rem 0;
+            background: #0A0E27;
+        }
+        
+        .services h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #D4AF37;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        @media (min-width: 768px) {
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .services-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .service-card {
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 2rem;
+            border-radius: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .service-card:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: #D4AF37;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.15);
+        }
+        
+        .service-card h3 {
+            color: #D4AF37;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        .service-card p {
+            color: #B0B0B0;
+            font-size: 0.95rem;
+        }
+        
+        .about {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #0A0E27 0%, #1a1f3a 100%);
+        }
+        
+        .about .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        @media (min-width: 768px) {
+            .about .container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .about-content h2 {
+            font-size: 2.2rem;
+            color: #D4AF37;
+            margin-bottom: 1rem;
+        }
+        
+        .about-content p {
+            color: #B0B0B0;
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+        
+        .assessment {
+            padding: 4rem 0;
+            background: #0A0E27;
+        }
+        
+        .assessment h2 {
+            text-align: center;
+            font-size: 2.2rem;
+            color: #D4AF37;
+            margin-bottom: 2rem;
+        }
+        
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 2rem;
+            border-radius: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #D4AF37;
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(232, 232, 232, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 0.5rem;
+            color: #E8E8E8;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #D4AF37;
+            background: rgba(212, 175, 55, 0.1);
+        }
+        
+        .form-group input::placeholder {
+            color: rgba(232, 232, 232, 0.5);
+        }
+        
+        .submit-button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #D4AF37 0%, #E8C547 100%);
+            color: #0A0E27;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+        }
+        
+        .faq {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #0A0E27 0%, #1a1f3a 100%);
+        }
+        
+        .faq h2 {
+            text-align: center;
+            font-size: 2.2rem;
+            color: #D4AF37;
+            margin-bottom: 3rem;
+        }
+        
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(212, 175, 55, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .faq-question:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+        
+        .faq-question h3 {
+            color: #D4AF37;
+            margin: 0;
+            font-size: 1rem;
+        }
+        
+        .faq-toggle {
+            color: #D4AF37;
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+        
+        .faq-item.active .faq-toggle {
+            transform: rotate(180deg);
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s;
+            background: rgba(212, 175, 55, 0.02);
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+        }
+        
+        .faq-answer p {
+            padding: 1.5rem;
+            color: #B0B0B0;
+            line-height: 1.8;
+        }
+        
+        .final-cta {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #D4AF37 0%, #E8C547 100%);
+            color: #0A0E27;
+        }
+        
+        .final-cta .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        @media (min-width: 768px) {
+            .final-cta .container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .final-cta h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .final-cta p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .final-cta-button {
+            background: #0A0E27;
+            color: #D4AF37;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+        
+        .final-cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        footer {
+            background: #0A0E27;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 2rem 0;
+            text-align: center;
+            color: #B0B0B0;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .social-links a {
+            color: #D4AF37;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: #E8C547;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(212, 175, 55, 0.6);
+            }
+        }
+        
+        .glow-pulse {
+            animation: glow 2s ease-in-out infinite;
+        }
+    </style>
 </head>
-
 <body>
+    <nav>
+        <div class="container">
+            <a href="#" class="logo">K PORTO</a>
+            <ul>
+                <li><a href="#services">Serviços</a></li>
+                <li><a href="#about">Sobre</a></li>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="https://www.instagram.com/kayo.porto?igsh=MXYzNHpnNmNtOTA2Ng==" target="_blank" rel="noopener">Instagram</a></li>
+            </ul>
+        </div>
+    </nav>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div>
-      <h1>Transforme Seu Corpo com Consultoria Online</h1>
-      <p>
-        Acompanhamento personalizado com foco em ganho de massa,
-        performance e resultados reais. Treino, dieta e mindset.
-      </p>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content fade-in">
+                <h1>Transforme Seu Corpo com Consultoria Online</h1>
+                <p>Acompanhamento personalizado com foco em ganho de massa, performance e resultados reais. Treino, dieta, leitura de exames e mindset coaching.</p>
+                <div class="hero-cta">
+                    <a href="#assessment" class="cta-button glow-pulse">Começar Avaliação</a>
+                    <a href="https://wa.me/651961629402?text=Oi%20Kayo%2C%20gostaria%20de%20saber%20mais%20sobre%20sua%20consultoria" target="_blank" rel="noopener" class="cta-button">WhatsApp</a>
+                </div>
+            </div>
+        </div>
+                  <div class="hero-image fade-in">
+                <img src="kayo_inicial.png"
+                     alt="Kayo Porto - Consultoria Online"
+                     style="width:100%; max-width:520px; border-radius:1rem;">
+            </div>
+    </section>
 
-      <div class="btns">
-        <a href="#" class="btn">Começar Avaliação</a>
-        <a href="#" class="btn">WhatsApp</a>
-      </div>
-    </div>
-  </section>
+    <section class="services" id="services">
+        <div class="container">
+            <h2>Meus Serviços</h2>
+            <div class="services-grid">
+                <div class="service-card fade-in">
+                    <h3>💪 Treino</h3>
+                    <p>Periodização e ajustes semanais com base em seus objetivos e progressão. Planos adaptados para iniciantes a avançados.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <h3>🍽️ Dieta Personalizada</h3>
+                    <p>Plano nutricional prático e sustentável. Cálculo de macros, refeições estratégicas e orientações para consistência.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <h3>📋 Leitura de Exames</h3>
+                    <p>Interpretação de exames laboratoriais e recomendações baseadas em seus resultados e objetivos.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <h3>🔄 Intra Ciclo / Pós Ciclo</h3>
+                    <p>Acompanhamento seguro e estratégico durante e após ciclos. Suporte completo para resultados otimizados.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <h3>🧠 Mindset & Coaching</h3>
+                    <p>Coaching para consistência, disciplina e mentalidade vencedora. Suporte emocional para alcançar seus objetivos.</p>
+                </div>
+                <div class="service-card fade-in">
+                    <h3>📊 Reeducação Alimentar</h3>
+                    <p>Mudança de hábitos alimentares com abordagem prática. Educação nutricional para vida saudável e sustentável.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <!-- SOBRE -->
-  <section class="sobre">
-    <div>
-      <h2>Sobre Kayo Porto</h2>
-      <p>
-        Sou Kayo Porto, personal trainer e consultor esportivo brasileiro,
-        atualmente morando em Portugal. Ajudo pessoas a transformarem
-        seus corpos com estratégia, ciência e constância.
-      </p>
-    </div>
+    <section class="assessment" id="assessment">
+        <div class="container">
+            <h2>Avaliação Inicial Gratuita</h2>
+            <div class="form-container">
+                <form id="assessmentForm">
+                    <div class="form-group">
+                        <label for="name">Nome Completo *</label>
+                        <input type="text" id="name" name="name" required placeholder="Seu nome">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="weight">Peso (kg) *</label>
+                        <input type="number" id="weight" name="weight" required placeholder="Ex: 80">
+                    </div>
+                    <div class="form-group">
+                        <label for="goal">Objetivo Principal *</label>
+                        <select id="goal" name="goal" required>
+                            <option value="">Selecione seu objetivo</option>
+                            <option value="ganho_massa">Ganho de Massa</option>
+                            <option value="definicao">Definição</option>
+                            <option value="performance">Performance</option>
+                            <option value="emagrecimento">Emagrecimento</option>
+                            <option value="saude_geral">Saúde Geral</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="experience">Experiência em Musculação *</label>
+                        <select id="experience" name="experience" required>
+                            <option value="">Selecione seu nível</option>
+                            <option value="iniciante">Iniciante</option>
+                            <option value="intermediario">Intermediário</option>
+                            <option value="avancado">Avançado</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-button">Enviar Avaliação via WhatsApp</button>
+                </form>
+            </div>
+        </div>
+    </section>
 
-    <img src="kayo_nutricao.png" alt="Consultoria e Nutrição" />
-  </section>
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-content fade-in">
+                <h2>Sobre Kayo Porto</h2>
+                <p>Sou Kayo Porto, personal trainer e consultor esportivo brasileiro atualmente morando em Portugal. Com anos de experiência em musculação, nutrição e coaching, ajudo centenas de pessoas a transformarem seus corpos e atingirem seus objetivos.</p>
+                <p>Minha abordagem é baseada em ciência, praticidade e consistência. Acredito que resultados vêm de planejamento estratégico, disciplina e suporte contínuo. Cada cliente recebe um plano 100% personalizado adaptado ao seu contexto, objetivos e estilo de vida.</p>
+                <p>Estou aqui para ser seu parceiro nessa jornada de transformação. Vamos juntos!</p>
+            </div>
+        </div>
+                  <div class="about-image fade-in">
+                <img src="kayo_nutricao.png"
+                     alt="Consultoria nutricional com Kayo Porto"
+                     style="width:100%; border-radius:1rem;">
+            </div>
 
-  <!-- CTA -->
-  <section class="cta">
-    <div>
-      <h2>Pronto para Transformar Seu Corpo?</h2>
-      <p>
-        Comece hoje mesmo com um plano personalizado
-        e acompanhamento profissional.
-      </p>
+    </section>
 
-      <a href="#" class="btn">Conversar no WhatsApp</a>
-    </div>
+    <section class="faq" id="faq">
+        <div class="container">
+            <h2>Perguntas Frequentes</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h3>Como funciona a consultoria online?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>A consultoria é 100% online. Você recebe um plano personalizado de treino e nutrição, com acompanhamento semanal via WhatsApp. Faço ajustes conforme sua progressão e respondo suas dúvidas diariamente.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h3>Qual é o investimento?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Os valores variam conforme o plano escolhido. Oferço opções mensais, trimestrais e anuais com descontos progressivos. Envie uma mensagem no WhatsApp para receber uma proposta personalizada.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h3>Posso começar se sou iniciante?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Sim! Trabalho com todos os níveis, do iniciante ao avançado. Para iniciantes, foco em criar uma base sólida, ensinar técnica correta e construir consistência. Cada plano é adaptado ao seu nível.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h3>Quanto tempo para ver resultados?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Os primeiros resultados aparecem entre 4-8 semanas com consistência. Transformações significativas geralmente ocorrem entre 3-6 meses. Tudo depende do seu comprometimento e aderência ao plano.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h3>Como faço para começar?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Clique no botão WhatsApp e envie uma mensagem. Faremos uma conversa inicial para entender seus objetivos, histórico e criar um plano personalizado. Você pode começar ainda hoje!</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <h3>Vocês trabalham com ciclos?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Sim. Ofereço acompanhamento completo intra ciclo e pós ciclo com estratégias seguras e otimizadas. Temos protocolos específicos para cada fase com foco em resultados e saúde.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <img src="kayo_CTA.png" alt="Treino e Resultado" />
-  </section>
+    <section class="final-cta">
+        <div class="container">
+            <div class="fade-in">
+                <h2>Pronto para Transformar Seu Corpo?</h2>
+                <p>Não espere mais. Comece sua jornada de transformação hoje mesmo com um plano personalizado e acompanhamento profissional.</p>
+                <a href="https://wa.me/651961629402?text=Oi%20Kayo%2C%20quero%20começar%20minha%20transformação%21" target="_blank" rel="noopener" class="final-cta-button glow-pulse">Conversar no WhatsApp</a>
+            </div>
+        </div>
+                  <div class="final-cta-image fade-in">
+                <img src="kayo_CTA.png"
+                     alt="Treinamento personalizado com Kayo Porto"
+                     style="width:100%; max-width:520px; border-radius:1rem;">
+            </div>
 
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="https://www.instagram.com/kayo.porto?igsh=MXYzNHpnNmNtOTA2Ng==" target="_blank" rel="noopener">Instagram</a>
+                <a href="https://wa.me/651961629402" target="_blank" rel="noopener">WhatsApp</a>
+            </div>
+            <p>&copy; 2026 Kayo Porto | Consultoria Online. Todos os direitos reservados.</p>
+            <p>Brasileiro morando em Portugal 🇧🇷🇵🇹</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleFaq(element) {
+            const faqItem = element.parentElement;
+            faqItem.classList.toggle('active');
+        }
+
+        document.getElementById('assessmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const weight = document.getElementById('weight').value;
+            const goal = document.getElementById('goal').value;
+            const experience = document.getElementById('experience').value;
+            
+            const message = `Olá Kayo! Gostaria de fazer uma avaliação inicial.
+            
+Nome: ${name}
+Email: ${email}
+Peso: ${weight}kg
+Objetivo: ${goal}
+Experiência: ${experience}
+
+Aguardo seu contato!`;
+            
+            const whatsappUrl = `https://wa.me/651961629402?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in, .service-card, .faq-item').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
 </body>
 </html>
