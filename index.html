@@ -64,6 +64,15 @@
             font-weight: 800;
             color: #D4AF37;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
         }
         
         nav ul {
@@ -166,6 +175,19 @@
             flex-wrap: wrap;
         }
         
+        .hero-image {
+            text-align: center;
+        }
+        
+        .hero-image img {
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
         .services {
             padding: 4rem 0;
             background: #0A0E27;
@@ -250,6 +272,15 @@
             color: #B0B0B0;
             margin-bottom: 1rem;
             line-height: 1.8;
+        }
+        
+        .about-image img {
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
         
         .assessment {
@@ -446,6 +477,14 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
         
+        .final-cta-image img {
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 1rem;
+        }
+        
         footer {
             background: #0A0E27;
             border-top: 1px solid rgba(212, 175, 55, 0.2);
@@ -503,7 +542,10 @@
 <body>
     <nav>
         <div class="container">
-            <a href="#" class="logo">K PORTO</a>
+            <a href="#" class="logo">
+                <img src="logo.png" alt="Kayo Porto Logo">
+                PORTO
+            </a>
             <ul>
                 <li><a href="#services">Serviços</a></li>
                 <li><a href="#about">Sobre</a></li>
@@ -524,11 +566,6 @@
                 </div>
             </div>
         </div>
-                  <div class="hero-image fade-in">
-                <img src="kayo_inicial.png"
-                     alt="Kayo Porto - Consultoria Online"
-                     style="width:100%; max-width:520px; border-radius:1rem;">
-            </div>
     </section>
 
     <section class="services" id="services">
@@ -614,13 +651,10 @@
                 <p>Minha abordagem é baseada em ciência, praticidade e consistência. Acredito que resultados vêm de planejamento estratégico, disciplina e suporte contínuo. Cada cliente recebe um plano 100% personalizado adaptado ao seu contexto, objetivos e estilo de vida.</p>
                 <p>Estou aqui para ser seu parceiro nessa jornada de transformação. Vamos juntos!</p>
             </div>
-        </div>
-                  <div class="about-image fade-in">
-                <img src="kayo_nutricao.png"
-                     alt="Consultoria nutricional com Kayo Porto"
-                     style="width:100%; border-radius:1rem;">
+            <div class="about-image fade-in">
+                <img src="kayo-nutrition.png" alt="Kayo Porto em consultoria de nutrição">
             </div>
-
+        </div>
     </section>
 
     <section class="faq" id="faq">
@@ -697,13 +731,10 @@
                 <p>Não espere mais. Comece sua jornada de transformação hoje mesmo com um plano personalizado e acompanhamento profissional.</p>
                 <a href="https://wa.me/651961629402?text=Oi%20Kayo%2C%20quero%20começar%20minha%20transformação%21" target="_blank" rel="noopener" class="final-cta-button glow-pulse">Conversar no WhatsApp</a>
             </div>
-        </div>
-                  <div class="final-cta-image fade-in">
-                <img src="kayo_CTA.png"
-                     alt="Treinamento personalizado com Kayo Porto"
-                     style="width:100%; max-width:520px; border-radius:1rem;">
+            <div class="final-cta-image fade-in">
+                <img src="kayo-academy.png" alt="Kayo Porto na academia">
             </div>
-
+        </div>
     </section>
 
     <footer>
