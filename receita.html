@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Plano de Dieta - Kayo Porto</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #d4af37;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: 600;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        /* ===== FORMULÁRIO ===== */
+        .form-section {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .form-section h2 {
+            color: #d4af37;
+            margin-bottom: 20px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #d4af37;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        /* ===== PRESETS ===== */
+        .presets {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .preset-btn {
+            padding: 12px;
+            background: rgba(212, 175, 55, 0.2);
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            border-radius: 8px;
+            color: #d4af37;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+
+        .preset-btn:hover {
+            background: rgba(212, 175, 55, 0.4);
+            border-color: #d4af37;
+            transform: translateY(-2px);
+        }
+
+        .preset-btn.active {
+            background: #d4af37;
+            color: #0a0e27;
+        }
+
+        /* ===== PREVIEW PDF ===== */
+        .preview-section {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+            max-height: 800px;
+            overflow-y: auto;
+        }
+
+        .preview-section h2 {
+            color: #d4af37;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        #pdfPreview {
+            background: white;
+            color: #0a0e27;
+            padding: 30px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .pdf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 15px;
+        }
+
+        .pdf-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+        }
+
+        .pdf-title {
+            text-align: center;
+            flex: 1;
+        }
+
+        .pdf-title h1 {
+            color: #d4af37;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .pdf-title p {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .pdf-section {
+            margin-bottom: 25px;
+        }
+
+        .pdf-section h3 {
+            color: #d4af37;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #d4af37;
+            padding-bottom: 8px;
+        }
+
+        .pdf-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .pdf-item {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .pdf-item label {
+            font-weight: 600;
+            color: #0a0e27;
+            font-size: 12px;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .pdf-item value {
+            color: #d4af37;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .macros-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .macros-table th {
+            background: #d4af37;
+            color: #0a0e27;
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .macros-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            font-size: 13px;
+        }
+
+        .macros-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .recommendations {
+            background: #f0f8ff;
+            border-left: 4px solid #d4af37;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .signature-section {
+            margin-top: 40px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+
+        .signature-line {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .signature-box {
+            text-align: center;
+            width: 150px;
+        }
+
+        .signature-line-draw {
+            border-top: 1px solid #0a0e27;
+            margin-bottom: 5px;
+        }
+
+        .signature-name {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* ===== BOTÕES DE AÇÃO ===== */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            .action-buttons {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #d4af37;
+            color: #0a0e27;
+        }
+
+        .btn-primary:hover {
+            background: #e5c158;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(212, 175, 55, 0.3);
+            color: #d4af37;
+            border: 2px solid #d4af37;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212, 175, 55, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background: #2196f3;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #0b7dda;
+            transform: translateY(-2px);
+        }
+
+        /* ===== HISTÓRICO ===== */
+        .history-section {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .history-section h3 {
+            color: #d4af37;
+            margin-bottom: 15px;
+        }
+
+        .history-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .history-item {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .history-item:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: #d4af37;
+        }
+
+        .history-item-name {
+            font-weight: 600;
+            color: #d4af37;
+            margin-bottom: 5px;
+        }
+
+        .history-item-date {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <img src="logo.png" alt="Logo Kayo Porto" class="logo-small">
+            Gerador de Plano de Dieta
+        </h1>
+        <div class="nav-links">
+            <a href="index.html">← Voltar ao Site</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- ===== FORMULÁRIO ===== -->
+        <div class="form-section">
+            <h2>📋 Dados do Cliente</h2>
+
+            <div class="form-group">
+                <label>Nome do Cliente *</label>
+                <input type="text" id="clientName" placeholder="Ex: João Silva" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Sexo *</label>
+                    <select id="sexo" required>
+                        <option value="">Selecione...</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Feminino</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Idade (anos) *</label>
+                    <input type="number" id="age" min="15" max="100" placeholder="Ex: 30" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Peso (kg) *</label>
+                    <input type="number" id="weight" min="30" max="250" step="0.1" placeholder="Ex: 80" required>
+                </div>
+                <div class="form-group">
+                    <label>Altura (cm) *</label>
+                    <input type="number" id="height" min="100" max="250" placeholder="Ex: 180" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nível de Atividade *</label>
+                    <select id="activity" required>
+                        <option value="">Selecione...</option>
+                        <option value="1.2">🛋️ Sedentário (pouco exercício)</option>
+                        <option value="1.375">🚶 Leve (1-3x/semana)</option>
+                        <option value="1.55">🏃 Moderado (3-5x/semana)</option>
+                        <option value="1.725">💪 Intenso (6-7x/semana)</option>
+                        <option value="1.9">🔥 Muito Intenso (atleta/profissional)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Experiência *</label>
+                    <select id="experience" required>
+                        <option value="">Selecione...</option>
+                        <option value="iniciante">🟢 Iniciante (&lt;1 ano)</option>
+                        <option value="intermediario">🟡 Intermediário (1-3 anos)</option>
+                        <option value="avancado">🔴 Avançado (3+ anos)</option>
+                    </select>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 30px;">⚡ Presets Rápidos</h2>
+            <div class="presets">
+                <button class="preset-btn" onclick="applyPreset('bulking')">💪 Bulking</button>
+                <button class="preset-btn" onclick="applyPreset('cutting')">🔥 Cutting</button>
+                <button class="preset-btn" onclick="applyPreset('maintenance')">⚖️ Manutenção</button>
+                <button class="preset-btn" onclick="applyPreset('recomposition')">🔄 Recomposição</button>
+            </div>
+
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>Objetivo Específico</label>
+                    <select id="objective">
+                        <option value="ganho">Ganho de Massa Muscular</option>
+                        <option value="definicao">Definição Muscular</option>
+                        <option value="performance">Performance Atlética</option>
+                        <option value="saude">Saúde Geral</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>Frequencia de Refeicoes</label>
+                    <select id="frequency">
+                        <option value="3">3 refeicoes/dia</option>
+                        <option value="4">4 refeicoes/dia</option>
+                        <option value="5">5 refeicoes/dia</option>
+                        <option value="6">6 refeicoes/dia</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>WhatsApp do Cliente (com +55)</label>
+                    <input type="tel" id="clientWhatsApp" placeholder="Ex: +5511999999999" value="+651961629402">
+                </div>
+            </div>
+
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>Restrições Alimentares</label>
+                    <textarea id="restrictions" placeholder="Ex: Sem glúten, sem lactose, vegetariano, etc." rows="3"></textarea>
+                </div>
+            </div>
+
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>Alergias/Intolerâncias</label>
+                    <textarea id="allergies" placeholder="Ex: Amendoim, frutos do mar, etc." rows="2"></textarea>
+                </div>
+            </div>
+
+            <div class="form-row full">
+                <div class="form-group">
+                    <label>Observações Adicionais</label>
+                    <textarea id="notes" placeholder="Ex: Problemas de saúde, medicações, preferências, etc." rows="2"></textarea>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 30px;">✏️ Personalizações</h2>
+
+            <div class="form-group">
+                <label>💡 Recomendações Personalizadas</label>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <textarea id="customRecommendations" placeholder="As recomendações aparecerão aqui para você editar..." rows="4" style="flex: 1;"></textarea>
+                </div>
+                <button class="btn btn-secondary" onclick="resetRecommendations()" style="width: 100%; margin-top: 8px;">🔄 Resetar para Padrão</button>
+            </div>
+
+            <div class="form-group">
+                <label>🍽️ Exemplo de Refeições</label>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <textarea id="customMeals" placeholder="As refeições aparecerão aqui para você editar..." rows="4" style="flex: 1;"></textarea>
+                </div>
+                <button class="btn btn-secondary" onclick="resetMeals()" style="width: 100%; margin-top: 8px;">🔄 Resetar para Padrão</button>
+            </div>
+
+            <div class="form-group">
+                <label>💊 Suplementação Recomendada</label>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <textarea id="customSupplements" placeholder="As suplementações aparecerão aqui para você editar..." rows="3" style="flex: 1;"></textarea>
+                </div>
+                <button class="btn btn-secondary" onclick="resetSupplements()" style="width: 100%; margin-top: 8px;">🔄 Resetar para Padrão</button>
+            </div>
+        </div>
+
+        <!-- ===== PREVIEW PDF ===== -->
+        <div class="preview-section">
+            <h2>👁️ Preview do PDF</h2>
+            <div id="pdfPreview">
+                <div class="pdf-header">
+                    <img src="logo.png" alt="Logo" class="pdf-logo">
+                    <div class="pdf-title">
+                        <h1>Plano de Dieta Personalizado</h1>
+                        <p>Kayo Porto - Consultoria Online</p>
+                    </div>
+                </div>
+
+                <div class="pdf-section">
+                    <h3>📋 Dados do Cliente</h3>
+                    <div class="pdf-row">
+                        <div class="pdf-item">
+                            <label>Nome</label>
+                            <value id="previewName">-</value>
+                        </div>
+                        <div class="pdf-item">
+                            <label>Idade</label>
+                            <value id="previewAge">-</value>
+                        </div>
+                    </div>
+                    <div class="pdf-row">
+                        <div class="pdf-item">
+                            <label>Peso</label>
+                            <value id="previewWeight">-</value>
+                        </div>
+                        <div class="pdf-item">
+                            <label>Altura</label>
+                            <value id="previewHeight">-</value>
+                        </div>
+                    </div>
+                    <div class="pdf-row">
+                        <div class="pdf-item">
+                            <label>IMC</label>
+                            <value id="previewIMC">-</value>
+                        </div>
+                        <div class="pdf-item">
+                            <label>Peso Ideal</label>
+                            <value id="previewIdealWeight">-</value>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pdf-section">
+                    <h3>🔥 Cálculos Nutricionais</h3>
+                    <div class="pdf-row">
+                        <div class="pdf-item">
+                            <label>TMB (kcal)</label>
+                            <value id="previewTMB">-</value>
+                        </div>
+                        <div class="pdf-item">
+                            <label>Calorias Totais</label>
+                            <value id="previewCalories">-</value>
+                        </div>
+                    </div>
+
+                    <table class="macros-table">
+                        <thead>
+                            <tr>
+                                <th>Macronutriente</th>
+                                <th>Gramas/dia</th>
+                                <th>% Calorias</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Proteína</td>
+                                <td id="previewProtein">-</td>
+                                <td id="previewProteinPct">-</td>
+                            </tr>
+                            <tr>
+                                <td>Carboidrato</td>
+                                <td id="previewCarbs">-</td>
+                                <td id="previewCarbsPct">-</td>
+                            </tr>
+                            <tr>
+                                <td>Gordura</td>
+                                <td id="previewFats">-</td>
+                                <td id="previewFatsPct">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pdf-section">
+                    <h3>💡 Recomendações Personalizadas</h3>
+                    <div id="previewRecommendations" class="recommendations">
+                        Preencha os campos para ver as recomendações...
+                    </div>
+                </div>
+
+                <div class="pdf-section">
+                    <h3>🍽️ Exemplo de Refeições</h3>
+                    <div id="previewMeals" class="recommendations">
+                        Preencha os campos para ver sugestões de refeições...
+                    </div>
+                </div>
+
+                <div class="pdf-section">
+                    <h3>💊 Suplementação Recomendada</h3>
+                    <div id="previewSupplements" class="recommendations">
+                        Preencha os campos para ver recomendações...
+                    </div>
+                </div>
+
+                <div class="pdf-section">
+                    <h3>⚠️ Restrições e Observações</h3>
+                    <div class="pdf-item" style="margin-bottom: 10px;">
+                        <label>Restrições Alimentares</label>
+                        <value id="previewRestrictionsText">Nenhuma</value>
+                    </div>
+                    <div class="pdf-item" style="margin-bottom: 10px;">
+                        <label>Alergias/Intolerâncias</label>
+                        <value id="previewAllergiesText">Nenhuma</value>
+                    </div>
+                    <div class="pdf-item">
+                        <label>Observações Adicionais</label>
+                        <value id="previewNotesText">Nenhuma</value>
+                    </div>
+                </div>
+
+                <div class="signature-section">
+                    <p style="font-size: 12px; margin-bottom: 30px; text-align: center; color: #666;">
+                        Este plano foi elaborado especificamente para <strong id="sigClientName">-</strong> e deve ser seguido conforme orientações.
+                    </p>
+                    <div class="signature-line">
+                        <div class="signature-box">
+                            <div class="signature-line-draw"></div>
+                            <div class="signature-name">Kayo Porto</div>
+                            <div style="font-size: 11px; color: #666;">Personal Trainer & Consultor</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== BOTÕES DE AÇÃO ===== -->
+    <div class="action-buttons">
+        <button class="btn btn-primary" onclick="generatePDF()">
+            📥 Baixar PDF
+        </button>
+        <button class="btn btn-secondary" onclick="printPDF()">
+            🖨️ Imprimir
+        </button>
+        <button class="btn btn-info" onclick="shareWhatsApp()">
+            📱 Compartilhar WhatsApp
+        </button>
+        <button class="btn btn-success" onclick="saveToHistory()">
+            💾 Salvar no Histórico
+        </button>
+    </div>
+
+    <!-- ===== HISTÓRICO ===== -->
+    <div class="history-section">
+        <h3>📚 Histórico de Clientes</h3>
+        <div class="history-list" id="historyList">
+            <p style="color: #999;">Nenhum cliente salvo ainda...</p>
+        </div>
+    </div>
+
+    <script>
+        // ===== DADOS E CÁLCULOS =====
+        const presets = {
+            bulking: { surplus: 300, protein: 2.2, carbs: 5, fats: 0.9 },
+            cutting: { surplus: -400, protein: 2.5, carbs: 2.5, fats: 0.8 },
+            maintenance: { surplus: 0, protein: 2.0, carbs: 3.5, fats: 0.8 },
+            recomposition: { surplus: 100, protein: 2.3, carbs: 3.5, fats: 0.9 }
+        };
+
+        const recommendations = {
+            ganho: {
+                iniciante: "Foco em consistência e aprender técnica correta. Aumente calorias gradualmente. Treino 3-4x/semana com foco em compostos.",
+                intermediario: "Periodize o treino. Aumente volume gradualmente. Monitore peso semanal. Ajuste macros a cada 2-3 semanas.",
+                avancado: "Periodização avançada com fases de carga/descarga. Manipule carbos estrategicamente. Acompanhe múltiplas métricas."
+            },
+            definicao: {
+                iniciante: "Deficit moderado (-400 kcal). Proteína alta para preservar massa. Cardio leve 2-3x/semana.",
+                intermediario: "Deficit controlado (-500 kcal). Cicle carbos (alto/baixo). Treino com foco em força.",
+                avancado: "Deficit agressivo (-600 kcal). Periodização com deload. Cardio estratégico. Manipule sódio e água."
+            },
+            performance: {
+                iniciante: "Timing de nutrientes pré/pós treino. Hidratação adequada. Carbos estratégicos.",
+                intermediario: "Periodize macros com treino. Suplementação específica. Monitoramento de energia.",
+                avancado: "Manipulação avançada de carbos. Periodização de eletrólitos. Otimização de recuperação."
+            },
+            saude: {
+                iniciante: "Foco em alimentos naturais. Consistência mais importante que perfeição. Hidratação adequada.",
+                intermediario: "Equilíbrio de macros. Alimentos integrais. Atividade regular.",
+                avancado: "Otimização de micronutrientes. Timing estratégico. Suplementação baseada em exames."
+            }
+        };
+
+        const meals = {
+            ganho: {
+                iniciante: "Café: Ovos + Pão integral + Banana\nAlmoço: Frango + Arroz + Feijão\nLanche: Whey + Banana\nJantar: Carne vermelha + Batata doce",
+                intermediario: "Café: 3 ovos + 2 pães + Mel\nAlmoço: 200g frango + 150g arroz + Brócolis\nLanche: Whey + Aveia + Banana\nJantar: 200g carne + 200g batata doce",
+                avancado: "Café: 4 ovos + 80g aveia + Frutas\nAlmoço: 250g frango + 200g arroz + Legumes\nLanche pré: Whey + Banana + Amendoim\nJantar: 250g carne + 250g batata doce"
+            },
+            definicao: {
+                iniciante: "Café: Ovos + Pão integral\nAlmoço: Frango + Arroz integral + Brócolis\nLanche: Iogurte grego + Frutas\nJantar: Peixe + Batata doce",
+                intermediario: "Café: 2 ovos + Aveia + Frutas\nAlmoço: 180g frango + 100g arroz + Legumes\nLanche: Whey + Maçã\nJantar: 150g peixe + 150g batata doce",
+                avancado: "Café: Claras + Aveia + Frutas vermelhas\nAlmoço: 200g frango + 80g arroz + Legumes\nLanche pré: Whey + Banana\nJantar: 180g peixe + 150g batata doce"
+            },
+            performance: {
+                iniciante: "Pré-treino: Banana + Pão (1-2h antes)\nPós-treino: Whey + Banana + Aveia\nRefeições: Balanceadas com proteína + carbos",
+                intermediario: "Pré-treino: 40g carbos + 20g proteína\nPós-treino: 40g proteína + 60g carbos\nRefeições: Timing estratégico",
+                avancado: "Pré: 50g carbos simples + 20g proteína\nPós: 50g proteína + 80g carbos\nIntra: BCAA ou carbos se treino >90min"
+            },
+            saude: {
+                iniciante: "Café: Frutas + Iogurte + Granola\nAlmoço: Proteína + Carbos + Legumes\nLanche: Frutas ou Castanhas\nJantar: Leve e equilibrado",
+                intermediario: "Café: Ovos + Pão integral + Frutas\nAlmoço: 150g proteína + 150g carbos + Legumes\nLanche: Frutas ou Iogurte\nJantar: Proteína leve + Legumes",
+                avancado: "Café: Proteína + Carbos complexos + Frutas\nAlmoço: Balanceado com micronutrientes\nLanche: Snack saudável\nJantar: Proteína + Legumes"
+            }
+        };
+
+        const supplements = {
+            ganho: "Whey Protein (30-40g pós-treino), Creatina (5g/dia), Multivitamínico, Ômega-3",
+            definicao: "Whey Protein (30-40g pós-treino), Creatina (5g/dia), Termogênico (opcional), Ômega-3",
+            performance: "Whey Protein, Creatina, BCAA (se treino longo), Beta-alanina, Ômega-3",
+            saude: "Multivitamínico, Ômega-3, Vitamina D (se necessário), Probiótico"
+        };
+
+        // ===== FUNÇÕES DE CÁLCULO =====
+        function calculateTMB() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const age = parseFloat(document.getElementById('age').value);
+            const sexo = document.getElementById('sexo').value;
+
+            if (!weight || !height || !age || !sexo) return null;
+
+            let tmb;
+            if (sexo === 'M') {
+                tmb = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+            } else {
+                tmb = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+            }
+
+            return tmb;
+        }
+
+        function calculateIMC() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+
+            if (!weight || !height) return null;
+
+            const heightM = height / 100;
+            return (weight / (heightM * heightM)).toFixed(1);
+        }
+
+        function calculateIdealWeight() {
+            const height = parseFloat(document.getElementById('height').value);
+            if (!height) return null;
+
+            // Fórmula de Devine
+            const heightCm = height;
+            let ideal;
+            if (document.getElementById('sexo').value === 'M') {
+                ideal = 50 + 2.3 * ((heightCm - 152.4) / 2.54);
+            } else {
+                ideal = 45.5 + 2.3 * ((heightCm - 152.4) / 2.54);
+            }
+
+            return ideal.toFixed(1);
+        }
+
+        function applyPreset(preset) {
+            const tmb = calculateTMB();
+            if (!tmb) {
+                alert('Preencha peso, altura, idade e sexo primeiro!');
+                return;
+            }
+
+            const activity = parseFloat(document.getElementById('activity').value);
+            if (!activity) {
+                alert('Selecione o nível de atividade!');
+                return;
+            }
+
+            const presetData = presets[preset];
+            const totalCalories = Math.round(tmb * activity + presetData.surplus);
+
+            // Calcular macros
+            const protein = Math.round(parseFloat(document.getElementById('weight').value) * presetData.protein);
+            const proteinCals = protein * 4;
+            const fatCals = Math.round(totalCalories * (presetData.fats / 10));
+            const fats = Math.round(fatCals / 9);
+            const carbCals = totalCalories - proteinCals - fatCals;
+            const carbs = Math.round(carbCals / 4);
+
+            // Atualizar preview
+            updatePreview(totalCalories, protein, carbs, fats, tmb);
+
+            // Marcar preset como ativo
+            document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Atualizar sugestoes automaticamente
+            const objective = document.getElementById('objective').value;
+            const experience = document.getElementById('experience').value;
+            
+            const recText = recommendations[objective]?.[experience] || 'Consulte seu personal trainer.';
+            const mealsText = meals[objective]?.[experience] || 'Consulte seu personal trainer.';
+            const suppsText = supplements[objective] || 'Consulte seu personal trainer.';
+            
+            document.getElementById('customRecommendations').value = recText;
+            document.getElementById('customMeals').value = mealsText;
+            document.getElementById('customSupplements').value = suppsText;
+            
+            document.getElementById('previewRecommendations').innerHTML = recText;
+            document.getElementById('previewMeals').innerHTML = mealsText.replace(/\n/g, '<br>');
+            document.getElementById('previewSupplements').innerHTML = suppsText;
+        }
+
+        function updatePreview(calories, protein, carbs, fats, tmb) {
+            const name = document.getElementById('clientName').value || '-';
+            const age = document.getElementById('age').value || '-';
+            const weight = document.getElementById('weight').value || '-';
+            const height = document.getElementById('height').value || '-';
+            const objective = document.getElementById('objective').value;
+            const experience = document.getElementById('experience').value;
+            const restrictions = document.getElementById('restrictions').value || 'Nenhuma';
+            const allergies = document.getElementById('allergies').value || 'Nenhuma';
+            const notes = document.getElementById('notes').value || 'Nenhuma';
+
+            const imc = calculateIMC() || '-';
+            const idealWeight = calculateIdealWeight() || '-';
+
+            document.getElementById('previewName').textContent = name;
+            document.getElementById('previewAge').textContent = age;
+            document.getElementById('previewWeight').textContent = weight + ' kg';
+            document.getElementById('previewHeight').textContent = height + ' cm';
+            document.getElementById('previewIMC').textContent = imc;
+            document.getElementById('previewIdealWeight').textContent = idealWeight + ' kg';
+            document.getElementById('previewTMB').textContent = Math.round(tmb);
+            document.getElementById('previewCalories').textContent = calories;
+
+            document.getElementById('previewProtein').textContent = protein + 'g';
+            document.getElementById('previewCarbs').textContent = carbs + 'g';
+            document.getElementById('previewFats').textContent = fats + 'g';
+
+            const proteinPct = Math.round((protein * 4 / calories) * 100);
+            const carbsPct = Math.round((carbs * 4 / calories) * 100);
+            const fatsPct = Math.round((fats * 9 / calories) * 100);
+
+            document.getElementById('previewProteinPct').textContent = proteinPct + '%';
+            document.getElementById('previewCarbsPct').textContent = carbsPct + '%';
+            document.getElementById('previewFatsPct').textContent = fatsPct + '%';
+
+            // Recomendações
+            const recText = recommendations[objective]?.[experience] || 'Consulte seu personal trainer.';
+            const customRec = document.getElementById('customRecommendations').value;
+            document.getElementById('customRecommendations').value = customRec || recText;
+            document.getElementById('previewRecommendations').innerHTML = (customRec || recText);
+
+            // Refeições
+            const mealsText = meals[objective]?.[experience] || 'Consulte seu personal trainer.';
+            const customMeals = document.getElementById('customMeals').value;
+            document.getElementById('customMeals').value = customMeals || mealsText;
+            document.getElementById('previewMeals').innerHTML = (customMeals || mealsText).replace(/\n/g, '<br>');
+
+            // Suplementação
+            const suppsText = supplements[objective] || 'Consulte seu personal trainer.';
+            const customSupps = document.getElementById('customSupplements').value;
+            document.getElementById('customSupplements').value = customSupps || suppsText;
+            document.getElementById('previewSupplements').innerHTML = (customSupps || suppsText);
+
+            // Restrições
+            document.getElementById('previewRestrictionsText').textContent = restrictions;
+            document.getElementById('previewAllergiesText').textContent = allergies;
+            document.getElementById('previewNotesText').textContent = notes;
+
+            document.getElementById('sigClientName').textContent = name;
+        }
+
+        // ===== GERAÇÃO DE PDF =====
+        function generatePDF() {
+            const element = document.getElementById('pdfPreview');
+            const clientName = document.getElementById('clientName').value || 'Plano_Dieta';
+            
+            const opt = {
+                margin: 10,
+                filename: `${clientName}_Plano_Dieta.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+            showToast('PDF baixado com sucesso!');
+        }
+
+        function printPDF() {
+            const element = document.getElementById('pdfPreview').cloneNode(true);
+            
+            const logo = element.querySelector('.pdf-logo');
+            if (logo) {
+                logo.style.width = '40px';
+                logo.style.height = '40px';
+            }
+            
+            const printWindow = window.open('', '', 'height=600,width=800');
+            const printStyle = '<style>@page { margin: 0; size: A4; } body { margin: 0; padding: 10mm; font-family: Arial, sans-serif; }</style>';
+            
+            printWindow.document.write(printStyle + element.innerHTML);
+            printWindow.document.close();
+            
+            setTimeout(() => {
+                printWindow.print();
+            }, 250);
+        }
+
+        function shareWhatsApp() {
+            const clientName = document.getElementById('clientName').value || 'Cliente';
+            const clientWhatsApp = document.getElementById('clientWhatsApp').value || '+651961629402';
+            const calories = document.getElementById('previewCalories').textContent;
+            const protein = document.getElementById('previewProtein').textContent;
+            const carbs = document.getElementById('previewCarbs').textContent;
+            const fats = document.getElementById('previewFats').textContent;
+
+            const message = `Ola ${clientName}! Seu plano de dieta personalizado esta pronto:\n\nCalorias: ${calories}\nProteina: ${protein}\nCarbos: ${carbs}\nGordura: ${fats}\n\nBaixe o PDF completo com todas as recomendacoes!`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const cleanNumber = clientWhatsApp.replace(/\D/g, '');
+            window.open(`https://wa.me/${cleanNumber}?text=${encodedMessage}`, '_blank');
+        }
+
+        function saveToHistory() {
+            const clientName = document.getElementById('clientName').value;
+            if (!clientName) {
+                alert('Preencha o nome do cliente!');
+                return;
+            }
+
+            const data = {
+                name: clientName,
+                sexo: document.getElementById('sexo').value,
+                age: document.getElementById('age').value,
+                weight: document.getElementById('weight').value,
+                height: document.getElementById('height').value,
+                activity: document.getElementById('activity').value,
+                experience: document.getElementById('experience').value,
+                objective: document.getElementById('objective').value,
+                frequency: document.getElementById('frequency').value,
+                restrictions: document.getElementById('restrictions').value,
+                allergies: document.getElementById('allergies').value,
+                notes: document.getElementById('notes').value,
+                timestamp: new Date().toLocaleString('pt-BR')
+            };
+
+            let history = JSON.parse(localStorage.getItem('clientHistory')) || [];
+            history.unshift(data);
+            history = history.slice(0, 10);
+            localStorage.setItem('clientHistory', JSON.stringify(history));
+
+            loadHistory();
+            showToast('✅ Cliente salvo no histórico!');
+        }
+
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('clientHistory')) || [];
+            const historyList = document.getElementById('historyList');
+
+            if (history.length === 0) {
+                historyList.innerHTML = '<p style="color: #999;">Nenhum cliente salvo ainda...</p>';
+                return;
+            }
+
+            historyList.innerHTML = history.map((item, index) => `
+                <div class="history-item" onclick="loadClient(${index})">
+                    <div class="history-item-name">${item.name}</div>
+                    <div class="history-item-date">${item.timestamp}</div>
+                </div>
+            `).join('');
+        }
+
+        function loadClient(index) {
+            const history = JSON.parse(localStorage.getItem('clientHistory')) || [];
+            const client = history[index];
+
+            document.getElementById('clientName').value = client.name;
+            document.getElementById('sexo').value = client.sexo;
+            document.getElementById('age').value = client.age;
+            document.getElementById('weight').value = client.weight;
+            document.getElementById('height').value = client.height;
+            document.getElementById('activity').value = client.activity;
+            document.getElementById('experience').value = client.experience;
+            document.getElementById('objective').value = client.objective;
+            document.getElementById('frequency').value = client.frequency;
+            document.getElementById('restrictions').value = client.restrictions;
+            document.getElementById('allergies').value = client.allergies;
+            document.getElementById('notes').value = client.notes;
+
+            // Atualizar preview
+            const tmb = calculateTMB();
+            const activity = parseFloat(client.activity);
+            const totalCalories = Math.round(tmb * activity);
+            const weight = parseFloat(client.weight);
+            const protein = Math.round(weight * 2.0);
+            const carbs = Math.round((totalCalories - protein * 4 - weight * 0.8 * 9) / 4);
+            const fats = Math.round(weight * 0.8);
+
+            updatePreview(totalCalories, protein, carbs, fats, tmb);
+            showToast('✅ Cliente carregado!');
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // ===== FUNÇÕES DE RESET =====
+        function resetRecommendations() {
+            const objective = document.getElementById('objective').value;
+            const experience = document.getElementById('experience').value;
+            const recText = recommendations[objective]?.[experience] || 'Consulte seu personal trainer.';
+            document.getElementById('customRecommendations').value = recText;
+            document.getElementById('previewRecommendations').innerHTML = recText;
+            showToast('✅ Recomendações resetadas!');
+        }
+
+        function resetMeals() {
+            const objective = document.getElementById('objective').value;
+            const experience = document.getElementById('experience').value;
+            const mealsText = meals[objective]?.[experience] || 'Consulte seu personal trainer.';
+            document.getElementById('customMeals').value = mealsText;
+            document.getElementById('previewMeals').innerHTML = mealsText.replace(/\n/g, '<br>');
+            showToast('✅ Refeições resetadas!');
+        }
+
+        function resetSupplements() {
+            const objective = document.getElementById('objective').value;
+            const suppsText = supplements[objective] || 'Consulte seu personal trainer.';
+            document.getElementById('customSupplements').value = suppsText;
+            document.getElementById('previewSupplements').innerHTML = suppsText;
+            showToast('✅ Suplementação resetada!');
+        }
+
+        // ===== EVENT LISTENERS =====
+        ['clientName', 'sexo', 'age', 'weight', 'height', 'activity', 'experience', 'objective', 'frequency', 'restrictions', 'allergies', 'notes'].forEach(id => {
+            document.getElementById(id).addEventListener('change', () => {
+                const tmb = calculateTMB();
+                if (tmb) {
+                    const activity = parseFloat(document.getElementById('activity').value) || 1.55;
+                    const totalCalories = Math.round(tmb * activity);
+                    const weight = parseFloat(document.getElementById('weight').value);
+                    const protein = Math.round(weight * 2.0);
+                    const carbs = Math.round((totalCalories - protein * 4 - weight * 0.8 * 9) / 4);
+                    const fats = Math.round(weight * 0.8);
+                    updatePreview(totalCalories, protein, carbs, fats, tmb);
+                }
+            });
+        });
+
+        // Atualizar preview quando campos customizados mudam
+        document.getElementById('customRecommendations').addEventListener('input', () => {
+            document.getElementById('previewRecommendations').innerHTML = document.getElementById('customRecommendations').value;
+        });
+
+        document.getElementById('customMeals').addEventListener('input', () => {
+            document.getElementById('previewMeals').innerHTML = document.getElementById('customMeals').value.replace(/\n/g, '<br>');
+        });
+
+        document.getElementById('customSupplements').addEventListener('input', () => {
+            document.getElementById('previewSupplements').innerHTML = document.getElementById('customSupplements').value;
+        });
+
+        // Salvar WhatsApp no localStorage
+        document.getElementById('clientWhatsApp').addEventListener('change', () => {
+            localStorage.setItem('defaultWhatsApp', document.getElementById('clientWhatsApp').value);
+        });
+
+        // Carregar WhatsApp salvo
+        const savedWhatsApp = localStorage.getItem('defaultWhatsApp');
+        if (savedWhatsApp) {
+            document.getElementById('clientWhatsApp').value = savedWhatsApp;
+        }
+
+        // Carregar historico ao abrir
+        loadHistory();
+    </script>
+</body>
+</html>
