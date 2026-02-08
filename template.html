@@ -301,11 +301,7 @@ textarea {
   <button class="print-button" onclick="window.print()">
     🖨️ Imprimir / Salvar em PDF
   </button>
-</div>
-  <div style="text-align:right; margin-bottom:10px;">
-  <button type="button" class="button" onclick="salvarDados()">💾 Salvar</button>
-  <button type="button" class="button" onclick="carregarDados()">📂 Carregar</button>
-</div>
+
 
 <!-- ================= IDENTIFICAÇÃO ================= -->
 <div class="section">
@@ -723,6 +719,90 @@ function atualizarListaFichas() {
 }
 
 document.addEventListener("DOMContentLoaded", atualizarListaFichas);
+</script>
+<script>
+/* ================= GERENCIADOR DE FICHAS (JSON) ================= */
+
+const STORAGE_KEY = "banco_fichas";
+
+/* ===== carregar banco ===== */
+function getBanco() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+}
+
+/* ===== salvar banco ===== */
+function setBanco(banco) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(banco));
+}
+
+/* ===== coletar TODOS os dados da tela ===== */
+function coletarTela() {
+  const dados = {};
+
+  document.querySelectorAll("input, textarea, select").forEach(el => {
+    if (el.id) {
+      dados[el.id] = el.value;
+    }
+  });
+
+  return dados;
+}
+
+/* ===== aplicar dados na tela ===== */
+function aplicarTela(dados) {
+  document.querySelectorAll("input, textarea, select").forEach(el => {
+    if (el.id && dados[el.id] !== undefined) {
+      el.value = dados[el.id];
+      if (el.tagName === "TEXTAREA" && typeof autoResize === "function") {
+        autoResize(el);
+      }
+    }
+  });
+}
+
+/* ===== salvar ficha ===== */
+function salvarFicha() {
+  const nome = document.getElementById("fichaNome").value.trim().toLowerCase();
+  if (!nome) {
+    alert("Digite o nome da ficha.");
+    return;
+  }
+
+  const banco = getBanco();
+  banco[nome] = coletarTela();
+  setBanco(banco);
+
+  atualizarLista();
+  alert(`Ficha "${nome}" salva.`);
+}
+
+/* ===== carregar ficha ===== */
+function carregarFicha(nome) {
+  if (!nome) return;
+
+  const banco = getBanco();
+  if (!banco[nome]) return;
+
+  aplicarTela(banco[nome]);
+  document.getElementById("fichaNome").value = nome;
+}
+
+/* ===== atualizar select ===== */
+function atualizarLista() {
+  const banco = getBanco();
+  const select = document.getElementById("listaFichas");
+  if (!select) return;
+
+  select.innerHTML = "<option value=''>Selecione</option>";
+  Object.keys(banco).forEach(nome => {
+    const opt = document.createElement("option");
+    opt.value = nome;
+    opt.textContent = nome;
+    select.appendChild(opt);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", atualizarLista);
 </script>
 
   
