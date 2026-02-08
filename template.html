@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Plano Personalizado</title>
+
+<style>
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #1a1a1a;
+  margin: 20px;
+}
+
+h1, h2, h3 {
+  margin: 6px 0;
+}
+
+hr {
+  border: none;
+  border-top: 2px solid #d4af37;
+  margin: 10px 0;
+}
+
+input, textarea {
+  width: 100%;
+  font-size: 12px;
+  padding: 4px;
+  margin: 2px 0 6px 0;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+.button {
+  padding: 4px 8px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.block {
+  border: 1px solid #ccc;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- CABEÇALHO -->
+<div class="section">
+  <h1><input placeholder="Título do Documento (ex: Plano de Dieta Personalizado)"></h1>
+  <input placeholder="Nome do Profissional / Marca">
+  <input placeholder="Subtítulo / Especialidade">
+  <hr>
+</div>
+
+<!-- CLIENTE -->
+<div class="section">
+  <h2>Identificação do Cliente</h2>
+  <input placeholder="Nome do Cliente">
+  <input placeholder="Tipo do Plano (Inicial, Intermediário, Avançado)">
+</div>
+
+<!-- REFEIÇÕES -->
+<div class="section">
+  <h2>Plano Alimentar</h2>
+  <div id="refeicoes"></div>
+  <button class="button" onclick="addRefeicao()">➕ Adicionar Refeição</button>
+</div>
+
+<!-- OBSERVAÇÕES IMPORTANTES -->
+<div class="section">
+  <h2>Observações Importantes</h2>
+  <textarea rows="4" placeholder="Digite as observações importantes"></textarea>
+</div>
+
+<!-- SUPLEMENTAÇÃO -->
+<div class="section">
+  <h2>Suplementação</h2>
+  <textarea rows="3" placeholder="Descrever suplementação (se houver)"></textarea>
+</div>
+
+<hr>
+
+<!-- TREINO -->
+<div class="section">
+  <h2>Plano de Treino</h2>
+  <input placeholder="Fase do Treino (ex: Inicial)">
+  <div id="treinos"></div>
+  <button class="button" onclick="addTreino()">➕ Adicionar Dia de Treino</button>
+</div>
+
+<!-- ABDOMINAIS -->
+<div class="section">
+  <h3>Abdominais</h3>
+  <textarea rows="3"></textarea>
+</div>
+
+<!-- CARDIO -->
+<div class="section">
+  <h3>Cardio</h3>
+  <textarea rows="2"></textarea>
+</div>
+
+<!-- OBSERVAÇÃO EXTRA -->
+<div class="section">
+  <h2>Observação Extra</h2>
+  <textarea rows="4" placeholder="Campo livre para observações adicionais"></textarea>
+</div>
+
+<!-- AVISO -->
+<div class="section">
+  <hr>
+  <small>
+    Plano educacional. Não substitui acompanhamento clínico ou profissional.
+  </small>
+</div>
+
+<script>
+function addRefeicao() {
+  const div = document.createElement("div");
+  div.className = "block";
+  div.innerHTML = `
+    <input placeholder="Nome da Refeição">
+    <textarea rows="2" placeholder="Descrição da Dieta"></textarea>
+    <textarea rows="2" placeholder="Observações"></textarea>
+    <button class="button" onclick="this.parentElement.remove()">➖ Remover</button>
+  `;
+  document.getElementById("refeicoes").appendChild(div);
+}
+
+function addTreino() {
+  const div = document.createElement("div");
+  div.className = "block";
+  div.innerHTML = `
+    <input placeholder="Dia de Treino (ex: DIA 1 – Perna)">
+    <textarea rows="4" placeholder="Lista de Exercícios"></textarea>
+    <button class="button" onclick="this.parentElement.remove()">➖ Remover</button>
+  `;
+  document.getElementById("treinos").appendChild(div);
+}
+</script>
+
+</body>
+</html>
