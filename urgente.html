@@ -3,215 +3,147 @@
 <head>
 <meta charset="UTF-8">
 <title>Plano de Dieta Personalizado</title>
-
 <style>
-@page {
-  size: A4;
-  margin: 14mm;
-}
-
 body {
+  font-family: "Inter", system-ui, sans-serif;
+  background: #0A0E27;
+  color: #1f2937;
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: #ffffff;
-  color: #222;
-  font-size: 11px;
-}
-
-.container {
-  width: 100%;
-}
-
-/* ================= HEADER ================= */
-.header {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #1f3c88;
-  margin-bottom: 10px;
-}
-
-.logo img {
-  height: 44px;
-}
-
-.header-title h1 {
-  margin: 0;
-  font-size: 17px;
-  color: #1f3c88;
-}
-
-.header-title p {
-  margin: 2px 0 0 0;
-  font-size: 11px;
-  color: #555;
-}
-
-/* ================= SECTION ================= */
-.section-title {
-  font-size: 14px;
-  font-weight: bold;
-  color: #1f3c88;
-  margin: 10px 0 6px;
-}
-
-/* ================= TABLE ================= */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 11px;
-}
-
-th, td {
-  border: 1px solid #cfd6e4;
-  padding: 6px;
-  vertical-align: top;
-}
-
-th {
-  background: #eef2fb;
-  color: #1f3c88;
-  text-align: left;
-}
-
-/* ================= HIGHLIGHTS ================= */
-.post {
-  background: #e4f3d4;
-  font-weight: bold;
-}
-
-.note {
-  color: #b36b00;
-  font-weight: bold;
-}
-
-.warn {
-  color: #c62828;
-  font-weight: bold;
-}
-
-/* ================= FOOTER ================= */
-.obs {
-  margin-top: 8px;
-  font-size: 11px;
-}
-
-.obs ul {
-  margin: 4px 0 6px 16px;
   padding: 0;
 }
-
-.obs li {
-  margin-bottom: 2px;
+.page {
+  max-width: 900px;
+  margin: auto;
+  background: #fff;
+  padding: 40px;
 }
-
-.suplementos {
-  margin-top: 4px;
+h1 {
+  text-align: center;
+  color: #D4AF37;
+  margin-bottom: 5px;
+}
+h2 {
+  color: #0A0E27;
+  border-bottom: 2px solid #D4AF37;
+  padding-bottom: 4px;
+  margin-top: 30px;
+}
+.subtitle {
+  text-align: center;
+  color: #555;
+  margin-bottom: 30px;
+}
+.section {
+  margin-bottom: 20px;
+}
+.meal {
+  border-left: 4px solid #D4AF37;
+  padding: 10px 15px;
+  margin-bottom: 12px;
+  background: #f9fafb;
+}
+.meal strong {
+  color: #0A0E27;
+}
+.note {
+  background: #fff7e6;
+  border-left: 4px solid #f59e0b;
+  padding: 12px;
+  margin-top: 15px;
+  font-size: 14px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.badge {
+  background: #0A0E27;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+.footer {
+  margin-top: 40px;
+  font-size: 12px;
+  color: #555;
+  text-align: center;
 }
 </style>
 </head>
 
 <body>
+<div class="page">
 
-<div class="container">
+<h1>Plano de Dieta Personalizado</h1>
+<div class="subtitle">Kayo Porto · Consultoria Online</div>
 
-  <!-- ================= HEADER ================= -->
-  <div class="header">
-    <div class="logo">
-      <!-- COLE AQUI O LOGO EM BASE64 -->
-      <!-- <img src="data:image/png;base64,AAAA..." /> -->
-    </div>
-    <div class="header-title">
-      <h1>Plano de Dieta Personalizado</h1>
-      <p>Kayo Porto • Consultoria Online</p>
-    </div>
-  </div>
+<h2>Rotina Diária</h2>
 
-  <!-- ================= DIETA ================= -->
-  <div class="section-title">Plano Alimentar – Kayo Inicial</div>
-
-  <table>
-    <tr>
-      <th width="16%">Refeição</th>
-      <th>Dieta</th>
-      <th width="28%">Observações</th>
-    </tr>
-
-    <tr>
-      <td><strong>Ao acordar</strong></td>
-      <td>1 copo de água morna com limão e vinagre de cidra</td>
-      <td>Carne bovina – 140 g • 3x/semana</td>
-    </tr>
-
-    <tr>
-      <td><strong>Café da Manhã</strong></td>
-      <td>
-        3 ovos + iogurte Skyr 150 g + 40 g aveia +  
-        100 g maçã + 25 g manteiga de amendoim
-      </td>
-      <td>Atum em lata – 2 latas</td>
-    </tr>
-
-    <tr>
-      <td><strong>2ª refeição</strong></td>
-      <td>130 g frango + 180 g arroz + 15 g azeite</td>
-      <td>Pescada – 190 g (quando quiser)</td>
-    </tr>
-
-    <tr>
-      <td><strong>3ª refeição</strong></td>
-      <td>130 g frango + 100 g batata + legumes + 15 g azeite</td>
-      <td>Salmão – 140 g • 2x/semana</td>
-    </tr>
-
-    <tr>
-      <td><strong>4ª refeição</strong></td>
-      <td>130 g frango + 250 g batata ou 200 g arroz + legumes</td>
-      <td>Pão pequeno no almoço – 50 g</td>
-    </tr>
-
-    <tr>
-      <td><strong>5ª refeição</strong></td>
-      <td>
-        180 g Skyr + 25 g proteína +  
-        25 g pasta de amendoim + 50 g frutos vermelhos
-      </td>
-      <td class="note">
-        Frutas: maçã, pera, banana, ameixa, abacaxi, morango
-      </td>
-    </tr>
-
-    <tr class="post">
-      <td><strong>Pós-treino</strong></td>
-      <td>
-        30 g proteína + 30 g cereais de arroz  
-        + 100 g fruta (exceto banana)
-      </td>
-      <td>
-        Cereais de arroz são os “sucrilhos dos adultos”
-      </td>
-    </tr>
-  </table>
-
-  <!-- ================= OBS ================= -->
-  <div class="obs">
-    <div class="section-title">Observações Importantes</div>
-    <ul>
-      <li>Pode usar polpa de tomate e mostarda.</li>
-      <li>Legumes salteados: cogumelos, brócolis, feijão-verde, pimentão.</li>
-      <li>Alimentos pesados após preparo (exceto claras e aveia).</li>
-      <li>Suplementos junto ao café da manhã.</li>
-      <li class="warn">Mínimo de 3,5 litros de água por dia.</li>
-    </ul>
-
-    <div class="suplementos">
-      <strong>Suplementação:</strong>  
-      Multivitamínico • Vitamina C 1000 • Ômega 3 • Whey • Creatina
-    </div>
-  </div>
-
+<div class="meal"><strong>Ao acordar</strong><br>
+1 copo de água morna com limão e vinagre de cidra
 </div>
 
+<div class="meal"><strong>30 min após – 1ª refeição</strong><br>
+3 ovos · Iogurte Skyr 150 g · Aveia 40 g · Maca 100 g · Manteiga de amendoim 25 g
+</div>
+
+<div class="meal"><strong>2ª refeição</strong><br>
+Peito de frango 130 g · Arroz 180 g · Azeite 15 g
+</div>
+
+<div class="meal"><strong>3ª refeição</strong><br>
+Peito de frango 130 g · Batata 100 g · Legumes · Azeite 15 g
+</div>
+
+<div class="meal"><strong>4ª refeição</strong><br>
+Peito de frango 130 g · Batata cozida 250 g<br>
+<strong>ou</strong> Arroz 200 g · Legumes 100 g
+</div>
+
+<div class="meal"><strong>5ª refeição</strong><br>
+Iogurte Skyr 180 g · Proteína 25 g · Manteiga de amendoim 25 g · Frutos vermelhos 50 g
+</div>
+
+<div class="meal"><strong>Pós-treino</strong><br>
+Proteína 30 g · Cereais de arroz 30 g · Fruta 100 g (exceto banana)
+</div>
+
+<h2>Substituições</h2>
+<div class="grid">
+<div class="meal">Vaca 140 g · 3x por semana</div>
+<div class="meal">Atum lata · 2 latas</div>
+<div class="meal">Pescada 190 g · quando quiser</div>
+<div class="meal">Salmão 140 g · 2x por semana</div>
+</div>
+
+<h2>Frutas</h2>
+<div class="meal">
+Alternar entre: Maçã, Pera, Banana, Ameixa, Abacaxi, Morango
+</div>
+
+<h2>Hidratação</h2>
+<div class="meal"><strong>Mínimo 3,5 litros de água por dia</strong></div>
+
+<h2>Suplementos</h2>
+<div class="meal">
+Multivitamínico · Vitamina C 1000 · Ômega 3 · Proteína Whey · Creatina
+</div>
+
+<div class="note">
+✔ Legumes salteados à vontade<br>
+✔ Pode usar polpa de tomate e mostarda<br>
+✔ Comida pesada depois de pronta (exceto claras e aveia – cruas)<br>
+✔ Vitaminas ao pequeno-almoço
+</div>
+
+<div class="footer">
+Plano alimentar educacional · Não substitui acompanhamento clínico
+</div>
+
+</div>
 </body>
 </html>
