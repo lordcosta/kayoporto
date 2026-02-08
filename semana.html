@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Semana de Treino · Kayo Porto</title>
+
+<style>
+:root {
+  --bg: #0A0E27;
+  --card: #141A3B;
+  --gold: #D4AF37;
+  --text: #E8E8E8;
+  --muted: #9FA6C3;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(212,175,55,.25);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--gold);
+}
+
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 1.5rem;
+}
+
+.mensagem {
+  background: linear-gradient(135deg, #1B234D, #10163A);
+  border-left: 4px solid var(--gold);
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.mensagem h3 {
+  margin: 0 0 .3rem 0;
+  color: var(--gold);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.dia {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+.dia h2 {
+  margin: 0 0 .6rem 0;
+  font-size: 1rem;
+  color: var(--gold);
+}
+
+.exercicio {
+  padding: .5rem 0;
+  border-bottom: 1px dashed rgba(255,255,255,.1);
+}
+
+.exercicio:last-child {
+  border-bottom: none;
+}
+
+.exercicio strong {
+  display: block;
+}
+
+.exercicio span {
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+footer {
+  text-align: center;
+  font-size: .75rem;
+  opacity: .6;
+  margin: 2rem 0 1rem;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Semana de Treino</h1>
+  <span>Kayo Porto · Engine Mode</span>
+</header>
+
+<main>
+
+<div id="mensagem" class="mensagem">
+  <h3>Mensagem do Treinador</h3>
+  <p>Carregando…</p>
+</div>
+
+<div id="semana" class="grid"></div>
+
+</main>
+
+<footer>
+  Engine LORDCosta · Projeto Kayo Porto
+</footer>
+
+<!-- Engines -->
+<script src="engine/treinoEngine.js"></script>
+<script src="engine/divisorEngine.js"></script>
+<script src="engine/mensagensEngine.js"></script>
+
+<script>
+(async function init() {
+
+  await TreinoEngine.carregarJSONs();
+
+  // 🔧 CONFIG DE TESTE (depois vem do formulário)
+  const config = {
+    nivel: "iniciante",
+    objetivo: "hipertrofia",
+    equipamentos: ["barra", "halter", "maquina", "cabo", "peso_corporal"],
+    divisao: "ABC"
+  };
+
+  // 1️⃣ Mensagem
+  const msg = MensagensEngine.gerarMensagem(config);
+  document.querySelector("#mensagem p").innerText = msg;
+
+  // 2️⃣ Divisão semanal
+  const semana = DivisorEngine.gerarDivisao(config);
+
+  const container = document.getElementById("semana");
+  container.innerHTML = "";
+
+  semana.forEach(dia => {
+    const card = document.createElement("div");
+    card.className = "dia";
+
+    card.innerHTML = `<h2>${dia.dia} · ${dia.grupo}</h2>`;
+
+    const treino = TreinoEngine.gerarTreino({
+      grupo: dia.grupo.toLowerCase(),
+      nivel: config.nivel,
+      objetivo: config.objetivo,
+      equipamentos: config.equipamentos
+    });
+
+    treino.forEach(e => {
+      const div = document.createElement("div");
+      div.className = "exercicio";
+      div.innerHTML = `
+        <strong>${e.ordem}. ${e.exercicio}</strong>
+        <span>${e.series} séries · ${e.repeticoes} reps · descanso ${e.descanso}</span>
+      `;
+      card.appendChild(div);
+    });
+
+    container.appendChild(card);
+  });
+
+})();
+</script>
+
+</body>
+</html>
