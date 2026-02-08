@@ -178,12 +178,14 @@ MSC · LORDCosta · uso interno
 </div>
 
 <script>
+const DATA_PATH = "data/";
+    
 let data = {};
 let grupoAtual = "peitorais";
 let index = 0;
 
 async function loadJSON() {
-    const res = await fetch("exercicios.json");
+    const res = await fetch(DATA_PATH + "eercicios.json");
     data = await res.json();
     grupoAtual = Object.keys(data)[0];
     index = 0;
