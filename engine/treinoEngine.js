@@ -1,97 +1,111 @@
-// engine/treinoEngine.js
-// Motor de geração automática de treino
-// LORDCosta • Projeto Kayo Porto
+/* ================================
+   TREINO ENGINE · LORDCosta
+   Motor de geração de treinos
+   ================================ */
 
-const DATA_PATH = "/data/";
+const DATA_PATH = "../data/";
 
-/**
- * Carrega JSON de forma segura
- */
-async function loadJSON(file) {
-  const res = await fetch(DATA_PATH + file);
-  if (!res.ok) {
-    throw new Error(`Erro ao carregar ${file}`);
-  }
-  return await res.json();
+let exerciciosDB = {};
+let regrasDB = {};
+
+/* ================================
+   LOADERS
+   ================================ */
+
+async function carregarJSONs() {
+  const [exRes, regrasRes] = await Promise.all([
+    fetch(DATA_PATH + "exercicios.json"),
+    fetch(DATA_PATH + "regras.json")
+  ]);
+
+  exerciciosDB = await exRes.json();
+  regrasDB = await regrasRes.json();
+
+  console.log("✔ Exercícios carregados");
+  console.log("✔ Regras carregadas");
 }
 
-/**
- * Filtra exercícios com base nas regras
- */
-function filtrarExercicios(lista, { nivel, equipamentos }) {
-  return lista.filter(ex => {
-    const nivelOk =
-      ex.nivel_minimo === nivel ||
-      (nivel === "intermediario" && ex.nivel_minimo === "iniciante") ||
-      (nivel === "avancado");
+/* ================================
+   UTILITÁRIOS
+   ================================ */
 
-    const equipamentoOk =
-      ex.equipamento.length === 0 ||
-      ex.equipamento.some(eq => equipamentos.includes(eq));
+function filtrarPorNivel(lista, nivel) {
+  const ordem = ["iniciante", "intermediario", "avancado"];
+  const nivelIndex = ordem.indexOf(nivel);
 
-    return nivelOk && equipamentoOk;
-  });
-}
-
-/**
- * Seleciona exercícios respeitando prioridade
- */
-function selecionarPorPrioridade(lista, quantidade) {
-  return lista
-    .sort((a, b) => a.prioridade - b.prioridade)
-    .slice(0, quantidade);
-}
-
-/**
- * Gera treino completo
- */
-export async function gerarTreino({
-  grupo,
-  nivel,
-  objetivo,
-  equipamentos
-}) {
-  const exerciciosData = await loadJSON("exercicios.json");
-  const regras = await loadJSON("regras.json");
-
-  const regrasGrupo = regras[grupo];
-  if (!regrasGrupo) {
-    throw new Error(`Grupo muscular inválido: ${grupo}`);
-  }
-
-  const config = regrasGrupo[objetivo];
-  if (!config) {
-    throw new Error(`Objetivo inválido para ${grupo}: ${objetivo}`);
-  }
-
-  const listaBase = exerciciosData[grupo] || [];
-  const filtrados = filtrarExercicios(listaBase, {
-    nivel,
-    equipamentos
-  });
-
-  const selecionados = selecionarPorPrioridade(
-    filtrados,
-    config.quantidade_exercicios
+  return lista.filter(e =>
+    ordem.indexOf(e.nivel_minimo) <= nivelIndex
   );
+}
 
-  const treino = selecionados.map(ex => ({
-    id: ex.id,
-    nome: ex.nome,
-    tipo: ex.tipo,
-    series: config.series,
-    repeticoes: config.repeticoes,
-    descanso: config.descanso,
-    observacao: ex.tipo === "composto"
-      ? "Manter técnica perfeita"
-      : "Controle total do movimento"
-  }));
+function filtrarPorEquipamento(lista, equipamentos) {
+  return lista.filter(e =>
+    e.equipamento.some(eq => equipamentos.includes(eq))
+  );
+}
 
-  return {
+function ordenarPorPrioridade(lista) {
+  return [...lista].sort((a, b) => a.prioridade - b.prioridade);
+}
+
+function embaralhar(lista) {
+  return lista.sort(() => Math.random() - 0.5);
+}
+
+/* ================================
+   MOTOR PRINCIPAL
+   ================================ */
+
+function gerarTreino(config) {
+  const {
     grupo,
     nivel,
     objetivo,
-    total_exercicios: treino.length,
-    treino
-  };
+    equipamentos = []
+  } = config;
+
+  if (!exerciciosDB[grupo]) {
+    console.error("Grupo muscular não encontrado:", grupo);
+    return [];
+  }
+
+  const regrasGrupo = regrasDB[objetivo]?.[nivel];
+
+  if (!regrasGrupo) {
+    console.error("Regras não encontradas para:", objetivo, nivel);
+    return [];
+  }
+
+  let lista = exerciciosDB[grupo];
+
+  // Filtros
+  lista = filtrarPorNivel(lista, nivel);
+  lista = filtrarPorEquipamento(lista, equipamentos);
+
+  // Prioridade + aleatoriedade controlada
+  lista = ordenarPorPrioridade(lista);
+  lista = embaralhar(lista);
+
+  // Quantidade definida pelas regras
+  const quantidade = regrasGrupo.exercicios;
+
+  const treino = lista.slice(0, quantidade).map((e, index) => ({
+    ordem: index + 1,
+    exercicio: e.nome,
+    series: regrasGrupo.series,
+    repeticoes: regrasGrupo.repeticoes,
+    descanso: regrasGrupo.descanso
+  }));
+
+  console.log("🔥 Treino gerado:", treino);
+  return treino;
 }
+
+/* ================================
+   API GLOBAL (para testes)
+   ================================ */
+
+window.TreinoEngine = {
+  carregarJSONs,
+  gerarTreino
+};
