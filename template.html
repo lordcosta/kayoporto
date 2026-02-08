@@ -6,6 +6,12 @@
 <title>Plano de Dieta Personalizado</title>
 
 <style>
+
+/* ================= ESPACAMENTO ================= */
+  .section-spacer {
+  height: 14px;
+}
+
 /* ================= ASSINATURA ================= */
 .signature {
   margin-top: 30px;
@@ -112,11 +118,25 @@ textarea {
   border: 1px solid #ccc;
 }
 
+/* 🔥 CÉLULAS COM ALTURA DINÂMICA */
 .table td {
   border: 1px solid #ccc;
   padding: 4px;
   vertical-align: top;
+  height: auto;
 }
+
+/* 🔥 TEXTAREA SEM ALTURA FIXA */
+.table td textarea {
+  width: 100%;
+  border: none;
+  resize: none;
+  overflow: hidden;
+  height: auto;
+  min-height: unset;
+  line-height: 1.3;
+}
+
 
 /* ================= BLOCOS DINÂMICOS ================= */
 .block {
@@ -192,6 +212,21 @@ textarea {
 /* ================= IMPRESSÃO ================= */
 @media print {
 
+   .header {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .logo {
+    width: 55px;
+    height: 55px;
+    margin-right: 10px;
+  }
+
+  .header-text h1 {
+    font-size: 17px;
+  }
+  
   /* Esconde botões e elementos de tela */
   .button,
   .print-area {
@@ -250,6 +285,8 @@ textarea {
     <option>Avançado</option>
   </select>
 </div>
+  <div class="section-spacer"></div>
+
 
 <!-- ================= PLANO ALIMENTAR ================= -->
 <div class="section">
@@ -329,13 +366,16 @@ function addRefeicao() {
         <option>Terceira refeição</option>
         <option>Quarta refeição</option>
         <option>Quinta refeição</option>
+        <option>Sexta refeição</option>
         <option>Ceia</option>
         <option>Pós-treino</option>
       </select>
     </td>
-    <td><textarea rows="2"></textarea></td>
     <td>
-      <textarea rows="2"></textarea>
+      <textarea oninput="autoResize(this)"></textarea>
+    </td>
+    <td>
+      <textarea oninput="autoResize(this)"></textarea>
       <button class="button" onclick="this.closest('tr').remove()">➖</button>
     </td>
   `;
@@ -343,16 +383,23 @@ function addRefeicao() {
 }
 
 
+
 function addTreino() {
   const div = document.createElement("div");
   div.className = "block";
-  div.innerHTML = `
+  div.inner = `
     <input placeholder="Dia de Treino (ex: DIA 1 – Perna)">
     <textarea rows="4" placeholder="Exercícios"></textarea>
     <button class="button" onclick="this.remove()">➖ Remover</button>
   `;
   document.getElementById("treinos").appendChild(div);
 }
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+  
 </script>
 
 </body>
