@@ -1,0 +1,32 @@
+{
+  "objetivos": {
+    "ganho_massa": {
+      "series": [3, 4],
+      "repeticoes": [6, 12],
+      "descanso_segundos": [60, 120]
+    },
+    "definicao": {
+      "series": [3, 4],
+      "repeticoes": [12, 20],
+      "descanso_segundos": [30, 60]
+    },
+    "performance": {
+      "series": [4, 5],
+      "repeticoes": [3, 8],
+      "descanso_segundos": [120, 180]
+    }
+  },
+
+  "cardio": {
+    "esteira": {
+      "iniciante": "20 min caminhada",
+      "intermediario": "25 min corrida leve",
+      "avancado": "30 min HIIT"
+    },
+    "bicicleta": {
+      "iniciante": "20 min",
+      "intermediario": "30 min",
+      "avancado": "40 min"
+    }
+  }
+}
