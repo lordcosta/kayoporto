@@ -1,56 +1,231 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Teste Treino Engine</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background: #0A0E27;
-      color: #E8E8E8;
-      padding: 1rem;
-    }
-    button {
-      background: #D4AF37;
-      border: none;
-      padding: .6rem 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      border-radius: 6px;
-    }
-    pre {
-      background: #111633;
-      padding: 1rem;
-      border-radius: 8px;
-      margin-top: 1rem;
-      white-space: pre-wrap;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gerador de Treino · Kayo Porto</title>
+
+<style>
+:root {
+  --bg: #0b0f1a;
+  --card: #151b2d;
+  --gold: #d4af37;
+  --text: #e8e8e8;
+  --muted: #9aa0b3;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(212,175,55,.3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--gold);
+}
+
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 10px;
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.03);
+}
+
+.card h2 {
+  margin-top: 0;
+  font-size: 1rem;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: .8rem;
+}
+
+select, button {
+  width: 100%;
+  padding: .6rem .7rem;
+  border-radius: 6px;
+  border: none;
+  font-size: .9rem;
+}
+
+select {
+  background: #1f2640;
+  color: var(--text);
+}
+
+button {
+  background: var(--gold);
+  color: #0b0f1a;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover {
+  filter: brightness(1.05);
+}
+
+#resultado-treino {
+  display: grid;
+  gap: .8rem;
+}
+
+.exercicio {
+  background: #0f1426;
+  border-radius: 8px;
+  padding: .8rem 1rem;
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: .8rem;
+  align-items: center;
+  border-left: 3px solid var(--gold);
+}
+
+.exercicio .ordem {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-align: center;
+}
+
+.exercicio .nome {
+  font-weight: 600;
+}
+
+.exercicio .detalhes {
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+footer {
+  text-align: center;
+  font-size: .75rem;
+  color: var(--muted);
+  margin: 3rem 0 1.5rem;
+}
+</style>
 </head>
+
 <body>
 
-<h1>Teste – Treino Engine</h1>
+<header>
+  <h1>Gerador de Treino</h1>
+  <span style="color:var(--muted); font-size:.8rem;">Kayo Porto · Engine Mode</span>
+</header>
 
-<button onclick="gerar()">Gerar Treino</button>
+<div class="container">
 
-<pre id="output">Clique no botão para gerar o treino…</pre>
+  <div class="card">
+    <h2>Configuração do Treino</h2>
 
+    <div class="controls">
+      <select id="grupo">
+        <option value="peitorais">Peitorais</option>
+        <option value="costas">Costas</option>
+        <option value="ombros">Ombros</option>
+        <option value="biceps">Bíceps</option>
+        <option value="triceps">Tríceps</option>
+        <option value="pernas">Pernas</option>
+        <option value="abdomen">Abdômen</option>
+        <option value="antebraco">Antebraço</option>
+        <option value="lombar">Lombar</option>
+      </select>
+
+      <select id="nivel">
+        <option value="iniciante">Iniciante</option>
+        <option value="intermediario">Intermediário</option>
+        <option value="avancado">Avançado</option>
+      </select>
+
+      <select id="objetivo">
+        <option value="hipertrofia">Hipertrofia</option>
+        <option value="forca">Força</option>
+        <option value="resistencia">Resistência</option>
+      </select>
+
+      <select id="equipamentos" multiple>
+        <option value="barra">Barra</option>
+        <option value="halter">Halter</option>
+        <option value="maquina">Máquina</option>
+        <option value="cabo">Cabo</option>
+        <option value="peso_corporal">Peso corporal</option>
+      </select>
+
+      <button onclick="gerar()">🔥 Gerar Treino</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Treino Gerado</h2>
+    <div id="resultado-treino"></div>
+  </div>
+
+</div>
+
+<footer>
+  Engine LORDCosta · Projeto Kayo Porto
+</footer>
+
+<!-- ENGINE -->
 <script src="engine/treinoEngine.js"></script>
 
 <script>
 async function gerar() {
   await TreinoEngine.carregarJSONs();
 
+  const grupo = document.getElementById("grupo").value;
+  const nivel = document.getElementById("nivel").value;
+  const objetivo = document.getElementById("objetivo").value;
+
+  const equipamentos = Array.from(
+    document.getElementById("equipamentos").selectedOptions
+  ).map(o => o.value);
+
   const treino = TreinoEngine.gerarTreino({
-    grupo: "peitorais",
-    nivel: "iniciante",
-    objetivo: "hipertrofia",
-    equipamentos: ["halter", "maquina"]
+    grupo,
+    nivel,
+    objetivo,
+    equipamentos
   });
 
-  document.getElementById("output").textContent =
-    JSON.stringify(treino, null, 2);
+  const container = document.getElementById("resultado-treino");
+  container.innerHTML = "";
+
+  treino.forEach(e => {
+    const div = document.createElement("div");
+    div.className = "exercicio";
+    div.innerHTML = `
+      <div class="ordem">${e.ordem}</div>
+      <div>
+        <div class="nome">${e.exercicio}</div>
+        <div class="detalhes">
+          ${e.series} séries · ${e.repeticoes} reps · descanso ${e.descanso}s
+        </div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
 }
 </script>
 
