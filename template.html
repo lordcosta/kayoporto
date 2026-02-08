@@ -351,9 +351,21 @@ textarea {
 <!-- ================= PLANO DE TREINO ================= -->
 <div class="section">
   <h2>Plano de Treino</h2>
-  <input placeholder="Cliente">
-  <div id="treinos"></div>
-  <button class="button" onclick="addTreino()">➕ Adicionar Dia de Treino</button>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width: 12%">Dia</th>
+        <th style="width: 44%">Descrição</th>
+        <th style="width: 44%">Observação</th>
+      </tr>
+    </thead>
+    <tbody id="treino-body">
+      <!-- linhas geradas via JS -->
+    </tbody>
+  </table>
+
+  <button class="button" onclick="adicionarTreino()">Adicionar Treino</button>
 </div>
 
 <!-- ================= ABDOMINAIS ================= -->
@@ -403,18 +415,13 @@ function addRefeicao() {
     </td>
 
     <td>
-      <!-- Campo editável na tela -->
       <textarea oninput="autoResize(this); syncPrint(this)"></textarea>
-      <!-- Campo usado SOMENTE na impressão -->
       <div class="print-text"></div>
     </td>
 
     <td>
-      <!-- Campo editável na tela -->
       <textarea oninput="autoResize(this); syncPrint(this)"></textarea>
-      <!-- Campo usado SOMENTE na impressão -->
       <div class="print-text"></div>
-
       <button class="button" onclick="this.closest('tr').remove()">➖</button>
     </td>
   `;
@@ -424,9 +431,10 @@ function addRefeicao() {
 function addTreino() {
   const div = document.createElement("div");
   div.className = "block";
-  div.inner = `
+  div.innerHTML = `
     <input placeholder="Dia de Treino (ex: DIA 1 – Perna)">
-    <textarea rows="4" placeholder="Exercícios"></textarea>
+    <textarea oninput="autoResize(this); syncPrint(this)"></textarea>
+    <div class="print-text"></div>
     <button class="button" onclick="this.remove()">➖ Remover</button>
   `;
   document.getElementById("treinos").appendChild(div);
@@ -439,13 +447,99 @@ function syncPrint(textarea) {
   }
 }
 
-
 function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = el.scrollHeight + 'px';
+  el.style.height = "auto";
+  el.style.height = el.scrollHeight + "px";
 }
+
   
 </script>
+<script>
+/* ================= TREINO ================= */
 
+const diasSemana = [
+  "1º Dia", "2º Dia", "3º Dia",
+  "4º Dia", "5º Dia", "6º Dia", "7º Dia"
+];
+
+function adicionarTreino() {
+  const tbody = document.getElementById("treino-body");
+
+  const index = tbody.children.length;
+  if (index >= 7) return;
+
+  const tr = document.createElement("tr");
+
+  tr.innerHTML = `
+    <td>${diasSemana[index]}</td>
+    <td>
+      <textarea oninput="autoResize(this); salvarDados()"></textarea>
+      <div class="print-text"></div>
+    </td>
+    <td>
+      <textarea oninput="autoResize(this); salvarDados()"></textarea>
+      <div class="print-text"></div>
+    </td>
+  `;
+
+  tbody.appendChild(tr);
+}
+
+/* ================= AUTO RESIZE ================= */
+
+function autoResize(el) {
+  el.style.height = "auto";
+  el.style.height = el.scrollHeight + "px";
+  el.nextElementSibling.textContent = el.value;
+}
+
+/* ================= SALVAR / RESTAURAR ================= */
+
+function salvarDados() {
+  const dados = {};
+
+  document.querySelectorAll("input, textarea, select").forEach(el => {
+    if (el.id) dados[el.id] = el.value;
+  });
+
+  const treino = [];
+  document.querySelectorAll("#treino-body tr").forEach(tr => {
+    treino.push({
+      descricao: tr.children[1].querySelector("textarea").value,
+      observacao: tr.children[2].querySelector("textarea").value
+    });
+  });
+
+  dados.treino = treino;
+  localStorage.setItem("planoSalvo", JSON.stringify(dados));
+}
+
+function restaurarDados() {
+  const dados = JSON.parse(localStorage.getItem("planoSalvo"));
+  if (!dados) return;
+
+  document.querySelectorAll("input, textarea, select").forEach(el => {
+    if (el.id && dados[el.id]) {
+      el.value = dados[el.id];
+      if (el.tagName === "TEXTAREA") autoResize(el);
+    }
+  });
+
+  if (dados.treino) {
+    dados.treino.forEach(item => {
+      adicionarTreino();
+      const tr = document.querySelectorAll("#treino-body tr");
+      const atual = tr[tr.length - 1];
+      atual.children[1].querySelector("textarea").value = item.descricao;
+      atual.children[2].querySelector("textarea").value = item.observacao;
+      autoResize(atual.children[1].querySelector("textarea"));
+      autoResize(atual.children[2].querySelector("textarea"));
+    });
+  }
+}
+
+window.onload = restaurarDados;
+</script>
+  
 </body>
 </html>
