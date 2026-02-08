@@ -302,6 +302,11 @@ textarea {
     🖨️ Imprimir / Salvar em PDF
   </button>
 </div>
+  <div style="text-align:right; margin-bottom:10px;">
+  <button type="button" class="button" onclick="salvarDados()">💾 Salvar</button>
+  <button type="button" class="button" onclick="carregarDados()">📂 Carregar</button>
+</div>
+
 <!-- ================= IDENTIFICAÇÃO ================= -->
 <div class="section">
   <h2>Identificação</h2>
@@ -555,6 +560,53 @@ function restaurarDados() {
 window.onload = restaurarDados;
 </script>
 
+<script>
+const STORAGE_KEY = "plano_dieta_personalizado";
+
+/* 🔹 Salvar todos os campos */
+function salvarDados() {
+  const dados = {};
+
+  document.querySelectorAll("input, textarea, select").forEach(el => {
+    if (!el.name && !el.id) return;
+    const key = el.name || el.id;
+    dados[key] = el.value;
+  });
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(dados));
+  alert("✅ Dados salvos com sucesso!");
+}
+
+/* 🔹 Carregar todos os campos */
+function carregarDados() {
+  const dados = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  if (!dados) {
+    alert("⚠️ Nenhum dado salvo encontrado.");
+    return;
+  }
+
+  document.querySelectorAll("input, textarea, select").forEach(el => {
+    const key = el.name || el.id;
+    if (dados[key] !== undefined) {
+      el.value = dados[key];
+      autoResize(el); // mantém altura correta
+    }
+  });
+
+  alert("📂 Dados carregados!");
+}
+
+/* 🔹 Ajuste automático de altura */
+function autoResize(el) {
+  if (el.tagName === "TEXTAREA") {
+    el.style.height = "auto";
+    el.style.height = el.scrollHeight + "px";
+  }
+}
+
+/* 🔹 Auto-ajuste ao digitar */
+document.addEventListener("input", e => autoResize(e.target));
+</script>
 
   
 </body>
