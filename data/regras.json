@@ -1,21 +1,69 @@
 {
+  "quantidade_exercicios_por_grupo": {
+    "iniciante": { "min": 2, "max": 3 },
+    "intermediario": { "min": 3, "max": 4 },
+    "avancado": { "min": 4, "max": 5 }
+  },
+
+  "ordem_exercicios": [
+    "composto",
+    "composto",
+    "isolador",
+    "isometrico"
+  ],
+
+  "divisoes": {
+    "fullbody": {
+      "dias": 3,
+      "grupos_por_dia": [
+        ["peitorais", "costas", "pernas", "ombros", "abdomen"],
+        ["peitorais", "costas", "pernas", "ombros", "abdomen"],
+        ["peitorais", "costas", "pernas", "ombros", "abdomen"]
+      ]
+    },
+
+    "AB": {
+      "dias": 4,
+      "grupos_por_dia": [
+        ["peitorais", "triceps", "ombros", "abdomen"],
+        ["costas", "biceps", "pernas", "lombar"]
+      ]
+    },
+
+    "ABC": {
+      "dias": 5,
+      "grupos_por_dia": [
+        ["peitorais", "triceps"],
+        ["costas", "biceps"],
+        ["pernas", "abdomen", "lombar"]
+      ]
+    },
+
+    "ABCD": {
+      "dias": 6,
+      "grupos_por_dia": [
+        ["peitorais"],
+        ["costas"],
+        ["pernas"],
+        ["ombros", "abdomen"],
+        ["biceps", "triceps"]
+      ]
+    }
+  },
+
   "limites": {
-    "exercicios_por_grupo": {
-      "iniciante": 3,
-      "intermediario": 4,
-      "avancado": 5
-    }
+    "max_isometricos_por_grupo": 1,
+    "max_isoladores_seguidos": 1,
+    "obrigatorio_composto_primeiro": true
   },
 
-  "prioridades": {
-    "ordem": ["composto", "isolador", "isometrico"]
+  "repeticao_exercicios": {
+    "permitir_mesma_semana": false,
+    "permitir_mesmo_dia": false
   },
 
-  "filtros": {
-    "local_treino": {
-      "casa": ["peso_corporal"],
-      "academia_simples": ["peso_corporal", "halter", "barra"],
-      "academia_completa": ["peso_corporal", "halter", "barra", "cabo", "maquina"]
-    }
+  "fallbacks": {
+    "sem_exercicio_valido": "reduzir_nivel",
+    "sem_equipamento": "peso_corporal"
   }
 }
