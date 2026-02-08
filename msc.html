@@ -101,7 +101,7 @@ footer {
     <button onclick="loadJSON()">📂 Carregar Exercícios</button>
     <button onclick="newExercise()">➕ Novo</button>
     <button class="danger" onclick="deleteExercise()">🗑️ Excluir</button>
-    <button class="secondary" onclick="downloadJSON()">💾 Salvar JSON</button>
+    <button class="secondary" onclick="downloadJSON()">💾 Baixar JSON</button>
 </div>
 
 <div class="nav">
@@ -114,14 +114,14 @@ footer {
 
 <div class="form-group">
 <label>Grupo Muscular</label>
-<select id="grupo">
-<option>peitorais</option>
-<option>costas</option>
-<option>ombros</option>
-<option>biceps</option>
-<option>triceps</option>
-<option>pernas</option>
-<option>abdomen</option>
+<select id="grupo" onchange="changeGroup()">
+<option value="peitorais">Peitorais</option>
+<option value="costas">Costas</option>
+<option value="ombros">Ombros</option>
+<option value="biceps">Bíceps</option>
+<option value="triceps">Tríceps</option>
+<option value="pernas">Pernas</option>
+<option value="abdomen">Abdômen</option>
 </select>
 </div>
 
@@ -138,24 +138,24 @@ footer {
 <div class="form-group">
 <label>Tipo</label>
 <select id="tipo">
-<option>composto</option>
-<option>isolador</option>
-<option>isometrico</option>
+<option value="composto">Composto</option>
+<option value="isolador">Isolador</option>
+<option value="isometrico">Isométrico</option>
 </select>
 </div>
 
 <div class="form-group">
 <label>Nível mínimo</label>
 <select id="nivel">
-<option>iniciante</option>
-<option>intermediario</option>
-<option>avancado</option>
+<option value="iniciante">Iniciante</option>
+<option value="intermediario">Intermediário</option>
+<option value="avancado">Avançado</option>
 </select>
 </div>
 
 <div class="form-group">
 <label>Prioridade</label>
-<input type="number" id="prioridade">
+<input type="number" id="prioridade" min="1">
 </div>
 
 <div class="form-group">
@@ -179,48 +179,62 @@ MSC · LORDCosta · uso interno
 
 <script>
 const DATA_PATH = "data/";
-    
+
 let data = {};
 let grupoAtual = "peitorais";
 let index = 0;
 
 async function loadJSON() {
-    const res = await fetch(DATA_PATH + "exercicios.json");
-    data = await res.json();
-    grupoAtual = Object.keys(data)[0];
+    try {
+        const res = await fetch(DATA_PATH + "exercicios.json");
+        if (!res.ok) throw new Error("Erro HTTP " + res.status);
+
+        data = await res.json();
+        grupoAtual = Object.keys(data)[0];
+        index = 0;
+        document.getElementById("grupo").value = grupoAtual;
+        render();
+
+    } catch (err) {
+        alert("Erro ao carregar exercicios.json");
+        console.error(err);
+    }
+}
+
+function changeGroup() {
+    saveCurrent();
+    grupoAtual = document.getElementById("grupo").value;
     index = 0;
     render();
 }
 
 function render() {
     const list = data[grupoAtual];
-    if (!list || !list[index]) return;
+    if (!list || list.length === 0) return;
 
     const e = list[index];
-    document.getElementById("grupo").value = grupoAtual;
-    document.getElementById("id").value = e.id;
-    document.getElementById("nome").value = e.nome;
-    document.getElementById("tipo").value = e.tipo;
-    document.getElementById("nivel").value = e.nivel_minimo;
-    document.getElementById("prioridade").value = e.prioridade;
+    id.value = e.id || "";
+    nome.value = e.nome || "";
+    tipo.value = e.tipo || "isolador";
+    nivel.value = e.nivel_minimo || "iniciante";
+    prioridade.value = e.prioridade || 1;
 
     document.querySelectorAll(".checkbox-group input").forEach(cb => {
-        cb.checked = e.equipamento.includes(cb.value);
+        cb.checked = e.equipamento?.includes(cb.value);
     });
 
-    document.getElementById("counter").innerText =
-        (index + 1) + " / " + list.length;
+    counter.innerText = (index + 1) + " / " + list.length;
 }
 
 function saveCurrent() {
-    const list = data[grupoAtual];
-    list[index] = {
+    if (!data[grupoAtual]) return;
+    data[grupoAtual][index] = {
         id: id.value.trim(),
         nome: nome.value.trim(),
         tipo: tipo.value,
         equipamento: [...document.querySelectorAll(".checkbox-group input:checked")].map(cb => cb.value),
         nivel_minimo: nivel.value,
-        prioridade: Number(prioridade.value)
+        prioridade: Number(prioridade.value || 1)
     };
 }
 
@@ -259,7 +273,7 @@ function deleteExercise() {
 
 function downloadJSON() {
     saveCurrent();
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = "exercicios.json";
