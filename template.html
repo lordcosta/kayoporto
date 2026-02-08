@@ -309,19 +309,30 @@ textarea {
 
 <!-- ================= IDENTIFICAÇÃO ================= -->
 <div class="section">
+  <label><strong>Fichas salvas</strong></label>
+  <select id="listaFichas" onchange="carregarFicha(this.value)"></select>
+  <button class="button" onclick="salvarFicha()">💾 Salvar ficha</button>
+</div>
+
+<div class="section">
   <h2>Identificação</h2>
-  <input placeholder="Nome do Cliente">
+
+  <input id="clienteNome" placeholder="Nome do Cliente">
+  <div class="section-spacer"></div>
+
+  <label><strong>Nome da ficha</strong></label>
+  <input id="fichaNome" placeholder="Ex: joao, maria, fernando">
   <div class="section-spacer"></div>
 
   <label>Tipo de Plano</label>
-  <select>
+  <select id="tipoPlano">
     <option>Inicial</option>
     <option>Intermediário</option>
     <option>Avançado</option>
   </select>
 </div>
-  <div class="section-spacer"></div>
 
+<div class="section-spacer"></div>
 
 <!-- ================= PLANO ALIMENTAR ================= -->
 <div class="section">
@@ -606,6 +617,112 @@ function autoResize(el) {
 
 /* 🔹 Auto-ajuste ao digitar */
 document.addEventListener("input", e => autoResize(e.target));
+</script>
+
+  <script>
+const STORAGE_KEY = "fichas_planos";
+
+/* ===== util ===== */
+function getBanco() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { fichas: {} };
+}
+
+function setBanco(banco) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(banco));
+}
+
+/* ===== coletar todos os dados da tela ===== */
+function coletarDadosTela() {
+  const dados = {};
+
+  document.querySelectorAll("input, textarea, select").forEach(el => {
+    if (!el.id) return;
+    dados[el.id] = el.value;
+  });
+
+  /* treino por dias */
+  const treino = [];
+  document.querySelectorAll("#treino-body tr").forEach(tr => {
+    treino.push({
+      descricao: tr.children[1].querySelector("textarea").value,
+      observacao: tr.children[2].querySelector("textarea").value
+    });
+  });
+
+  dados._treinoDias = treino;
+
+  return dados;
+}
+
+/* ===== aplicar dados na tela ===== */
+function aplicarDadosTela(dados) {
+  document.querySelectorAll("input, textarea, select").forEach(el => {
+    if (el.id && dados[el.id] !== undefined) {
+      el.value = dados[el.id];
+      if (el.tagName === "TEXTAREA") autoResize(el);
+    }
+  });
+
+  /* treino por dias */
+  const tbody = document.getElementById("treino-body");
+  tbody.innerHTML = "";
+
+  if (dados._treinoDias) {
+    dados._treinoDias.forEach(item => {
+      adicionarTreino();
+      const trs = tbody.querySelectorAll("tr");
+      const atual = trs[trs.length - 1];
+
+      atual.children[1].querySelector("textarea").value = item.descricao;
+      atual.children[2].querySelector("textarea").value = item.observacao;
+
+      autoResize(atual.children[1].querySelector("textarea"));
+      autoResize(atual.children[2].querySelector("textarea"));
+    });
+  }
+}
+
+/* ===== salvar ficha ===== */
+function salvarFicha() {
+  const nome = document.getElementById("fichaNome").value.trim().toLowerCase();
+  if (!nome) {
+    alert("Informe o nome da ficha.");
+    return;
+  }
+
+  const banco = getBanco();
+  banco.fichas[nome] = coletarDadosTela();
+  setBanco(banco);
+
+  atualizarListaFichas();
+  alert(`Ficha "${nome}" salva com sucesso.`);
+}
+
+/* ===== carregar ficha ===== */
+function carregarFicha(nome) {
+  const banco = getBanco();
+  if (!banco.fichas[nome]) return;
+
+  aplicarDadosTela(banco.fichas[nome]);
+  document.getElementById("fichaNome").value = nome;
+}
+
+/* ===== lista ===== */
+function atualizarListaFichas() {
+  const banco = getBanco();
+  const select = document.getElementById("listaFichas");
+  if (!select) return;
+
+  select.innerHTML = "<option value=''>Selecione</option>";
+  Object.keys(banco.fichas).forEach(nome => {
+    const opt = document.createElement("option");
+    opt.value = nome;
+    opt.textContent = nome;
+    select.appendChild(opt);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", atualizarListaFichas);
 </script>
 
   
