@@ -1,6 +1,6 @@
 /* ================================
    TREINO ENGINE · LORDCosta
-   Motor de geração de treinos
+   TORETTO EDITION 🏁
    ================================ */
 
 const DATA_PATH = "data/";
@@ -29,19 +29,17 @@ async function carregarJSONs() {
    UTILITÁRIOS
    ================================ */
 
-function filtrarPorNivel(lista, nivel) {
+function nivelPermitido(exercicio, nivelUsuario) {
   const ordem = ["iniciante", "intermediario", "avancado"];
-  const nivelIndex = ordem.indexOf(nivel);
-
-  return lista.filter(e =>
-    ordem.indexOf(e.nivel_minimo) <= nivelIndex
+  return (
+    ordem.indexOf(exercicio.nivel_minimo) <=
+    ordem.indexOf(nivelUsuario)
   );
 }
 
-function filtrarPorEquipamento(lista, equipamentos) {
-  return lista.filter(e =>
-    e.equipamento.some(eq => equipamentos.includes(eq))
-  );
+function filtrarEquipamentos(exercicio, equipamentos) {
+  if (!equipamentos || equipamentos.length === 0) return true;
+  return exercicio.equipamento.some(e => equipamentos.includes(e));
 }
 
 function ordenarPorPrioridade(lista) {
@@ -49,7 +47,7 @@ function ordenarPorPrioridade(lista) {
 }
 
 function embaralhar(lista) {
-  return lista.sort(() => Math.random() - 0.5);
+  return [...lista].sort(() => Math.random() - 0.5);
 }
 
 /* ================================
@@ -65,44 +63,97 @@ function gerarTreino(config) {
   } = config;
 
   if (!exerciciosDB[grupo]) {
-    console.error("Grupo muscular não encontrado:", grupo);
+    console.error("❌ Grupo muscular não encontrado:", grupo);
     return [];
   }
 
-  const regrasGrupo = regrasDB[objetivo]?.[nivel];
+  /* ================================
+     QUANTIDADE DE EXERCÍCIOS
+     ================================ */
 
-  if (!regrasGrupo) {
-    console.error("Regras não encontradas para:", objetivo, nivel);
-    return [];
+  const qtd =
+    regrasDB.quantidade_exercicios_por_grupo?.[grupo]?.[nivel] ??
+    regrasDB.fallbacks?.exercicios ??
+    4;
+
+  /* ================================
+     FILTRAGEM BASE
+     ================================ */
+
+  let lista = exerciciosDB[grupo]
+    .filter(e => nivelPermitido(e, nivel))
+    .filter(e => filtrarEquipamentos(e, equipamentos));
+
+  if (lista.length === 0) {
+    console.warn("⚠ Nenhum exercício após filtros. Usando fallback.");
+    lista = exerciciosDB[grupo];
   }
 
-  let lista = exerciciosDB[grupo];
+  /* ================================
+     ORDEM DOS EXERCÍCIOS
+     ================================ */
 
-  // Filtros
-  lista = filtrarPorNivel(lista, nivel);
-  lista = filtrarPorEquipamento(lista, equipamentos);
+  const ordemPreferida =
+    regrasDB.ordem_exercicios?.[objetivo] ||
+    regrasDB.ordem_exercicios?.padrao ||
+    ["composto", "isolador", "isometrico"];
 
-  // Prioridade + aleatoriedade controlada
+  lista = lista.sort((a, b) =>
+    ordemPreferida.indexOf(a.tipo) -
+    ordemPreferida.indexOf(b.tipo)
+  );
+
+  /* ================================
+     PRIORIDADE + ALEATORIEDADE
+     ================================ */
+
   lista = ordenarPorPrioridade(lista);
   lista = embaralhar(lista);
 
-  // Quantidade definida pelas regras
-  const quantidade = regrasGrupo.exercicios;
+  /* ================================
+     SELEÇÃO FINAL
+     ================================ */
 
-  const treino = lista.slice(0, quantidade).map((e, index) => ({
+  const selecionados = lista.slice(0, qtd);
+
+  /* ================================
+     PARÂMETROS DE EXECUÇÃO
+     ================================ */
+
+  const series =
+    regrasDB.limites?.series?.[objetivo]?.[nivel] ??
+    regrasDB.fallbacks?.series ??
+    3;
+
+  const repeticoes =
+    regrasDB.limites?.repeticoes?.[objetivo]?.[nivel] ??
+    regrasDB.fallbacks?.repeticoes ??
+    "8–12";
+
+  const descanso =
+    regrasDB.limites?.descanso?.[objetivo]?.[nivel] ??
+    regrasDB.fallbacks?.descanso ??
+    "60–90s";
+
+  /* ================================
+     TREINO FINAL
+     ================================ */
+
+  const treino = selecionados.map((e, index) => ({
     ordem: index + 1,
     exercicio: e.nome,
-    series: regrasGrupo.series,
-    repeticoes: regrasGrupo.repeticoes,
-    descanso: regrasGrupo.descanso
+    tipo: e.tipo,
+    series,
+    repeticoes,
+    descanso
   }));
 
-  console.log("🔥 Treino gerado:", treino);
+  console.log("🔥 TREINO GERADO (TORETTO MODE):", treino);
   return treino;
 }
 
 /* ================================
-   API GLOBAL (para testes)
+   API GLOBAL
    ================================ */
 
 window.TreinoEngine = {
