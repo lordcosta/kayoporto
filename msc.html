@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MSC | LORDCosta</title>
+
+<style>
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0A0E27;
+    color: #E8E8E8;
+    margin: 0;
+}
+header {
+    padding: 1rem;
+    background: #111633;
+    border-bottom: 1px solid rgba(212,175,55,.3);
+}
+header h1 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #D4AF37;
+}
+.container {
+    padding: 1rem;
+    max-width: 720px;
+    margin: auto;
+}
+button {
+    background: #D4AF37;
+    border: none;
+    color: #0A0E27;
+    padding: .6rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+button.secondary {
+    background: #333;
+    color: #E8E8E8;
+}
+button.danger {
+    background: #B03A2E;
+    color: #fff;
+}
+.controls {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+.form-group {
+    margin-bottom: .8rem;
+}
+label {
+    display: block;
+    font-size: .8rem;
+    color: #D4AF37;
+    margin-bottom: .2rem;
+}
+input, select {
+    width: 100%;
+    padding: .5rem;
+    border-radius: 5px;
+    border: none;
+}
+.checkbox-group {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+.nav {
+    display: flex;
+    justify-content: space-between;
+    margin: 1rem 0;
+}
+.status {
+    font-size: .85rem;
+    opacity: .8;
+}
+footer {
+    text-align: center;
+    font-size: .75rem;
+    opacity: .6;
+    margin-top: 2rem;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>MSC · LORDCosta</h1>
+    <div class="status">Painel interno de manutenção · JSON Editor</div>
+</header>
+
+<div class="container">
+
+<div class="controls">
+    <button onclick="loadJSON()">📂 Carregar Exercícios</button>
+    <button onclick="newExercise()">➕ Novo</button>
+    <button class="danger" onclick="deleteExercise()">🗑️ Excluir</button>
+    <button class="secondary" onclick="downloadJSON()">💾 Salvar JSON</button>
+</div>
+
+<div class="nav">
+    <button class="secondary" onclick="prev()">⬅️ Anterior</button>
+    <div id="counter">0 / 0</div>
+    <button class="secondary" onclick="next()">➡️ Próximo</button>
+</div>
+
+<form id="form">
+
+<div class="form-group">
+<label>Grupo Muscular</label>
+<select id="grupo">
+<option>peitorais</option>
+<option>costas</option>
+<option>ombros</option>
+<option>biceps</option>
+<option>triceps</option>
+<option>pernas</option>
+<option>abdomen</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>ID</label>
+<input id="id">
+</div>
+
+<div class="form-group">
+<label>Nome</label>
+<input id="nome">
+</div>
+
+<div class="form-group">
+<label>Tipo</label>
+<select id="tipo">
+<option>composto</option>
+<option>isolador</option>
+<option>isometrico</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Nível mínimo</label>
+<select id="nivel">
+<option>iniciante</option>
+<option>intermediario</option>
+<option>avancado</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Prioridade</label>
+<input type="number" id="prioridade">
+</div>
+
+<div class="form-group">
+<label>Equipamento</label>
+<div class="checkbox-group">
+<label><input type="checkbox" value="barra"> Barra</label>
+<label><input type="checkbox" value="halter"> Halter</label>
+<label><input type="checkbox" value="maquina"> Máquina</label>
+<label><input type="checkbox" value="cabo"> Cabo</label>
+<label><input type="checkbox" value="peso_corporal"> Peso corporal</label>
+</div>
+</div>
+
+</form>
+
+<footer>
+MSC · LORDCosta · uso interno
+</footer>
+
+</div>
+
+<script>
+let data = {};
+let grupoAtual = "peitorais";
+let index = 0;
+
+async function loadJSON() {
+    const res = await fetch("exercicios.json");
+    data = await res.json();
+    grupoAtual = Object.keys(data)[0];
+    index = 0;
+    render();
+}
+
+function render() {
+    const list = data[grupoAtual];
+    if (!list || !list[index]) return;
+
+    const e = list[index];
+    document.getElementById("grupo").value = grupoAtual;
+    document.getElementById("id").value = e.id;
+    document.getElementById("nome").value = e.nome;
+    document.getElementById("tipo").value = e.tipo;
+    document.getElementById("nivel").value = e.nivel_minimo;
+    document.getElementById("prioridade").value = e.prioridade;
+
+    document.querySelectorAll(".checkbox-group input").forEach(cb => {
+        cb.checked = e.equipamento.includes(cb.value);
+    });
+
+    document.getElementById("counter").innerText =
+        (index + 1) + " / " + list.length;
+}
+
+function saveCurrent() {
+    const list = data[grupoAtual];
+    list[index] = {
+        id: id.value.trim(),
+        nome: nome.value.trim(),
+        tipo: tipo.value,
+        equipamento: [...document.querySelectorAll(".checkbox-group input:checked")].map(cb => cb.value),
+        nivel_minimo: nivel.value,
+        prioridade: Number(prioridade.value)
+    };
+}
+
+function next() {
+    saveCurrent();
+    if (index < data[grupoAtual].length - 1) index++;
+    render();
+}
+
+function prev() {
+    saveCurrent();
+    if (index > 0) index--;
+    render();
+}
+
+function newExercise() {
+    saveCurrent();
+    data[grupoAtual].push({
+        id: "",
+        nome: "",
+        tipo: "isolador",
+        equipamento: [],
+        nivel_minimo: "iniciante",
+        prioridade: 1
+    });
+    index = data[grupoAtual].length - 1;
+    render();
+}
+
+function deleteExercise() {
+    if (!confirm("Excluir este exercício?")) return;
+    data[grupoAtual].splice(index, 1);
+    index = Math.max(0, index - 1);
+    render();
+}
+
+function downloadJSON() {
+    saveCurrent();
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "exercicios.json";
+    a.click();
+}
+</script>
+
+</body>
+</html>
