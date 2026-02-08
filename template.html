@@ -5,7 +5,8 @@
 <title>Plano de Dieta Personalizado</title>
 
 <style>
-  .signature {
+/* ================= ASSINATURA ================= */
+.signature {
   margin-top: 30px;
   text-align: right;
   font-size: 11px;
@@ -16,11 +17,13 @@
   font-size: 12px;
 }
 
+/* ================= CONFIGURAÇÃO DE PÁGINA ================= */
 @page {
   size: A4;
   margin: 18mm;
 }
 
+/* ================= BASE ================= */
 body {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
@@ -92,7 +95,7 @@ textarea {
   resize: vertical;
 }
 
-/* ================= TABELA ================= */
+/* ================= TABELAS ================= */
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -128,44 +131,90 @@ textarea {
   margin-top: 4px;
 }
 
-/* ================= RODAPÉ ================= */
-.footer {
-  font-size: 10px;
-  color: #666;
+/* ================= BOTÃO IMPRIMIR ================= */
+.print-area {
   text-align: center;
-  margin-top: 20px;
+  margin: 12px 0 20px 0;
+}
+
+.print-button {
+  background: #0b3c8c;
+  color: #fff;
+  border: none;
+  font-size: 16px;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ================= MOBILE FIRST ================= */
+@media (max-width: 768px) {
+
+  body {
+    font-size: 14px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  .header-text h1 {
+    font-size: 16px;
+  }
+
+  .section h2 {
+    font-size: 15px;
+  }
+
+  input, textarea, select {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  textarea {
+    min-height: 80px;
+  }
+
+  .button, .print-button {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
 }
 
 /* ================= IMPRESSÃO ================= */
 @media print {
 
-  /* esconde botões */
-  .button {
-    display: none;
+  /* Esconde botões e elementos de tela */
+  .button,
+  .print-area {
+    display: none !important;
   }
 
-  /* inputs viram texto */
-  input, textarea, select {
-    border: none;
-    padding: 0;
-    margin: 0;
-    appearance: none;
-    background: transparent;
-    resize: none;
+  /* Inputs viram texto no PDF */
+  input,
+  textarea,
+  select {
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    appearance: none !important;
+    resize: none !important;
   }
 
   textarea {
     overflow: hidden;
   }
-
-  select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-  }
-
 }
 </style>
+
 </head>
 
 <body>
