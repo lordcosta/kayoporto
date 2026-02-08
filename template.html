@@ -232,6 +232,12 @@ textarea {
   </div>
 </div>
 
+<!-- ================= BOTÃO IMPRIMIR ================= -->
+<div class="print-area">
+  <button class="print-button" onclick="window.print()">
+    🖨️ Imprimir / Salvar em PDF
+  </button>
+</div>
 <!-- ================= IDENTIFICAÇÃO ================= -->
 <div class="section">
   <h2>Identificação</h2>
@@ -314,7 +320,18 @@ textarea {
 function addRefeicao() {
   const tr = document.createElement("tr");
   tr.innerHTML = `
-    <td><input></td>
+    <td>
+      <select>
+        <option value="">Selecione</option>
+        <option>Ao acordar</option>
+        <option>Primeira refeição</option>
+        <option>Segunda refeição</option>
+        <option>Terceira refeição</option>
+        <option>Quarta refeição</option>
+        <option>Ceia</option>
+        <option>Pós-treino</option>
+      </select>
+    </td>
     <td><textarea rows="2"></textarea></td>
     <td>
       <textarea rows="2"></textarea>
@@ -323,6 +340,7 @@ function addRefeicao() {
   `;
   document.getElementById("refeicoes").appendChild(tr);
 }
+
 
 function addTreino() {
   const div = document.createElement("div");
