@@ -185,7 +185,7 @@ let grupoAtual = "peitorais";
 let index = 0;
 
 async function loadJSON() {
-    const res = await fetch(DATA_PATH + "ercicios.json");
+    const res = await fetch(DATA_PATH + "exercicios.json");
     data = await res.json();
     grupoAtual = Object.keys(data)[0];
     index = 0;
