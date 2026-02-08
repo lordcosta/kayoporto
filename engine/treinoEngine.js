@@ -1,9 +1,10 @@
 /* ================================
    TREINO ENGINE · LORDCosta
-   TORETTO EDITION 🏁
+   Motor de geração de treinos
+   TORETTO MODE™
    ================================ */
 
-const DATA_PATH = "data/";
+const DATA_PATH = "../data/";
 
 let exerciciosDB = {};
 let regrasDB = {};
@@ -29,17 +30,21 @@ async function carregarJSONs() {
    UTILITÁRIOS
    ================================ */
 
-function nivelPermitido(exercicio, nivelUsuario) {
+function filtrarPorNivel(lista, nivel) {
   const ordem = ["iniciante", "intermediario", "avancado"];
-  return (
-    ordem.indexOf(exercicio.nivel_minimo) <=
-    ordem.indexOf(nivelUsuario)
+  const nivelIndex = ordem.indexOf(nivel);
+
+  return lista.filter(e =>
+    ordem.indexOf(e.nivel_minimo) <= nivelIndex
   );
 }
 
-function filtrarEquipamentos(exercicio, equipamentos) {
-  if (!equipamentos || equipamentos.length === 0) return true;
-  return exercicio.equipamento.some(e => equipamentos.includes(e));
+function filtrarPorEquipamento(lista, equipamentos) {
+  if (!equipamentos || equipamentos.length === 0) return lista;
+
+  return lista.filter(e =>
+    e.equipamento.some(eq => equipamentos.includes(eq))
+  );
 }
 
 function ordenarPorPrioridade(lista) {
@@ -57,8 +62,7 @@ function embaralhar(lista) {
 function gerarTreino(config) {
   const {
     grupo,
-    nivel,
-    objetivo,
+    nivel = "iniciante",
     equipamentos = []
   } = config;
 
@@ -67,82 +71,35 @@ function gerarTreino(config) {
     return [];
   }
 
-  /* ================================
-     QUANTIDADE DE EXERCÍCIOS
-     ================================ */
+  let lista = exerciciosDB[grupo];
 
-  const qtd =
-    regrasDB.quantidade_exercicios_por_grupo?.[grupo]?.[nivel] ??
-    regrasDB.fallbacks?.exercicios ??
-    4;
-
-  /* ================================
-     FILTRAGEM BASE
-     ================================ */
-
-  let lista = exerciciosDB[grupo]
-    .filter(e => nivelPermitido(e, nivel))
-    .filter(e => filtrarEquipamentos(e, equipamentos));
+  // Aplicar filtros
+  lista = filtrarPorNivel(lista, nivel);
+  lista = filtrarPorEquipamento(lista, equipamentos);
 
   if (lista.length === 0) {
-    console.warn("⚠ Nenhum exercício após filtros. Usando fallback.");
-    lista = exerciciosDB[grupo];
+    console.warn("⚠ Nenhum exercício disponível após filtros");
+    return [];
   }
 
-  /* ================================
-     ORDEM DOS EXERCÍCIOS
-     ================================ */
-
-  const ordemPreferida =
-    regrasDB.ordem_exercicios?.[objetivo] ||
-    regrasDB.ordem_exercicios?.padrao ||
-    ["composto", "isolador", "isometrico"];
-
-  lista = lista.sort((a, b) =>
-    ordemPreferida.indexOf(a.tipo) -
-    ordemPreferida.indexOf(b.tipo)
-  );
-
-  /* ================================
-     PRIORIDADE + ALEATORIEDADE
-     ================================ */
-
+  // Ordenar + leve aleatoriedade
   lista = ordenarPorPrioridade(lista);
   lista = embaralhar(lista);
 
-  /* ================================
-     SELEÇÃO FINAL
-     ================================ */
+  // Quantidade de exercícios (engine moderno)
+  const quantidade =
+    regrasDB.quantidade_exercicios_por_grupo?.[grupo] ||
+    regrasDB.fallbacks?.quantidade_exercicios ||
+    4;
 
-  const selecionados = lista.slice(0, qtd);
+  // Parâmetros padrão (fallback seguro)
+  const series = regrasDB.fallbacks?.series || "3–4";
+  const repeticoes = regrasDB.fallbacks?.repeticoes || "8–12";
+  const descanso = regrasDB.fallbacks?.descanso || "60–90s";
 
-  /* ================================
-     PARÂMETROS DE EXECUÇÃO
-     ================================ */
-
-  const series =
-    regrasDB.limites?.series?.[objetivo]?.[nivel] ??
-    regrasDB.fallbacks?.series ??
-    3;
-
-  const repeticoes =
-    regrasDB.limites?.repeticoes?.[objetivo]?.[nivel] ??
-    regrasDB.fallbacks?.repeticoes ??
-    "8–12";
-
-  const descanso =
-    regrasDB.limites?.descanso?.[objetivo]?.[nivel] ??
-    regrasDB.fallbacks?.descanso ??
-    "60–90s";
-
-  /* ================================
-     TREINO FINAL
-     ================================ */
-
-  const treino = selecionados.map((e, index) => ({
+  const treino = lista.slice(0, quantidade).map((e, index) => ({
     ordem: index + 1,
     exercicio: e.nome,
-    tipo: e.tipo,
     series,
     repeticoes,
     descanso
@@ -153,7 +110,7 @@ function gerarTreino(config) {
 }
 
 /* ================================
-   API GLOBAL
+   API GLOBAL (browser-safe)
    ================================ */
 
 window.TreinoEngine = {
