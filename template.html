@@ -5,28 +5,58 @@
 <title>Plano Personalizado</title>
 
 <style>
+@page {
+  size: A4;
+  margin: 18mm;
+}
+
 body {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   color: #1a1a1a;
-  margin: 20px;
+  margin: 0;
 }
 
-h1, h2, h3 {
-  margin: 6px 0;
+/* ===== CABEÇALHO FIXO ===== */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 8px;
+  border-bottom: 3px solid #d4af37;
+  margin-bottom: 14px;
 }
 
-hr {
-  border: none;
-  border-top: 2px solid #d4af37;
-  margin: 10px 0;
+.logo {
+  width: 70px;
+  height: 70px;
+  flex-shrink: 0;
 }
 
-input, textarea {
+.logo img {
+  width: 100%;
+  height: auto;
+}
+
+/* TEXTO CABEÇALHO */
+.header-text h1 {
+  margin: 0;
+  font-size: 18px;
+  color: #d4af37;
+}
+
+.header-text p {
+  margin: 2px 0 0 0;
+  font-size: 12px;
+  color: #555;
+}
+
+/* CAMPOS */
+input, textarea, select {
   width: 100%;
   font-size: 12px;
   padding: 4px;
-  margin: 2px 0 6px 0;
+  margin-top: 4px;
 }
 
 textarea {
@@ -34,65 +64,127 @@ textarea {
 }
 
 .section {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
-.button {
-  padding: 4px 8px;
-  font-size: 11px;
-  cursor: pointer;
+.section h2 {
+  font-size: 14px;
+  color: #0b3c8c;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 2px;
 }
 
+.section h3 {
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+/* BLOCOS DINÂMICOS */
 .block {
   border: 1px solid #ccc;
   padding: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+}
+
+.button {
+  font-size: 11px;
+  padding: 3px 6px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+/* TABELA REFEIÇÕES */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 6px;
+}
+
+.table th {
+  background: #eef3fb;
+  color: #0b3c8c;
+  text-align: left;
+  padding: 4px;
+  font-size: 12px;
+}
+
+.table td {
+  border: 1px solid #ccc;
+  padding: 4px;
+  vertical-align: top;
+}
+
+.footer {
+  font-size: 10px;
+  color: #666;
+  text-align: center;
+  margin-top: 20px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- CABEÇALHO -->
-<div class="section">
-  <h1><input placeholder="Título do Documento (ex: Plano de Dieta Personalizado)"></h1>
-  <input placeholder="Nome do Profissional / Marca">
-  <input placeholder="Subtítulo / Especialidade">
-  <hr>
+<!-- CABEÇALHO FIXO -->
+<div class="header">
+  <div class="logo">
+    <!-- 🔴 COLE AQUI O LOGO EM BASE64 -->
+    <img src="data:image/png;base64,COLE_AQUI_SEU_BASE64">
+  </div>
+  <div class="header-text">
+    <h1>Plano de Dieta Personalizado</h1>
+    <p>Kayo Porto · Consultoria Online</p>
+  </div>
 </div>
 
-<!-- CLIENTE -->
+<!-- IDENTIFICAÇÃO DO PLANO -->
 <div class="section">
-  <h2>Identificação do Cliente</h2>
+  <h2>Identificação</h2>
   <input placeholder="Nome do Cliente">
-  <input placeholder="Tipo do Plano (Inicial, Intermediário, Avançado)">
+  
+  <label>Tipo de Plano</label>
+  <select>
+    <option value="Inicial">Inicial</option>
+    <option value="Intermediário">Intermediário</option>
+    <option value="Avançado">Avançado</option>
+  </select>
 </div>
 
-<!-- REFEIÇÕES -->
+<!-- PLANO ALIMENTAR -->
 <div class="section">
   <h2>Plano Alimentar</h2>
-  <div id="refeicoes"></div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width: 20%">Refeição</th>
+        <th style="width: 50%">Dieta</th>
+        <th style="width: 30%">Observações</th>
+      </tr>
+    </thead>
+    <tbody id="refeicoes"></tbody>
+  </table>
+
   <button class="button" onclick="addRefeicao()">➕ Adicionar Refeição</button>
 </div>
 
 <!-- OBSERVAÇÕES IMPORTANTES -->
 <div class="section">
   <h2>Observações Importantes</h2>
-  <textarea rows="4" placeholder="Digite as observações importantes"></textarea>
+  <textarea rows="4"></textarea>
 </div>
 
 <!-- SUPLEMENTAÇÃO -->
 <div class="section">
   <h2>Suplementação</h2>
-  <textarea rows="3" placeholder="Descrever suplementação (se houver)"></textarea>
+  <textarea rows="2"></textarea>
 </div>
 
-<hr>
-
-<!-- TREINO -->
+<!-- PLANO DE TREINO -->
 <div class="section">
   <h2>Plano de Treino</h2>
-  <input placeholder="Fase do Treino (ex: Inicial)">
+  <input placeholder="Cliente">
   <div id="treinos"></div>
   <button class="button" onclick="addTreino()">➕ Adicionar Dia de Treino</button>
 </div>
@@ -112,28 +204,25 @@ textarea {
 <!-- OBSERVAÇÃO EXTRA -->
 <div class="section">
   <h2>Observação Extra</h2>
-  <textarea rows="4" placeholder="Campo livre para observações adicionais"></textarea>
+  <textarea rows="4"></textarea>
 </div>
 
-<!-- AVISO -->
-<div class="section">
-  <hr>
-  <small>
-    Plano educacional. Não substitui acompanhamento clínico ou profissional.
-  </small>
+<div class="footer">
+  Plano alimentar educacional · Não substitui acompanhamento clínico
 </div>
 
 <script>
 function addRefeicao() {
-  const div = document.createElement("div");
-  div.className = "block";
-  div.innerHTML = `
-    <input placeholder="Nome da Refeição">
-    <textarea rows="2" placeholder="Descrição da Dieta"></textarea>
-    <textarea rows="2" placeholder="Observações"></textarea>
-    <button class="button" onclick="this.parentElement.remove()">➖ Remover</button>
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td><input></td>
+    <td><textarea rows="2"></textarea></td>
+    <td>
+      <textarea rows="2"></textarea>
+      <button class="button" onclick="this.closest('tr').remove()">➖</button>
+    </td>
   `;
-  document.getElementById("refeicoes").appendChild(div);
+  document.getElementById("refeicoes").appendChild(tr);
 }
 
 function addTreino() {
@@ -141,8 +230,8 @@ function addTreino() {
   div.className = "block";
   div.innerHTML = `
     <input placeholder="Dia de Treino (ex: DIA 1 – Perna)">
-    <textarea rows="4" placeholder="Lista de Exercícios"></textarea>
-    <button class="button" onclick="this.parentElement.remove()">➖ Remover</button>
+    <textarea rows="4" placeholder="Exercícios"></textarea>
+    <button class="button" onclick="this.remove()">➖ Remover</button>
   `;
   document.getElementById("treinos").appendChild(div);
 }
