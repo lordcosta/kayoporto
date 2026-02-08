@@ -4,7 +4,7 @@
    TORETTO MODE™
    ================================ */
 
-const DATA_PATH = "data/";
+const DATA_PATH = "../data/";
 
 let exerciciosDB = {};
 let regrasDB = {};
