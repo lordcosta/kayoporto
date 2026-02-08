@@ -1,0 +1,21 @@
+{
+  "limites": {
+    "exercicios_por_grupo": {
+      "iniciante": 3,
+      "intermediario": 4,
+      "avancado": 5
+    }
+  },
+
+  "prioridades": {
+    "ordem": ["composto", "isolador", "isometrico"]
+  },
+
+  "filtros": {
+    "local_treino": {
+      "casa": ["peso_corporal"],
+      "academia_simples": ["peso_corporal", "halter", "barra"],
+      "academia_completa": ["peso_corporal", "halter", "barra", "cabo", "maquina"]
+    }
+  }
+}
