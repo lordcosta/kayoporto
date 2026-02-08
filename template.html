@@ -296,12 +296,20 @@ textarea {
   </div>
 </div>
 
-<!-- ================= BOTÃO IMPRIMIR ================= -->
+<!-- ================= BOTÃO IMPRIMIR e Salvar================= -->
 <div class="print-area">
   <button class="print-button" onclick="window.print()">
     🖨️ Imprimir / Salvar em PDF
   </button>
 </div>
+
+  <div class="print-area">
+  <button class="print-button" onclick="salvarJSON()">💾 Salvar plano</button>
+  <button class="print-button" onclick="document.getElementById('fileJSON').click()">📂 Carregar plano</button>
+  <input type="file" id="fileJSON" accept=".json" style="display:none" onchange="carregarJSON(this)">
+</div>
+
+
 <!-- ================= IDENTIFICAÇÃO ================= -->
 <div class="section">
   <h2>Identificação</h2>
@@ -371,19 +379,22 @@ textarea {
 <!-- ================= ABDOMINAIS ================= -->
 <div class="section">
   <h3>Abdominais</h3>
-  <textarea rows="3"></textarea>
+  <textarea rows="3" oninput="autoResize(this); syncPrint(this)"></textarea>
+  <div class="print-text"></div>
 </div>
 
 <!-- ================= CARDIO ================= -->
 <div class="section">
   <h3>Cardio</h3>
-  <textarea rows="2"></textarea>
+  <textarea rows="2" oninput="autoResize(this); syncPrint(this)"></textarea>
+  <div class="print-text"></div>
 </div>
 
 <!-- ================= OBSERVAÇÃO EXTRA ================= -->
 <div class="section">
   <h2>Observação Extra</h2>
-  <textarea rows="4"></textarea>
+  <textarea rows="4" oninput="autoResize(this); syncPrint(this)"></textarea>
+  <div class="print-text"></div>
 </div>
 
   <!-- ================= ASSINATURA ================= -->
@@ -396,6 +407,8 @@ textarea {
 </div>
 
 <script>
+/* ================= REFEIÇÕES ================= */
+
 function addRefeicao() {
   const tr = document.createElement("tr");
   tr.innerHTML = `
@@ -428,6 +441,8 @@ function addRefeicao() {
   document.getElementById("refeicoes").appendChild(tr);
 }
 
+/* ================= TREINO (BLOCOS) ================= */
+
 function addTreino() {
   const div = document.createElement("div");
   div.className = "block";
@@ -440,6 +455,13 @@ function addTreino() {
   document.getElementById("treinos").appendChild(div);
 }
 
+/* ================= UTILITÁRIOS ================= */
+
+function autoResize(el) {
+  el.style.height = "auto";
+  el.style.height = el.scrollHeight + "px";
+}
+
 function syncPrint(textarea) {
   const printDiv = textarea.nextElementSibling;
   if (printDiv && printDiv.classList.contains("print-text")) {
@@ -447,99 +469,87 @@ function syncPrint(textarea) {
   }
 }
 
-function autoResize(el) {
-  el.style.height = "auto";
-  el.style.height = el.scrollHeight + "px";
-}
+/* ================= SALVAR / CARREGAR JSON ================= */
 
-  
-</script>
-<script>
-/* ================= TREINO ================= */
+function salvarJSON() {
+  const dados = {
+    refeicoes: [],
+    treinos: []
+  };
 
-const diasSemana = [
-  "1º Dia", "2º Dia", "3º Dia",
-  "4º Dia", "5º Dia", "6º Dia", "7º Dia"
-];
-
-function adicionarTreino() {
-  const tbody = document.getElementById("treino-body");
-
-  const index = tbody.children.length;
-  if (index >= 7) return;
-
-  const tr = document.createElement("tr");
-
-  tr.innerHTML = `
-    <td>${diasSemana[index]}</td>
-    <td>
-      <textarea oninput="autoResize(this); salvarDados()"></textarea>
-      <div class="print-text"></div>
-    </td>
-    <td>
-      <textarea oninput="autoResize(this); salvarDados()"></textarea>
-      <div class="print-text"></div>
-    </td>
-  `;
-
-  tbody.appendChild(tr);
-}
-
-/* ================= AUTO RESIZE ================= */
-
-function autoResize(el) {
-  el.style.height = "auto";
-  el.style.height = el.scrollHeight + "px";
-  el.nextElementSibling.textContent = el.value;
-}
-
-/* ================= SALVAR / RESTAURAR ================= */
-
-function salvarDados() {
-  const dados = {};
-
-  document.querySelectorAll("input, textarea, select").forEach(el => {
-    if (el.id) dados[el.id] = el.value;
-  });
-
-  const treino = [];
-  document.querySelectorAll("#treino-body tr").forEach(tr => {
-    treino.push({
-      descricao: tr.children[1].querySelector("textarea").value,
+  // Refeições
+  document.querySelectorAll("#refeicoes tr").forEach(tr => {
+    dados.refeicoes.push({
+      tipo: tr.children[0].querySelector("select").value,
+      dieta: tr.children[1].querySelector("textarea").value,
       observacao: tr.children[2].querySelector("textarea").value
     });
   });
 
-  dados.treino = treino;
-  localStorage.setItem("planoSalvo", JSON.stringify(dados));
-}
-
-function restaurarDados() {
-  const dados = JSON.parse(localStorage.getItem("planoSalvo"));
-  if (!dados) return;
-
-  document.querySelectorAll("input, textarea, select").forEach(el => {
-    if (el.id && dados[el.id]) {
-      el.value = dados[el.id];
-      if (el.tagName === "TEXTAREA") autoResize(el);
-    }
+  // Treinos
+  document.querySelectorAll("#treinos .block").forEach(div => {
+    dados.treinos.push({
+      dia: div.querySelector("input").value,
+      descricao: div.querySelector("textarea").value
+    });
   });
 
-  if (dados.treino) {
-    dados.treino.forEach(item => {
-      adicionarTreino();
-      const tr = document.querySelectorAll("#treino-body tr");
-      const atual = tr[tr.length - 1];
-      atual.children[1].querySelector("textarea").value = item.descricao;
-      atual.children[2].querySelector("textarea").value = item.observacao;
-      autoResize(atual.children[1].querySelector("textarea"));
-      autoResize(atual.children[2].querySelector("textarea"));
-    });
-  }
+  const blob = new Blob([JSON.stringify(dados, null, 2)], {
+    type: "application/json"
+  });
+
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "plano.json";
+  a.click();
 }
 
-window.onload = restaurarDados;
+function carregarJSON(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const dados = JSON.parse(e.target.result);
+
+    // Limpar tudo
+    document.getElementById("refeicoes").innerHTML = "";
+    document.getElementById("treinos").innerHTML = "";
+
+    // Restaurar refeições
+    if (dados.refeicoes) {
+      dados.refeicoes.forEach(r => {
+        addRefeicao();
+        const tr = document.querySelector("#refeicoes tr:last-child");
+        tr.children[0].querySelector("select").value = r.tipo;
+        tr.children[1].querySelector("textarea").value = r.dieta;
+        tr.children[2].querySelector("textarea").value = r.observacao;
+
+        autoResize(tr.children[1].querySelector("textarea"));
+        autoResize(tr.children[2].querySelector("textarea"));
+        syncPrint(tr.children[1].querySelector("textarea"));
+        syncPrint(tr.children[2].querySelector("textarea"));
+      });
+    }
+
+    // Restaurar treinos
+    if (dados.treinos) {
+      dados.treinos.forEach(t => {
+        addTreino();
+        const div = document.querySelector("#treinos .block:last-child");
+        div.querySelector("input").value = t.dia;
+        div.querySelector("textarea").value = t.descricao;
+
+        autoResize(div.querySelector("textarea"));
+        syncPrint(div.querySelector("textarea"));
+      });
+    }
+  };
+
+  reader.readAsText(file);
+}
 </script>
+
   
 </body>
 </html>
