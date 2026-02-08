@@ -1,0 +1,147 @@
+{
+  "peitorais": [
+    {
+      "id": "supino_reto",
+      "nome": "Supino Reto",
+      "tipo": "composto",
+      "equipamento": ["barra"],
+      "nivel_minimo": "iniciante",
+      "prioridade": 1
+    },
+    {
+      "id": "supino_inclinado",
+      "nome": "Supino Inclinado",
+      "tipo": "composto",
+      "equipamento": ["barra", "halter"],
+      "nivel_minimo": "iniciante",
+      "prioridade": 2
+    },
+    {
+      "id": "crucifixo",
+      "nome": "Crucifixo",
+      "tipo": "isolador",
+      "equipamento": ["halter"],
+      "nivel_minimo": "iniciante",
+      "prioridade": 3
+    },
+    {
+      "id": "cross_over",
+      "nome": "Cross-over",
+      "tipo": "isolador",
+      "equipamento": ["cabo"],
+      "nivel_minimo": "intermediario",
+      "prioridade": 4
+    },
+    {
+      "id": "flexao",
+      "nome": "Flexão de Braço",
+      "tipo": "composto",
+      "equipamento": ["peso_corporal"],
+      "nivel_minimo": "iniciante",
+      "prioridade": 5
+    }
+  ],
+
+  "costas": [
+    {
+      "id": "puxada_frente",
+      "nome": "Pulley Frente",
+      "tipo": "composto",
+      "equipamento": ["cabo"],
+      "nivel_minimo": "iniciante",
+      "prioridade": 1
+    },
+    {
+      "id": "barra_fixa",
+      "nome": "Barra Fixa",
+      "tipo": "composto",
+      "equipamento": ["peso_corporal"],
+      "nivel_minimo": "intermediario",
+      "prioridade": 2
+    },
+    {
+      "id": "remada_curvada",
+      "nome": "Remada Curvada",
+      "tipo": "composto",
+      "equipamento": ["barra"],
+      "nivel_minimo": "intermediario",
+      "prioridade": 3
+    }
+  ],
+
+  "biceps": [
+    {
+      "id": "rosca_direta",
+      "nome": "Rosca Direta",
+      "tipo": "isolador",
+      "equipamento": ["barra"],
+      "nivel_minimo": "iniciante",
+      "prioridade": 1
+    },
+    {
+      "id": "rosca_alternada",
+      "nome": "Rosca Alternada",
+      "tipo": "isolador",
+      "equipamento": ["halter"],
+      "nivel_minimo": "iniciante",
+      "prioridade": 2
+    }
+  ],
+
+  "triceps": [
+    {
+      "id": "triceps_pulley",
+      "nome": "Tríceps Pulley",
+      "tipo": "isolador",
+      "equipamento": ["cabo"],
+      "nivel_minimo": "iniciante",
+      "prioridade": 1
+    },
+    {
+      "id": "paralelas",
+      "nome": "Paralelas",
+      "tipo": "composto",
+      "equipamento": ["peso_corporal"],
+      "nivel_minimo": "intermediario",
+      "prioridade": 2
+    }
+  ],
+
+  "pernas": [
+    {
+      "id": "agachamento_livre",
+      "nome": "Agachamento Livre",
+      "tipo": "composto",
+      "equipamento": ["barra"],
+      "nivel_minimo": "iniciante",
+      "prioridade": 1
+    },
+    {
+      "id": "leg_press",
+      "nome": "Leg Press 45°",
+      "tipo": "composto",
+      "equipamento": ["maquina"],
+      "nivel_minimo": "iniciante",
+      "prioridade": 2
+    }
+  ],
+
+  "abdomen": [
+    {
+      "id": "abdominal_supra",
+      "nome": "Abdominal Supra",
+      "tipo": "isolador",
+      "equipamento": ["peso_corporal"],
+      "nivel_minimo": "iniciante",
+      "prioridade": 1
+    },
+    {
+      "id": "prancha",
+      "nome": "Prancha Isométrica",
+      "tipo": "isometrico",
+      "equipamento": ["peso_corporal"],
+      "nivel_minimo": "iniciante",
+      "prioridade": 2
+    }
+  ]
+}
