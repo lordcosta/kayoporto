@@ -5,34 +5,59 @@
     { "id": "supino_declinado", "nome": "Supino Declinado", "tipo": "composto", "equipamento": ["barra"], "nivel_minimo": "intermediario", "prioridade": 3 },
     { "id": "crucifixo", "nome": "Crucifixo", "tipo": "isolador", "equipamento": ["halter"], "nivel_minimo": "iniciante", "prioridade": 4 },
     { "id": "cross_over", "nome": "Cross-over", "tipo": "isolador", "equipamento": ["cabo"], "nivel_minimo": "intermediario", "prioridade": 5 },
-    { "id": "flexao", "nome": "Flexão de Braço", "tipo": "composto", "equipamento": ["peso_corporal"], "nivel_minimo": "iniciante", "prioridade": 6 }
+    { "id": "flexao", "nome": "Flexão de Braço", "tipo": "composto", "equipamento": ["peso_corporal"], "nivel_minimo": "iniciante", "prioridade": 6 },
+    { "id": "supino_halter", "nome": "Supino Reto com Halteres", "tipo": "composto", "equipamento": ["halter"], "nivel_minimo": "iniciante", "prioridade": 7 },
+    { "id": "pullover_peitoral", "nome": "Pullover", "tipo": "isolador", "equipamento": ["halter", "barra"], "nivel_minimo": "intermediario", "prioridade": 8 },
+    { "id": "peck_deck", "nome": "Peck Deck (Voador)", "tipo": "isolador", "equipamento": ["maquina"], "nivel_minimo": "iniciante", "prioridade": 9 },
+    { "id": "supino_maquina", "nome": "Supino na Máquina", "tipo": "composto", "equipamento": ["maquina"], "nivel_minimo": "iniciante", "prioridade": 10 },
+    { "id": "flexao_declinada", "nome": "Flexão Declinada", "tipo": "composto", "equipamento": ["peso_corporal"], "nivel_minimo": "intermediario", "prioridade": 11 }
   ],
 
   "costas": [
     { "id": "barra_fixa", "nome": "Barra Fixa", "tipo": "composto", "equipamento": ["peso_corporal"], "nivel_minimo": "intermediario", "prioridade": 1 },
     { "id": "pulley_frente", "nome": "Pulley Frente", "tipo": "composto", "equipamento": ["cabo"], "nivel_minimo": "iniciante", "prioridade": 2 },
     { "id": "remada_curvada", "nome": "Remada Curvada", "tipo": "composto", "equipamento": ["barra"], "nivel_minimo": "intermediario", "prioridade": 3 },
-    { "id": "remada_unilateral", "nome": "Remada Unilateral", "tipo": "isolador", "equipamento": ["halter"], "nivel_minimo": "iniciante", "prioridade": 4 },
-    { "id": "pullover", "nome": "Pullover", "tipo": "isolador", "equipamento": ["halter"], "nivel_minimo": "intermediario", "prioridade": 5 }
+    { "id": "remada_unilateral", "nome": "Remada Unilateral", "tipo": "composto", "equipamento": ["halter"], "nivel_minimo": "iniciante", "prioridade": 4 },
+    { "id": "pullover_costas", "nome": "Pullover", "tipo": "isolador", "equipamento": ["halter"], "nivel_minimo": "intermediario", "prioridade": 5 },
+    { "id": "levantamento_terra", "nome": "Levantamento Terra", "tipo": "composto", "equipamento": ["barra"], "nivel_minimo": "intermediario", "prioridade": 6 },
+    { "id": "pulley_costas", "nome": "Pulley Costas (Triângulo)", "tipo": "composto", "equipamento": ["cabo"], "nivel_minimo": "iniciante", "prioridade": 7 },
+    { "id": "remada_cavalinho", "nome": "Remada Cavalinho", "tipo": "composto", "equipamento": ["maquina"], "nivel_minimo": "iniciante", "prioridade": 8 },
+    { "id": "remada_baixa", "nome": "Remada Baixa", "tipo": "composto", "equipamento": ["cabo"], "nivel_minimo": "iniciante", "prioridade": 9 },
+    { "id": "pull_down", "nome": "Pull Down com Corda", "tipo": "isolador", "equipamento": ["cabo"], "nivel_minimo": "intermediario", "prioridade": 10 }
   ],
 
   "ombros": [
     { "id": "desenvolvimento_barra", "nome": "Desenvolvimento com Barra", "tipo": "composto", "equipamento": ["barra"], "nivel_minimo": "iniciante", "prioridade": 1 },
     { "id": "elevacao_lateral", "nome": "Elevação Lateral", "tipo": "isolador", "equipamento": ["halter"], "nivel_minimo": "iniciante", "prioridade": 2 },
     { "id": "elevacao_frontal", "nome": "Elevação Frontal", "tipo": "isolador", "equipamento": ["halter"], "nivel_minimo": "iniciante", "prioridade": 3 },
-    { "id": "arnold_press", "nome": "Arnold Press", "tipo": "composto", "equipamento": ["halter"], "nivel_minimo": "intermediario", "prioridade": 4 }
+    { "id": "arnold_press", "nome": "Arnold Press", "tipo": "composto", "equipamento": ["halter"], "nivel_minimo": "intermediario", "prioridade": 4 },
+    { "id": "desenvolvimento_halter", "nome": "Desenvolvimento com Halteres", "tipo": "composto", "equipamento": ["halter"], "nivel_minimo": "iniciante", "prioridade": 5 },
+    { "id": "elevacao_posterior", "nome": "Elevação Posterior", "tipo": "isolador", "equipamento": ["halter"], "nivel_minimo": "iniciante", "prioridade": 6 },
+    { "id": "remada_alta", "nome": "Remada Alta", "tipo": "composto", "equipamento": ["barra", "cabo"], "nivel_minimo": "intermediario", "prioridade": 7 },
+    { "id": "crucifixo_invertido", "nome": "Crucifixo Invertido", "tipo": "isolador", "equipamento": ["halter"], "nivel_minimo": "intermediario", "prioridade": 8 },
+    { "id": "elevacao_lateral_cabo", "nome": "Elevação Lateral no Cabo", "tipo": "isolador", "equipamento": ["cabo"], "nivel_minimo": "iniciante", "prioridade": 9 }
   ],
 
   "biceps": [
     { "id": "rosca_direta", "nome": "Rosca Direta", "tipo": "isolador", "equipamento": ["barra"], "nivel_minimo": "iniciante", "prioridade": 1 },
     { "id": "rosca_alternada", "nome": "Rosca Alternada", "tipo": "isolador", "equipamento": ["halter"], "nivel_minimo": "iniciante", "prioridade": 2 },
-    { "id": "rosca_martelo", "nome": "Rosca Martelo", "tipo": "isolador", "equipamento": ["halter"], "nivel_minimo": "iniciante", "prioridade": 3 }
+    { "id": "rosca_martelo", "nome": "Rosca Martelo", "tipo": "isolador", "equipamento": ["halter"], "nivel_minimo": "iniciante", "prioridade": 3 },
+    { "id": "rosca_scott", "nome": "Rosca Scott", "tipo": "isolador", "equipamento": ["barra", "halter"], "nivel_minimo": "iniciante", "prioridade": 4 },
+    { "id": "rosca_concentrada", "nome": "Rosca Concentrada", "tipo": "isolador", "equipamento": ["halter"], "nivel_minimo": "iniciante", "prioridade": 5 },
+    { "id": "rosca_cabo", "nome": "Rosca no Cabo", "tipo": "isolador", "equipamento": ["cabo"], "nivel_minimo": "iniciante", "prioridade": 6 },
+    { "id": "rosca_inversa", "nome": "Rosca Inversa", "tipo": "isolador", "equipamento": ["barra"], "nivel_minimo": "intermediario", "prioridade": 7 },
+    { "id": "rosca_21", "nome": "Rosca 21", "tipo": "isolador", "equipamento": ["barra"], "nivel_minimo": "intermediario", "prioridade": 8 }
   ],
 
   "triceps": [
     { "id": "triceps_pulley", "nome": "Tríceps Pulley", "tipo": "isolador", "equipamento": ["cabo"], "nivel_minimo": "iniciante", "prioridade": 1 },
     { "id": "triceps_testa", "nome": "Tríceps Testa", "tipo": "isolador", "equipamento": ["barra"], "nivel_minimo": "intermediario", "prioridade": 2 },
-    { "id": "paralelas", "nome": "Paralelas", "tipo": "composto", "equipamento": ["peso_corporal"], "nivel_minimo": "intermediario", "prioridade": 3 }
+    { "id": "paralelas", "nome": "Paralelas", "tipo": "composto", "equipamento": ["peso_corporal"], "nivel_minimo": "intermediario", "prioridade": 3 },
+    { "id": "triceps_corda", "nome": "Tríceps Pulley com Corda", "tipo": "isolador", "equipamento": ["cabo"], "nivel_minimo": "iniciante", "prioridade": 4 },
+    { "id": "triceps_coice", "nome": "Tríceps Coice", "tipo": "isolador", "equipamento": ["halter"], "nivel_minimo": "iniciante", "prioridade": 5 },
+    { "id": "supino_fechado", "nome": "Supino Fechado", "tipo": "composto", "equipamento": ["barra"], "nivel_minimo": "intermediario", "prioridade": 6 },
+    { "id": "triceps_frances", "nome": "Tríceps Francês", "tipo": "isolador", "equipamento": ["halter", "barra"], "nivel_minimo": "intermediario", "prioridade": 7 },
+    { "id": "mergulho_banco", "nome": "Mergulho no Banco", "tipo": "composto", "equipamento": ["peso_corporal"], "nivel_minimo": "iniciante", "prioridade": 8 }
   ],
 
   "pernas": [
@@ -40,12 +65,50 @@
     { "id": "leg_press", "nome": "Leg Press 45°", "tipo": "composto", "equipamento": ["maquina"], "nivel_minimo": "iniciante", "prioridade": 2 },
     { "id": "stiff", "nome": "Stiff", "tipo": "composto", "equipamento": ["barra"], "nivel_minimo": "intermediario", "prioridade": 3 },
     { "id": "extensora", "nome": "Cadeira Extensora", "tipo": "isolador", "equipamento": ["maquina"], "nivel_minimo": "iniciante", "prioridade": 4 },
-    { "id": "flexora", "nome": "Cadeira Flexora", "tipo": "isolador", "equipamento": ["maquina"], "nivel_minimo": "iniciante", "prioridade": 5 }
+    { "id": "flexora", "nome": "Cadeira Flexora", "tipo": "isolador", "equipamento": ["maquina"], "nivel_minimo": "iniciante", "prioridade": 5 },
+    { "id": "agachamento_sumô", "nome": "Agachamento Sumô", "tipo": "composto", "equipamento": ["barra", "halter"], "nivel_minimo": "iniciante", "prioridade": 6 },
+    { "id": "afundo", "nome": "Afundo", "tipo": "composto", "equipamento": ["halter", "barra"], "nivel_minimo": "iniciante", "prioridade": 7 },
+    { "id": "cadeira_abdutora", "nome": "Cadeira Abdutora", "tipo": "isolador", "equipamento": ["maquina"], "nivel_minimo": "iniciante", "prioridade": 8 },
+    { "id": "cadeira_adutora", "nome": "Cadeira Adutora", "tipo": "isolador", "equipamento": ["maquina"], "nivel_minimo": "iniciante", "prioridade": 9 },
+    { "id": "hack_machine", "nome": "Hack Machine", "tipo": "composto", "equipamento": ["maquina"], "nivel_minimo": "intermediario", "prioridade": 10 },
+    { "id": "panturrilha_em_pe", "nome": "Panturrilha em Pé", "tipo": "isolador", "equipamento": ["maquina"], "nivel_minimo": "iniciante", "prioridade": 11 },
+    { "id": "panturrilha_sentado", "nome": "Panturrilha Sentado", "tipo": "isolador", "equipamento": ["maquina"], "nivel_minimo": "iniciante", "prioridade": 12 },
+    { "id": "panturrilha_leg_press", "nome": "Panturrilha no Leg Press", "tipo": "isolador", "equipamento": ["maquina"], "nivel_minimo": "iniciante", "prioridade": 13 },
+    { "id": "agachamento_bulgaro", "nome": "Agachamento Búlgaro", "tipo": "composto", "equipamento": ["peso_corporal", "halter"], "nivel_minimo": "intermediario", "prioridade": 14 },
+    { "id": "agachamento_pistol", "nome": "Agachamento Pistol", "tipo": "composto", "equipamento": ["peso_corporal"], "nivel_minimo": "avancado", "prioridade": 15 },
+    { "id": "ponte_gluteo", "nome": "Ponte de Glúteo", "tipo": "composto", "equipamento": ["peso_corporal", "barra"], "nivel_minimo": "iniciante", "prioridade": 16 }
   ],
 
   "abdomen": [
     { "id": "supra", "nome": "Abdominal Supra", "tipo": "isolador", "equipamento": ["peso_corporal"], "nivel_minimo": "iniciante", "prioridade": 1 },
     { "id": "infra", "nome": "Abdominal Infra", "tipo": "isolador", "equipamento": ["peso_corporal"], "nivel_minimo": "iniciante", "prioridade": 2 },
-    { "id": "prancha", "nome": "Prancha Isométrica", "tipo": "isometrico", "equipamento": ["peso_corporal"], "nivel_minimo": "iniciante", "prioridade": 3 }
-  ]
+    { "id": "prancha", "nome": "Prancha Isométrica", "tipo": "isometrico", "equipamento": ["peso_corporal"], "nivel_minimo": "iniciante", "prioridade": 3 },
+    { "id": "abdominal_bicicleta", "nome": "Abdominal Bicicleta", "tipo": "isolador", "equipamento": ["peso_corporal"], "nivel_minimo": "iniciante", "prioridade": 4 },
+    { "id": "elevacao_pernas", "nome": "Elevação de Pernas", "tipo": "isolador", "equipamento": ["peso_corporal"], "nivel_minimo": "iniciante", "prioridade": 5 },
+    { "id": "abdominal_canivete", "nome": "Abdominal Canivete", "tipo": "isolador", "equipamento": ["peso_corporal"], "nivel_minimo": "intermediario", "prioridade": 6 },
+    { "id": "prancha_lateral", "nome": "Prancha Lateral", "tipo": "isometrico", "equipamento": ["peso_corporal"], "nivel_minimo": "iniciante", "prioridade": 7 },
+    { "id": "mountain_climber", "nome": "Mountain Climber", "tipo": "composto", "equipamento": ["peso_corporal"], "nivel_minimo": "intermediario", "prioridade": 8 },
+    { "id": "russian_twist", "nome": "Russian Twist", "tipo": "isolador", "equipamento": ["peso_corporal", "halter"], "nivel_minimo": "intermediario", "prioridade": 9 },
+    { "id": "abdominal_remador", "nome": "Abdominal Remador", "tipo": "isolador", "equipamento": ["peso_corporal"], "nivel_minimo": "intermediario", "prioridade": 10 },
+    { "id": "abdominal_cabo", "nome": "Abdominal no Cabo (Rope Crunch)", "tipo": "isolador", "equipamento": ["cabo"], "nivel_minimo": "iniciante", "prioridade": 11 },
+    { "id": "roda_abdominal", "nome": "Roda Abdominal", "tipo": "composto", "equipamento": ["peso_corporal"], "nivel_minimo": "avancado", "prioridade": 12 },
+    { "id": "elevacao_pernas_barra", "nome": "Elevação de Pernas na Barra", "tipo": "composto", "equipamento": ["peso_corporal"], "nivel_minimo": "intermediario", "prioridade": 13 }
+  ],
+
+  "antebraco": [
+    { "id": "rosca_punho", "nome": "Rosca de Punho", "tipo": "isolador", "equipamento": ["barra", "halter"], "nivel_minimo": "iniciante", "prioridade": 1 },
+    { "id": "rosca_punho_inversa", "nome": "Rosca de Punho Inversa", "tipo": "isolador", "equipamento": ["barra", "halter"], "nivel_minimo": "iniciante", "prioridade": 2 },
+    { "id": "farmer_walk", "nome": "Farmer's Walk", "tipo": "composto", "equipamento": ["halter"], "nivel_minimo": "iniciante", "prioridade": 3 },
+    { "id": "pronacao_supinacao", "nome": "Pronação e Supinação", "tipo": "isolador", "equipamento": ["halter"], "nivel_minimo": "iniciante", "prioridade": 4 },
+    { "id": "dead_hang", "nome": "Dead Hang (Suspensão)", "tipo": "isometrico", "equipamento": ["peso_corporal"], "nivel_minimo": "iniciante", "prioridade": 5 }
+  ],
+
+  "lombar": [
+    { "id": "hiperextensao", "nome": "Hiperextensão", "tipo": "composto", "equipamento": ["maquina", "peso_corporal"], "nivel_minimo": "iniciante", "prioridade": 1 },
+    { "id": "bom_dia", "nome": "Bom Dia (Good Morning)", "tipo": "composto", "equipamento": ["barra"], "nivel_minimo": "intermediario", "prioridade": 2 },
+    { "id": "superman", "nome": "Superman", "tipo": "isolador", "equipamento": ["peso_corporal"], "nivel_minimo": "iniciante", "prioridade": 3 },
+    { "id": "prancha_reversa", "nome": "Prancha Reversa", "tipo": "isometrico", "equipamento": ["peso_corporal"], "nivel_minimo": "iniciante", "prioridade": 4 },
+    { "id": "bird_dog", "nome": "Bird Dog", "tipo": "isometrico", "equipamento": ["peso_corporal"], "nivel_minimo": "iniciante", "prioridade": 5 }
+]
+
 }
