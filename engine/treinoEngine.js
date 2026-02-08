@@ -3,7 +3,7 @@
    Motor de geração de treinos
    ================================ */
 
-const DATA_PATH = "data/";
+const DATA_PATH = "/data/";
 
 let exerciciosDB = {};
 let regrasDB = {};
