@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Teste Treino Engine</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #0A0E27;
+      color: #E8E8E8;
+      padding: 1rem;
+    }
+    button {
+      background: #D4AF37;
+      border: none;
+      padding: .6rem 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+    pre {
+      background: #111633;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Teste – Treino Engine</h1>
+
+<button onclick="gerar()">Gerar Treino</button>
+
+<pre id="output">Clique no botão para gerar o treino…</pre>
+
+<script src="engine/treinoEngine.js"></script>
+
+<script>
+async function gerar() {
+  await TreinoEngine.carregarJSONs();
+
+  const treino = TreinoEngine.gerarTreino({
+    grupo: "peitorais",
+    nivel: "iniciante",
+    objetivo: "hipertrofia",
+    equipamentos: ["halter", "maquina"]
+  });
+
+  document.getElementById("output").textContent =
+    JSON.stringify(treino, null, 2);
+}
+</script>
+
+</body>
+</html>
