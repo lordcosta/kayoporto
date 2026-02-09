@@ -24,6 +24,12 @@
   font-size: 12px;
 }
 
+/* ================= RODAPÉ ================= */
+.footer {
+  font-size: 10px;
+  font-style: italic;
+}
+
 /* ================= CONFIGURAÇÃO DE PÁGINA ================= */
 @page {
   size: A4;
@@ -77,7 +83,22 @@ body {
   white-space: pre-wrap;
   line-height: 1.3;
 }
-  
+
+.print-only {
+  display: none;
+}
+
+.identificacao-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ficha-print {
+  font-style: italic;
+}
+
 /* ================= SEÇÕES ================= */
 .section {
   margin-bottom: 16px;
@@ -237,7 +258,8 @@ textarea {
 
   /* ===== Esconder botões e elementos de tela ===== */
   .button,
-  .print-area {
+  .print-area,
+  .hide-on-print {
     display: none !important;
   }
 
@@ -276,6 +298,16 @@ textarea {
     line-height: 1.3;
   }
 
+  .print-only {
+    display: block !important;
+    white-space: pre-wrap;
+    line-height: 1.3;
+  }
+
+  .print-only-large {
+    font-size: 14px;
+  }
+
 }
 
 </style>
@@ -302,16 +334,29 @@ textarea {
     🖨️ Imprimir / Salvar em PDF
   </button>
 </div>
+<div style="text-align:right; margin-bottom:10px;">
+  <button type="button" class="button" onclick="exportarDados()">⬇️ Exportar</button>
+  <button type="button" class="button" onclick="document.getElementById('importarArquivo').click()">⬆️ Carregar</button>
+  <input id="importarArquivo" type="file" accept="application/json" style="display:none" onchange="importarDados(this.files[0])">
+</div>
 
 <!-- ================= IDENTIFICAÇÃO ================= -->
 <div class="section">
-  <h2>Identificação</h2>
+  <div class="identificacao-header">
+    <h2>Identificação</h2>
+    <span class="ficha-print" id="fichaTitulo"></span>
+  </div>
 
-  <input id="clienteNome" placeholder="Nome do Cliente">
+  <div class="print-only print-only-large" id="printNomeTelefone"></div>
+
+  <input id="clienteNome" class="hide-on-print" placeholder="Nome do Cliente">
   <div class="section-spacer"></div>
 
-  <label><strong>Nome da ficha</strong></label>
-  <input id="fichaNome" placeholder="Ex: joao, maria, fernando">
+  <input id="clienteTelefone" class="hide-on-print" placeholder="Telefone" oninput="mascararTelefone(this)">
+  <div class="section-spacer"></div>
+
+  <label>Data</label>
+  <input id="dataPlano" class="hide-on-print" type="date" oninput="atualizarDataImpressao()">
   <div class="section-spacer"></div>
 
   <label>Tipo de Plano</label>
@@ -320,6 +365,11 @@ textarea {
     <option>Intermediário</option>
     <option>Avançado</option>
   </select>
+</div>
+
+<div class="section">
+  <label><strong>Nome da ficha</strong></label>
+  <input id="fichaNome" placeholder="Ex: joao, maria, fernando">
 </div>
 
 <div class="section-spacer"></div>
@@ -346,7 +396,7 @@ textarea {
 <div class="section">
   <h2>Observações Importantes</h2>
 
-  <textarea rows="4" oninput="syncPrint(this)"></textarea>
+  <textarea id="observacoesImportantes" rows="4" oninput="syncPrint(this)"></textarea>
   <div class="print-text"></div>
 </div>
 
@@ -354,7 +404,7 @@ textarea {
 <div class="section">
   <h2>Suplementação</h2>
 
-  <textarea rows="2" oninput="syncPrint(this)"></textarea>
+  <textarea id="suplementacao" rows="2" oninput="syncPrint(this)"></textarea>
   <div class="print-text"></div>
 </div>
 
@@ -382,7 +432,7 @@ textarea {
 <div class="section">
   <h3>Abdominais</h3>
   
-  <textarea rows="2" oninput="syncPrint(this)"></textarea>
+  <textarea id="abdominais" rows="2" oninput="syncPrint(this)"></textarea>
   <div class="print-text"></div>
 </div>
 
@@ -390,7 +440,7 @@ textarea {
 <div class="section">
   <h3>Cardio</h3>
   
-  <textarea rows="2" oninput="syncPrint(this)"></textarea>
+  <textarea id="cardio" rows="2" oninput="syncPrint(this)"></textarea>
   <div class="print-text"></div>
 </div>
 
@@ -398,17 +448,18 @@ textarea {
 <div class="section">
   <h2>Observação Extra</h2>
   
-  <textarea rows="4" oninput="syncPrint(this)"></textarea>
+  <textarea id="observacaoExtra" rows="4" oninput="syncPrint(this)"></textarea>
   <div class="print-text"></div>
 </div>
 
   <!-- ================= ASSINATURA ================= -->
+<div class="print-date" id="dataImpressao"></div>
 <div class="signature">
   <strong>Kayo Porto</strong><br>
   Personal Trainer · Consultor
 </div>
 <div class="footer">
-  Plano alimentar educacional · Não substitui acompanhamento clínico
+  Plano alimentar - Não substitui acompanhamento clínico
 </div>
 
 <script>
@@ -475,6 +526,160 @@ function syncAllPrintTexts() {
   });
 }
 
+function atualizarIdentificacao() {
+  const nome = document.getElementById("clienteNome").value.trim();
+  const telefone = document.getElementById("clienteTelefone").value.trim();
+  const ficha = document.getElementById("fichaNome").value.trim();
+  const destinoNome = document.getElementById("printNomeTelefone");
+  const destinoFicha = document.getElementById("fichaTitulo");
+  const telefoneFormatado = formatarTelefone(telefone);
+
+  if (destinoNome) {
+    if (nome && telefone) {
+      destinoNome.textContent = `${nome}   -   ${telefoneFormatado}`;
+    } else {
+      destinoNome.textContent = nome || telefoneFormatado;
+    }
+  }
+
+  if (destinoFicha) {
+    destinoFicha.textContent = ficha ? `Ficha: (${ficha})` : "";
+  }
+}
+
+function formatarTelefone(valor) {
+  const numeros = valor.replace(/\D/g, "");
+  if (!numeros) return "";
+  if (numeros.length <= 2) return `(${numeros}`;
+  if (numeros.length <= 6) return `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+  if (numeros.length <= 10) {
+    return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 6)}-${numeros.slice(6, 10)}`;
+  }
+  return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7, 11)}`;
+}
+
+function mascararTelefone(campo) {
+  if (!campo) return;
+  campo.value = formatarTelefone(campo.value);
+}
+
+function atualizarDataImpressao() {
+  const campoData = document.getElementById("dataPlano");
+  const destino = document.getElementById("dataImpressao");
+  if (!campoData || !destino) return;
+
+  if (!campoData.value) {
+    destino.textContent = "";
+    return;
+  }
+
+  const [ano, mes, dia] = campoData.value.split("-");
+  const meses = [
+    "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+    "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+  ];
+  const diaFormatado = String(dia).padStart(2, "0");
+  const mesNome = meses[Number(mes) - 1] || "";
+  destino.textContent = `Albufeira, ${diaFormatado} de ${mesNome} de ${ano}.`;
+}
+
+function exportarDados() {
+  const dados = {
+    clienteNome: document.getElementById("clienteNome").value,
+    clienteTelefone: document.getElementById("clienteTelefone").value,
+    fichaNome: document.getElementById("fichaNome").value,
+    dataPlano: document.getElementById("dataPlano").value,
+    tipoPlano: document.getElementById("tipoPlano").value,
+    observacoesImportantes: document.getElementById("observacoesImportantes").value,
+    suplementacao: document.getElementById("suplementacao").value,
+    abdominais: document.getElementById("abdominais").value,
+    cardio: document.getElementById("cardio").value,
+    observacaoExtra: document.getElementById("observacaoExtra").value,
+    planoAlimentar: Array.from(document.querySelectorAll("#refeicoes tr")).map(tr => ({
+      refeicao: tr.querySelector("select")?.value || "",
+      dieta: tr.children[1]?.querySelector("textarea")?.value || "",
+      observacoes: tr.children[2]?.querySelector("textarea")?.value || ""
+    })),
+    planoTreino: Array.from(document.querySelectorAll("#treino-body tr")).map(tr => ({
+      dia: tr.children[0]?.textContent?.trim() || "",
+      descricao: tr.children[1]?.querySelector("textarea")?.value || "",
+      observacao: tr.children[2]?.querySelector("textarea")?.value || ""
+    }))
+  };
+
+  const nomeBase = (dados.fichaNome || "ficha").trim() || "ficha";
+  const arquivo = `${nomeBase}.json`;
+  const blob = new Blob([JSON.stringify(dados, null, 2)], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = arquivo;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(link.href);
+}
+
+function importarDados(arquivo) {
+  if (!arquivo) return;
+  const leitor = new FileReader();
+  leitor.onload = () => {
+    const dados = JSON.parse(leitor.result);
+    document.getElementById("clienteNome").value = dados.clienteNome || "";
+    document.getElementById("clienteTelefone").value = formatarTelefone(dados.clienteTelefone || "");
+    document.getElementById("fichaNome").value = dados.fichaNome || "";
+    document.getElementById("dataPlano").value = dados.dataPlano || "";
+    document.getElementById("tipoPlano").value = dados.tipoPlano || "Inicial";
+    document.getElementById("observacoesImportantes").value = dados.observacoesImportantes || "";
+    document.getElementById("suplementacao").value = dados.suplementacao || "";
+    document.getElementById("abdominais").value = dados.abdominais || "";
+    document.getElementById("cardio").value = dados.cardio || "";
+    document.getElementById("observacaoExtra").value = dados.observacaoExtra || "";
+
+    const refeicoesBody = document.getElementById("refeicoes");
+    refeicoesBody.innerHTML = "";
+    (dados.planoAlimentar || []).forEach(item => {
+      addRefeicao();
+      const tr = refeicoesBody.lastElementChild;
+      if (!tr) return;
+      const select = tr.querySelector("select");
+      const dieta = tr.children[1]?.querySelector("textarea");
+      const obs = tr.children[2]?.querySelector("textarea");
+      if (select) select.value = item.refeicao || "";
+      if (dieta) {
+        dieta.value = item.dieta || "";
+        autoResize(dieta);
+      }
+      if (obs) {
+        obs.value = item.observacoes || "";
+        autoResize(obs);
+      }
+    });
+
+    const treinoBody = document.getElementById("treino-body");
+    treinoBody.innerHTML = "";
+    (dados.planoTreino || []).forEach(item => {
+      adicionarTreino();
+      const tr = treinoBody.lastElementChild;
+      if (!tr) return;
+      const descricao = tr.children[1]?.querySelector("textarea");
+      const observacao = tr.children[2]?.querySelector("textarea");
+      if (descricao) {
+        descricao.value = item.descricao || "";
+        autoResize(descricao);
+      }
+      if (observacao) {
+        observacao.value = item.observacao || "";
+        autoResize(observacao);
+      }
+    });
+
+    atualizarIdentificacao();
+    syncAllPrintTexts();
+    atualizarDataImpressao();
+  };
+  leitor.readAsText(arquivo);
+}
+
 /* ================= AUTO RESIZE (ÚNICO) ================= */
 
 function autoResize(el) {
@@ -522,9 +727,18 @@ function adicionarTreino() {
     if (e.target.tagName === "TEXTAREA") {
       syncPrint(e.target);
     }
+    if (["clienteNome", "clienteTelefone", "fichaNome"].includes(e.target.id)) {
+      atualizarIdentificacao();
+    }
   });
 
-  window.addEventListener("beforeprint", syncAllPrintTexts);
+  window.addEventListener("beforeprint", () => {
+    atualizarIdentificacao();
+    syncAllPrintTexts();
+    atualizarDataImpressao();
+  });
+
+  document.addEventListener("DOMContentLoaded", atualizarIdentificacao);
 </script>
 
   
