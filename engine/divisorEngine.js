@@ -1,51 +1,82 @@
 /* ================================
    DIVISOR ENGINE · LORDCosta
-   Organiza a semana de treino
+   Define a divisão semanal de treino
    ================================ */
 
-const divisores = {
-  AB: {
-    dias: [
-      { dia: "A", grupos: ["peitorais", "triceps"] },
-      { dia: "B", grupos: ["costas", "biceps"] }
-    ],
-    abdomen: { frequencia: 2 }
-  },
+const DATA_PATH = "/data/divisoes.json";
 
-  ABC: {
-    dias: [
-      { dia: "A", grupos: ["peitorais", "triceps"] },
-      { dia: "B", grupos: ["costas", "biceps"] },
-      { dia: "C", grupos: ["pernas", "ombros"] }
-    ],
-    abdomen: { frequencia: 2 }
-  },
-
-  ABCD: {
-    dias: [
-      { dia: "A", grupos: ["peitorais"] },
-      { dia: "B", grupos: ["costas"] },
-      { dia: "C", grupos: ["pernas"] },
-      { dia: "D", grupos: ["ombros", "biceps", "triceps"] }
-    ],
-    abdomen: { frequencia: 3 }
-  }
-};
+let divisoesDB = null;
+let carregamentoEmAndamento = null;
 
 /* ================================
-   GERADOR DE SEMANA
+   LOADERS
    ================================ */
 
-function gerarDivisao(config) {
-  const { tipo } = config;
-
-  const divisor = divisores[tipo];
-  if (!divisor) {
-    console.error("Divisor não encontrado:", tipo);
-    return null;
+async function carregarDivisoes() {
+  if (divisoesDB) {
+    return divisoesDB;
   }
 
-  return divisor;
+  if (!carregamentoEmAndamento) {
+    carregamentoEmAndamento = fetch(DATA_PATH).then((res) => res.json());
+  }
+
+  divisoesDB = await carregamentoEmAndamento;
+  return divisoesDB;
+}
+
+/* ================================
+   UTILITÁRIOS
+   ================================ */
+
+function normalizarDivisao(divisao) {
+  if (!divisao) {
+    return "";
+  }
+  return String(divisao).trim().toLowerCase();
+}
+
+function criarMapaDeDivisoes(divisoes) {
+  const mapa = {};
+
+  Object.values(divisoes || {}).forEach((grupo) => {
+    Object.entries(grupo || {}).forEach(([nome, dias]) => {
+      if (Array.isArray(dias)) {
+        mapa[nome.toUpperCase()] = dias;
+      }
+    });
+  });
+
+  return mapa;
+}
+
+function montarResposta(divisao, dias) {
+  const diasFormatados = (dias || []).map((grupos, index) => ({
+    dia: index + 1,
+    grupos
+  }));
+
+  return {
+    divisao,
+    frequenciaSemanal: diasFormatados.length,
+    dias: diasFormatados
+  };
+}
+
+/* ================================
+   MOTOR PRINCIPAL
+   ================================ */
+
+async function executar(input) {
+  const { divisao } = input || {};
+  const divisoes = await carregarDivisoes();
+  const mapa = criarMapaDeDivisoes(divisoes);
+
+  const chaveSolicitada = normalizarDivisao(divisao).toUpperCase();
+  const chaveFallback = mapa.ABC ? "ABC" : Object.keys(mapa)[0] || "ABC";
+  const chaveFinal = mapa[chaveSolicitada] ? chaveSolicitada : chaveFallback;
+
+  return montarResposta(chaveFinal, mapa[chaveFinal] || []);
 }
 
 /* ================================
@@ -53,5 +84,5 @@ function gerarDivisao(config) {
    ================================ */
 
 window.DivisorEngine = {
-  gerarDivisao
+  executar
 };

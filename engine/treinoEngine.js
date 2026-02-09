@@ -4,7 +4,8 @@
    TORETTO MODE™
    ================================ */
 
-const DATA_PATH = "../data/";
+const DATA_PATH = "/data/";
+const NIVEL_ORDEM = ["iniciante", "intermediario", "avancado"];
 
 let exerciciosDB = {};
 let regrasDB = {};
@@ -13,100 +14,130 @@ let regrasDB = {};
    LOADERS
    ================================ */
 
-async function carregarJSONs() {
+async function init() {
   const [exRes, regrasRes] = await Promise.all([
-    fetch(DATA_PATH + "exercicios.json"),
-    fetch(DATA_PATH + "regras.json")
+    fetch(`${DATA_PATH}exercicios.json`),
+    fetch(`${DATA_PATH}regras.json`)
   ]);
 
   exerciciosDB = await exRes.json();
   regrasDB = await regrasRes.json();
-
-  console.log("✔ Exercícios carregados");
-  console.log("✔ Regras carregadas");
 }
 
 /* ================================
    UTILITÁRIOS
    ================================ */
 
-function filtrarPorNivel(lista, nivel) {
-  const ordem = ["iniciante", "intermediario", "avancado"];
-  const nivelIndex = ordem.indexOf(nivel);
+function normalizarNivel(nivel) {
+  return NIVEL_ORDEM.includes(nivel) ? nivel : "iniciante";
+}
 
-  return lista.filter(e =>
-    ordem.indexOf(e.nivel_minimo) <= nivelIndex
-  );
+function obterListaDoGrupo(grupoMuscular) {
+  const lista = exerciciosDB?.[grupoMuscular];
+  if (Array.isArray(lista)) {
+    return lista;
+  }
+
+  // Fallback seguro: usa todos os grupos disponíveis
+  return Object.values(exerciciosDB || {}).flat();
+}
+
+function filtrarPorNivel(lista, nivel) {
+  const nivelIndex = NIVEL_ORDEM.indexOf(nivel);
+
+  return lista.filter((exercicio) => {
+    const minimo = exercicio?.nivel_minimo || "iniciante";
+    return NIVEL_ORDEM.indexOf(minimo) <= nivelIndex;
+  });
 }
 
 function filtrarPorEquipamento(lista, equipamentos) {
-  if (!equipamentos || equipamentos.length === 0) return lista;
+  if (!Array.isArray(equipamentos) || equipamentos.length === 0) {
+    return lista;
+  }
 
-  return lista.filter(e =>
-    e.equipamento.some(eq => equipamentos.includes(eq))
-  );
+  return lista.filter((exercicio) => {
+    const necessario = Array.isArray(exercicio?.equipamento)
+      ? exercicio.equipamento
+      : [];
+    return necessario.length === 0 || necessario.some((eq) => equipamentos.includes(eq));
+  });
 }
 
 function ordenarPorPrioridade(lista) {
-  return [...lista].sort((a, b) => a.prioridade - b.prioridade);
+  return [...lista].sort((a, b) => {
+    const prioridadeA = Number.isFinite(a?.prioridade) ? a.prioridade : 999;
+    const prioridadeB = Number.isFinite(b?.prioridade) ? b.prioridade : 999;
+    return prioridadeA - prioridadeB;
+  });
 }
 
-function embaralhar(lista) {
-  return [...lista].sort(() => Math.random() - 0.5);
+function obterQuantidade(grupoMuscular) {
+  return (
+    regrasDB?.quantidade_exercicios_por_grupo?.[grupoMuscular] ||
+    regrasDB?.fallbacks?.quantidade_exercicios ||
+    4
+  );
+}
+
+function obterFallbacks() {
+  return {
+    series: regrasDB?.fallbacks?.series || "3–4",
+    repeticoes: regrasDB?.fallbacks?.repeticoes || "8–12",
+    descanso: regrasDB?.fallbacks?.descanso || "60–90s"
+  };
+}
+
+function garantirQuantidade(lista, quantidade, fallbackLista) {
+  if (lista.length >= quantidade) {
+    return lista.slice(0, quantidade);
+  }
+
+  const faltam = quantidade - lista.length;
+  const complemento = fallbackLista.filter((item) => !lista.includes(item)).slice(0, faltam);
+  return [...lista, ...complemento].slice(0, quantidade);
 }
 
 /* ================================
    MOTOR PRINCIPAL
    ================================ */
 
-function gerarTreino(config) {
+function gerarTreino(input) {
   const {
-    grupo,
+    grupoMuscular,
     nivel = "iniciante",
     equipamentos = []
-  } = config;
+  } = input || {};
 
-  if (!exerciciosDB[grupo]) {
-    console.error("❌ Grupo muscular não encontrado:", grupo);
-    return [];
-  }
+  const nivelNormalizado = normalizarNivel(nivel);
+  const listaBase = obterListaDoGrupo(grupoMuscular);
 
-  let lista = exerciciosDB[grupo];
+  // 1. Filtrar por grupo muscular (já aplicado em obterListaDoGrupo)
+  // 2. Filtrar por nível mínimo permitido
+  let listaFiltrada = filtrarPorNivel(listaBase, nivelNormalizado);
+  // 3. Filtrar por equipamentos disponíveis
+  listaFiltrada = filtrarPorEquipamento(listaFiltrada, equipamentos);
+  // 4. Ordenar por prioridade (menor valor primeiro)
+  listaFiltrada = ordenarPorPrioridade(listaFiltrada);
 
-  // Aplicar filtros
-  lista = filtrarPorNivel(lista, nivel);
-  lista = filtrarPorEquipamento(lista, equipamentos);
+  const quantidade = obterQuantidade(grupoMuscular);
+  const { series, repeticoes, descanso } = obterFallbacks();
 
-  if (lista.length === 0) {
-    console.warn("⚠ Nenhum exercício disponível após filtros");
-    return [];
-  }
+  // 5. Aplicar quantidade definida em regras.json
+  // 6. Aplicar fallback seguro se não houver exercícios suficientes
+  const listaFallback = ordenarPorPrioridade(listaBase);
+  const selecionados = garantirQuantidade(listaFiltrada, quantidade, listaFallback);
 
-  // Ordenar + leve aleatoriedade
-  lista = ordenarPorPrioridade(lista);
-  lista = embaralhar(lista);
+  // 7. Nunca retornar array vazio
+  const fallbackExercicio = listaFallback[0] || { nome: "Exercício" };
+  const treinoBase = selecionados.length > 0 ? selecionados : [fallbackExercicio];
 
-  // Quantidade de exercícios (engine moderno)
-  const quantidade =
-    regrasDB.quantidade_exercicios_por_grupo?.[grupo] ||
-    regrasDB.fallbacks?.quantidade_exercicios ||
-    4;
-
-  // Parâmetros padrão (fallback seguro)
-  const series = regrasDB.fallbacks?.series || "3–4";
-  const repeticoes = regrasDB.fallbacks?.repeticoes || "8–12";
-  const descanso = regrasDB.fallbacks?.descanso || "60–90s";
-
-  const treino = lista.slice(0, quantidade).map((e, index) => ({
-    ordem: index + 1,
-    exercicio: e.nome,
+  return treinoBase.map((exercicio) => ({
+    nome: exercicio.nome,
     series,
     repeticoes,
     descanso
   }));
-
-  console.log("🔥 TREINO GERADO (TORETTO MODE):", treino);
-  return treino;
 }
 
 /* ================================
@@ -114,6 +145,6 @@ function gerarTreino(config) {
    ================================ */
 
 window.TreinoEngine = {
-  carregarJSONs,
+  init,
   gerarTreino
 };
