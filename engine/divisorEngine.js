@@ -3,8 +3,8 @@
    Define a divisão semanal de treino
    ================================ */
 
-// Caminho relativo seguro para Live Server e GitHub Pages
-const DATA_PATH = "./data/divisoes.json";
+// Resolver JSON via import.meta.url para funcionar em subpastas (GitHub Pages).
+const DIVISOES_URL = new URL("../data/divisoes.json", import.meta.url);
 
 let divisoesDB = null;
 let carregamentoEmAndamento = null;
@@ -19,7 +19,7 @@ async function carregarDivisoes() {
   }
 
   if (!carregamentoEmAndamento) {
-    carregamentoEmAndamento = fetch(DATA_PATH).then((res) => res.json());
+    carregamentoEmAndamento = fetch(DIVISOES_URL).then((res) => res.json());
   }
 
   divisoesDB = await carregamentoEmAndamento;
