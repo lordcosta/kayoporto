@@ -3,7 +3,8 @@
    Define a divisão semanal de treino
    ================================ */
 
-const DATA_PATH = "/data/divisoes.json";
+// Caminho relativo seguro para Live Server e GitHub Pages
+const DATA_PATH = "./data/divisoes.json";
 
 let divisoesDB = null;
 let carregamentoEmAndamento = null;

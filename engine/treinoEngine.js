@@ -4,7 +4,8 @@
    TORETTO MODE™
    ================================ */
 
-const DATA_PATH = "/data/";
+// Caminho relativo seguro para Live Server e GitHub Pages
+const DATA_PATH = "./data/";
 const NIVEL_ORDEM = ["iniciante", "intermediario", "avancado"];
 
 let exerciciosDB = {};
