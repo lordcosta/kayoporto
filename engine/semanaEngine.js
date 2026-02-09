@@ -3,68 +3,87 @@
    Orquestrador geral de treinos
    ================================ */
 
-async function gerarSemana(config) {
+async function gerarSemana(input) {
   const {
-    divisor,
+    divisao,
     nivel = "iniciante",
-    objetivo = "hipertrofia",
-    equipamentos = []
-  } = config;
+    equipamentos = [],
+    objetivo = ""
+  } = input || {};
 
-  // Garantir dados carregados
-  await TreinoEngine.carregarJSONs();
+  // Garantir dados carregados no TreinoEngine
+  if (typeof TreinoEngine?.init === "function") {
+    await TreinoEngine.init();
+  }
 
-  const estrutura = DivisorEngine.gerarDivisao({ tipo: divisor });
-  if (!estrutura) return null;
+  // 1. Chamar DivisorEngine.executar({ divisao })
+  const estrutura = await DivisorEngine.executar({ divisao });
+  const diasSemana = Array.isArray(estrutura?.dias) ? estrutura.dias : [];
 
   const semana = [];
-  let abdomenUsado = 0;
-  const maxAbdomen = estrutura.abdomen?.frequencia || 0;
+  let ultimoExtra = null;
+  const extrasPossiveis = ["abdomen", "lombar"];
 
-  estrutura.dias.forEach((dia, index) => {
-    const treinoDia = [];
+  diasSemana.forEach((diaInfo, index) => {
+    const gruposDia = Array.isArray(diaInfo?.grupos) ? diaInfo.grupos : [];
+    const exerciciosDia = [];
 
-    dia.grupos.forEach(grupo => {
-      const treinoGrupo = TreinoEngine.gerarTreino({
-        grupo,
+    // 2. Para cada grupo muscular do dia -> TreinoEngine.gerarTreino()
+    gruposDia.forEach((grupo) => {
+      const lista = TreinoEngine.gerarTreino({
+        grupoMuscular: grupo,
         nivel,
-        equipamentos
+        equipamentos,
+        objetivo
       });
 
-      treinoDia.push({
+      exerciciosDia.push({
         grupo,
-        exercicios: treinoGrupo
+        lista
       });
     });
 
-    // Injeção de abdômen (camada transversal)
-    if (
-      maxAbdomen > 0 &&
-      abdomenUsado < maxAbdomen &&
-      !dia.grupos.includes("pernas")
-    ) {
-      const treinoAbdomen = TreinoEngine.gerarTreino({
-        grupo: "abdomen",
-        nivel,
-        equipamentos
-      });
+    // 4. Injetar abdômen e/ou lombar (sem dia exclusivo e sem repetição consecutiva)
+    const jaTemExtra = gruposDia.includes("abdomen") || gruposDia.includes("lombar");
+    if (!jaTemExtra && gruposDia.length > 0) {
+      const proximoExtra = extrasPossiveis.find((extra) => extra !== ultimoExtra);
+      if (proximoExtra) {
+        const listaExtra = TreinoEngine.gerarTreino({
+          grupoMuscular: proximoExtra,
+          nivel,
+          equipamentos,
+          objetivo
+        });
 
-      treinoDia.push({
-        grupo: "abdomen",
-        exercicios: treinoAbdomen
-      });
-
-      abdomenUsado++;
+        if (Array.isArray(listaExtra) && listaExtra.length > 0) {
+          exerciciosDia.push({
+            grupo: proximoExtra,
+            lista: listaExtra
+          });
+          ultimoExtra = proximoExtra;
+        }
+      }
     }
 
+    // 3. Agregar os exercícios por dia
     semana.push({
-      dia: `Dia ${dia.dia}`,
-      grupos: dia.grupos,
-      treino: treinoDia
+      dia: `Dia ${diaInfo?.dia ?? index + 1}`,
+      grupos: gruposDia,
+      exercicios: exerciciosDia
     });
   });
 
-  console.log("📆 SEMANA GERADA:", semana);
+  // Fallback obrigatório: nunca retornar estrutura vazia
+  if (semana.length === 0) {
+    return [
+      {
+        dia: "Dia 1",
+        grupos: [],
+        exercicios: []
+      }
+    ];
+  }
+
   return semana;
 }
 
