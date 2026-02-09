@@ -302,6 +302,11 @@ textarea {
     🖨️ Imprimir / Salvar em PDF
   </button>
 </div>
+<div style="text-align:right; margin-bottom:10px;">
+  <button type="button" class="button" onclick="exportarDados()">⬇️ Exportar</button>
+  <button type="button" class="button" onclick="document.getElementById('importarArquivo').click()">⬆️ Carregar</button>
+  <input id="importarArquivo" type="file" accept="application/json" style="display:none" onchange="importarDados(this.files[0])">
+</div>
 
 <!-- ================= IDENTIFICAÇÃO ================= -->
 <div class="section">
@@ -346,7 +351,7 @@ textarea {
 <div class="section">
   <h2>Observações Importantes</h2>
 
-  <textarea rows="4" oninput="syncPrint(this)"></textarea>
+  <textarea id="observacoesImportantes" rows="4" oninput="syncPrint(this)"></textarea>
   <div class="print-text"></div>
 </div>
 
@@ -354,7 +359,7 @@ textarea {
 <div class="section">
   <h2>Suplementação</h2>
 
-  <textarea rows="2" oninput="syncPrint(this)"></textarea>
+  <textarea id="suplementacao" rows="2" oninput="syncPrint(this)"></textarea>
   <div class="print-text"></div>
 </div>
 
@@ -382,7 +387,7 @@ textarea {
 <div class="section">
   <h3>Abdominais</h3>
   
-  <textarea rows="2" oninput="syncPrint(this)"></textarea>
+  <textarea id="abdominais" rows="2" oninput="syncPrint(this)"></textarea>
   <div class="print-text"></div>
 </div>
 
@@ -390,7 +395,7 @@ textarea {
 <div class="section">
   <h3>Cardio</h3>
   
-  <textarea rows="2" oninput="syncPrint(this)"></textarea>
+  <textarea id="cardio" rows="2" oninput="syncPrint(this)"></textarea>
   <div class="print-text"></div>
 </div>
 
@@ -398,7 +403,7 @@ textarea {
 <div class="section">
   <h2>Observação Extra</h2>
   
-  <textarea rows="4" oninput="syncPrint(this)"></textarea>
+  <textarea id="observacaoExtra" rows="4" oninput="syncPrint(this)"></textarea>
   <div class="print-text"></div>
 </div>
 
@@ -473,6 +478,97 @@ function syncAllPrintTexts() {
   document.querySelectorAll("textarea").forEach(textarea => {
     syncPrint(textarea);
   });
+}
+
+function exportarDados() {
+  const dados = {
+    clienteNome: document.getElementById("clienteNome").value,
+    fichaNome: document.getElementById("fichaNome").value,
+    tipoPlano: document.getElementById("tipoPlano").value,
+    observacoesImportantes: document.getElementById("observacoesImportantes").value,
+    suplementacao: document.getElementById("suplementacao").value,
+    abdominais: document.getElementById("abdominais").value,
+    cardio: document.getElementById("cardio").value,
+    observacaoExtra: document.getElementById("observacaoExtra").value,
+    planoAlimentar: Array.from(document.querySelectorAll("#refeicoes tr")).map(tr => ({
+      refeicao: tr.querySelector("select")?.value || "",
+      dieta: tr.children[1]?.querySelector("textarea")?.value || "",
+      observacoes: tr.children[2]?.querySelector("textarea")?.value || ""
+    })),
+    planoTreino: Array.from(document.querySelectorAll("#treino-body tr")).map(tr => ({
+      dia: tr.children[0]?.textContent?.trim() || "",
+      descricao: tr.children[1]?.querySelector("textarea")?.value || "",
+      observacao: tr.children[2]?.querySelector("textarea")?.value || ""
+    }))
+  };
+
+  const nomeBase = (dados.fichaNome || "ficha").trim() || "ficha";
+  const arquivo = `${nomeBase}.json`;
+  const blob = new Blob([JSON.stringify(dados, null, 2)], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = arquivo;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(link.href);
+}
+
+function importarDados(arquivo) {
+  if (!arquivo) return;
+  const leitor = new FileReader();
+  leitor.onload = () => {
+    const dados = JSON.parse(leitor.result);
+    document.getElementById("clienteNome").value = dados.clienteNome || "";
+    document.getElementById("fichaNome").value = dados.fichaNome || "";
+    document.getElementById("tipoPlano").value = dados.tipoPlano || "Inicial";
+    document.getElementById("observacoesImportantes").value = dados.observacoesImportantes || "";
+    document.getElementById("suplementacao").value = dados.suplementacao || "";
+    document.getElementById("abdominais").value = dados.abdominais || "";
+    document.getElementById("cardio").value = dados.cardio || "";
+    document.getElementById("observacaoExtra").value = dados.observacaoExtra || "";
+
+    const refeicoesBody = document.getElementById("refeicoes");
+    refeicoesBody.innerHTML = "";
+    (dados.planoAlimentar || []).forEach(item => {
+      addRefeicao();
+      const tr = refeicoesBody.lastElementChild;
+      if (!tr) return;
+      const select = tr.querySelector("select");
+      const dieta = tr.children[1]?.querySelector("textarea");
+      const obs = tr.children[2]?.querySelector("textarea");
+      if (select) select.value = item.refeicao || "";
+      if (dieta) {
+        dieta.value = item.dieta || "";
+        autoResize(dieta);
+      }
+      if (obs) {
+        obs.value = item.observacoes || "";
+        autoResize(obs);
+      }
+    });
+
+    const treinoBody = document.getElementById("treino-body");
+    treinoBody.innerHTML = "";
+    (dados.planoTreino || []).forEach(item => {
+      adicionarTreino();
+      const tr = treinoBody.lastElementChild;
+      if (!tr) return;
+      const descricao = tr.children[1]?.querySelector("textarea");
+      const observacao = tr.children[2]?.querySelector("textarea");
+      if (descricao) {
+        descricao.value = item.descricao || "";
+        autoResize(descricao);
+      }
+      if (observacao) {
+        observacao.value = item.observacao || "";
+        autoResize(observacao);
+      }
+    });
+
+    syncAllPrintTexts();
+  };
+  leitor.readAsText(arquivo);
 }
 
 /* ================= AUTO RESIZE (ÚNICO) ================= */
