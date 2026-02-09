@@ -3,85 +3,111 @@
    Mensagens instrucionais e motivacionais
    ================================ */
 
-const mensagensDB = {
+const OBJETIVOS = {
   hipertrofia: {
-    AB: {
-      iniciante:
-        "Este treino em divisão AB foi estruturado para distribuir o volume semanal de forma equilibrada, permitindo adaptação progressiva e recuperação adequada. Concentre-se na execução correta e na progressão gradual das cargas.",
-      intermediario:
-        "A divisão AB permite maior foco por sessão, mantendo boa frequência semanal. Priorize intensidade controlada, boa técnica e consistência ao longo das semanas.",
-      avancado:
-        "Neste modelo AB, o foco está na intensidade e na qualidade do estímulo. Trabalhe próximo da falha de forma consciente e respeite os intervalos de descanso."
-    },
-
-    ABC: {
-      iniciante:
-        "A divisão ABC é ideal para organizar o treino em blocos claros, facilitando a recuperação muscular. Execute os exercícios com atenção à técnica e mantenha regularidade semanal.",
-      intermediario:
-        "Neste treino ABC, o volume é distribuído para maximizar hipertrofia com recuperação adequada. Busque progressão de cargas e controle de execução.",
-      avancado:
-        "A divisão ABC permite alto foco muscular por sessão. Ajuste cargas, intensidade e descanso de forma estratégica para otimizar os resultados."
-    },
-
-    ABCD: {
-      iniciante:
-        "A divisão ABCD aumenta o foco por grupo muscular, mantendo o volume semanal sob controle. Ideal para evolução gradual com sessões bem direcionadas.",
-      intermediario:
-        "Neste modelo ABCD, cada grupo muscular recebe atenção específica. Trabalhe com intensidade moderada a alta e acompanhe sua recuperação.",
-      avancado:
-        "A divisão ABCD é indicada para alto nível de controle de volume e intensidade. Priorize estímulos eficientes, técnica refinada e recuperação."
-    }
+    introducao:
+      "Este plano foi estruturado para estimular o desenvolvimento muscular com organização e consistência.",
+    orientacoes:
+      "Priorize a execução controlada, respeite a recuperação entre sessões e acompanhe sua evolução de forma progressiva."
   },
-
   emagrecimento: {
-    AB: {
-      iniciante:
-        "Este treino AB foi estruturado para estimular grandes grupos musculares, aumentando o gasto energético. Mantenha ritmo constante e atenção aos descansos.",
-      intermediario:
-        "A divisão AB permite sessões mais intensas e eficientes para emagrecimento. Controle os intervalos e mantenha foco na execução.",
-      avancado:
-        "Neste modelo AB, o objetivo é maximizar o gasto calórico com intensidade e eficiência. Trabalhe com foco e constância."
-    },
-
-    ABC: {
-      iniciante:
-        "A divisão ABC ajuda a manter regularidade e equilíbrio no treino, favorecendo a queima calórica e a adaptação gradual.",
-      intermediario:
-        "Este treino ABC permite boa combinação entre intensidade e recuperação, otimizando o processo de emagrecimento.",
-      avancado:
-        "No modelo ABC, mantenha intensidade elevada, controle de descanso e foco na qualidade do movimento."
-    }
+    introducao:
+      "Este plano foi pensado para favorecer o condicionamento e o gasto energético de forma sustentável.",
+    orientacoes:
+      "Mantenha um ritmo estável, cuide da postura durante os movimentos e preserve a regularidade semanal."
   },
-
   condicionamento: {
-    ABC: {
-      iniciante:
-        "Este treino foi estruturado para melhorar o condicionamento geral, respeitando a adaptação do corpo ao esforço físico.",
-      intermediario:
-        "A divisão ABC favorece evolução gradual do condicionamento. Trabalhe com atenção ao ritmo e à recuperação.",
-      avancado:
-        "Neste modelo ABC, o foco está na performance e resistência. Ajuste intensidade e volume conforme sua capacidade."
-    }
+    introducao:
+      "Este plano foi desenhado para melhorar resistência e capacidade funcional ao longo das semanas.",
+    orientacoes:
+      "Ajuste o ritmo conforme sua adaptação, priorize a técnica e valorize a recuperação."
   }
 };
+
+const NIVEIS = {
+  iniciante:
+    "Comece com foco em aprender o movimento, criando uma base sólida antes de evoluir.",
+  intermediario:
+    "Mantenha constância e atenção aos sinais do corpo para seguir avançando com segurança.",
+  avancado:
+    "Ajuste intensidade e volume com responsabilidade para sustentar performance e evolução."
+};
+
+const DIVISOES = {
+  AB: "A divisão AB concentra grupos musculares em sessões equilibradas.",
+  ABC: "A divisão ABC distribui o treino em três blocos bem definidos.",
+  ABCD: "A divisão ABCD amplia o foco por sessão e favorece organização semanal.",
+  ABCDE: "A divisão ABCDE maximiza o foco por sessão com alta especificidade.",
+  FULLBODY: "O modelo fullbody trabalha o corpo de forma integrada em cada sessão."
+};
+
+/* ================================
+   UTILITÁRIOS
+   ================================ */
+
+function normalizarTexto(valor) {
+  if (!valor) {
+    return "";
+  }
+  return String(valor).trim();
+}
+
+function normalizarChave(valor) {
+  return normalizarTexto(valor).toLowerCase();
+}
+
+function obterDivisaoTexto(divisao) {
+  const chave = normalizarTexto(divisao).toUpperCase();
+  return DIVISOES[chave] || "A divisão escolhida organiza o treino ao longo da semana.";
+}
+
+function obterObjetivo(chave) {
+  return OBJETIVOS[chave] || {
+    introducao:
+      "Este plano foi organizado para apoiar sua evolução com consistência e segurança.",
+    orientacoes:
+      "Mantenha a boa execução, respeite a recuperação e acompanhe seu progresso."
+  };
+}
+
+function obterNivel(chave) {
+  return NIVEIS[chave] || "Mantenha foco, disciplina e progressão gradual ao longo do tempo.";
+}
+
+function obterFrequenciaTexto(frequenciaSemanal) {
+  if (Number.isFinite(frequenciaSemanal) && frequenciaSemanal > 0) {
+    return `A frequência semanal prevista é de ${frequenciaSemanal} sessão${frequenciaSemanal > 1 ? "ões" : ""}.`;
+  }
+  return "A frequência semanal será ajustada conforme sua rotina e disponibilidade.";
+}
 
 /* ================================
    GERADOR DE MENSAGEM
    ================================ */
 
-function gerarMensagem(config) {
-  const { objetivo, divisor, nivel } = config;
+function gerarMensagem(input) {
+  const { objetivo, divisao, nivel, frequenciaSemanal } = input || {};
 
-  return (
-    mensagensDB?.[objetivo]?.[divisor]?.[nivel] ||
-    "Siga o treino com foco, respeite os intervalos de descanso e mantenha consistência ao longo das semanas. A disciplina é fundamental para alcançar bons resultados."
-  );
+  const objetivoChave = normalizarChave(objetivo);
+  const nivelChave = normalizarChave(nivel);
+
+  const objetivoTexto = obterObjetivo(objetivoChave);
+  const nivelTexto = obterNivel(nivelChave);
+  const divisaoTexto = obterDivisaoTexto(divisao);
+  const frequenciaTexto = obterFrequenciaTexto(frequenciaSemanal);
+
+  return {
+    introducao: `${objetivoTexto.introducao} ${divisaoTexto}`.trim(),
+    orientacoesGerais: `${objetivoTexto.orientacoes} ${frequenciaTexto}`.trim(),
+    mensagemMotivacional:
+      `Continue com constância e atenção à qualidade do treino. ${nivelTexto}`.trim()
+  };
 }
 
 /* ================================
    API GLOBAL
    ================================ */
 
-window.MensagemEngine = {
+window.MensagensEngine = {
   gerarMensagem
 };
