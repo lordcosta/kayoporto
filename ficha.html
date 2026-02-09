@@ -306,6 +306,7 @@ textarea {
 
   .print-only-large {
     font-size: 14px;
+    font-weight: 700;
   }
 
 }
@@ -355,9 +356,9 @@ textarea {
   <input id="clienteTelefone" class="hide-on-print" placeholder="Telefone" oninput="mascararTelefone(this)">
   <div class="section-spacer"></div>
 
-  <label>Data</label>
+  <label class="hide-on-print">Data</label>
   <input id="dataPlano" class="hide-on-print" type="date" oninput="atualizarDataImpressao()">
-  <div class="section-spacer"></div>
+  <div class="section-spacer hide-on-print"></div>
 
   <label>Tipo de Plano</label>
   <select id="tipoPlano">
@@ -367,7 +368,7 @@ textarea {
   </select>
 </div>
 
-<div class="section">
+<div class="section hide-on-print">
   <label><strong>Nome da ficha</strong></label>
   <input id="fichaNome" placeholder="Ex: joao, maria, fernando">
 </div>
