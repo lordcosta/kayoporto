@@ -91,6 +91,71 @@ button:hover {
   gap: .8rem;
 }
 
+.treino-accordion {
+  display: grid;
+  gap: .8rem;
+}
+
+.dia-card {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(212,175,55,.2);
+  background: #0f1426;
+}
+
+.dia-header {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: var(--text);
+  padding: .9rem 1rem;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.dia-header span {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.dia-toggle {
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+.dia-content {
+  display: none;
+  padding: 0 1rem 1rem;
+  border-top: 1px solid rgba(255,255,255,.05);
+}
+
+.dia-content.is-open {
+  display: grid;
+  gap: .9rem;
+}
+
+.grupo-bloco {
+  background: #151b2d;
+  border-radius: 8px;
+  padding: .8rem 1rem;
+}
+
+.grupo-bloco h3 {
+  margin: 0 0 .6rem;
+  font-size: .9rem;
+  color: var(--gold);
+}
+
+.exercicios-lista {
+  display: grid;
+  gap: .6rem;
+}
+
 .exercicio {
   background: #0f1426;
   border-radius: 8px;
@@ -187,11 +252,11 @@ footer {
   Engine LORDCosta · Projeto Kayo Porto
 </footer>
 
-<!-- ENGINE -->
-<script src="../engine/treinoEngine.js"></script>
-<script src="../engine/divisorEngine.js"></script>
-<script src="../engine/semanaEngine.js"></script>
-<script src="../engine/mensagensEngine.js"></script>
+<!-- ENGINE: caminhos relativos e módulos para GitHub Pages -->
+<script type="module" src="./engine/treinoEngine.js"></script>
+<script type="module" src="./engine/divisorEngine.js"></script>
+<script type="module" src="./engine/semanaEngine.js"></script>
+<script type="module" src="./engine/mensagensEngine.js"></script>
 
 <script>
 async function gerar() {
@@ -240,21 +305,61 @@ async function gerar() {
   const container = document.getElementById("resultado-treino");
   container.innerHTML = "";
 
-  (resultadoFinal.semana || []).forEach((dia) => {
-    const blocoDia = document.createElement("div");
-    blocoDia.className = "exercicio";
+  const accordion = document.createElement("div");
+  accordion.className = "treino-accordion";
+  container.appendChild(accordion);
 
-    const grupos = Array.isArray(dia.grupos) ? dia.grupos.join(", ") : "";
-    blocoDia.innerHTML = `
-      <div class="ordem">${dia.dia}</div>
-      <div>
-        <div class="nome">${grupos}</div>
-      </div>
+  const dias = resultadoFinal.semana || [];
+
+  // Accordion: somente um dia aberto por vez.
+  const atualizarAccordion = (indiceAberto) => {
+    Array.from(accordion.children).forEach((card, index) => {
+      const conteudo = card.querySelector(".dia-content");
+      const botao = card.querySelector(".dia-header");
+      const aberto = index === indiceAberto;
+
+      conteudo.classList.toggle("is-open", aberto);
+      botao.setAttribute("aria-expanded", aberto);
+      botao.querySelector(".dia-toggle").textContent = aberto ? "Fechar" : "Abrir";
+    });
+  };
+
+  dias.forEach((dia, index) => {
+    const card = document.createElement("div");
+    card.className = "dia-card";
+
+    const gruposTexto = Array.isArray(dia.grupos) ? dia.grupos.join(" + ") : "";
+    const tituloDia = gruposTexto
+      ? `Dia ${dia.dia} — ${gruposTexto}`
+      : `Dia ${dia.dia}`;
+
+    const header = document.createElement("button");
+    header.type = "button";
+    header.className = "dia-header";
+    header.setAttribute("aria-expanded", "false");
+    header.innerHTML = `
+      <span>${tituloDia}</span>
+      <span class="dia-toggle">Abrir</span>
     `;
 
-    container.appendChild(blocoDia);
+    const content = document.createElement("div");
+    content.className = "dia-content";
 
+    // Renderizar grupos e exercícios dentro do dia.
     (dia.exercicios || []).forEach((grupoInfo) => {
+      const grupoBloco = document.createElement("div");
+      grupoBloco.className = "grupo-bloco";
+
+      const nomeGrupo =
+        grupoInfo?.grupo ||
+        grupoInfo?.nome ||
+        grupoInfo?.titulo ||
+        "Grupo";
+      grupoBloco.innerHTML = `<h3>${nomeGrupo}</h3>`;
+
+      const lista = document.createElement("div");
+      lista.className = "exercicios-lista";
+
       (grupoInfo.lista || []).forEach((item) => {
         const div = document.createElement("div");
         div.className = "exercicio";
@@ -267,10 +372,24 @@ async function gerar() {
             </div>
           </div>
         `;
-        container.appendChild(div);
+        lista.appendChild(div);
       });
+
+      grupoBloco.appendChild(lista);
+      content.appendChild(grupoBloco);
     });
+
+    header.addEventListener("click", () => atualizarAccordion(index));
+
+    card.appendChild(header);
+    card.appendChild(content);
+    accordion.appendChild(card);
   });
+
+  // Abrir somente o primeiro dia por padrão.
+  if (dias.length > 0) {
+    atualizarAccordion(0);
+  }
 }
 </script>
 
