@@ -4,7 +4,10 @@
    TORETTO MODE™
    ================================ */
 
-const DATA_PATH = "/data/";
+// Resolver JSONs via import.meta.url para funcionar em subpastas (GitHub Pages).
+const DATA_BASE_URL = new URL("../data/", import.meta.url);
+const EXERCICIOS_URL = new URL("exercicios.json", DATA_BASE_URL);
+const REGRAS_URL = new URL("regras.json", DATA_BASE_URL);
 const NIVEL_ORDEM = ["iniciante", "intermediario", "avancado"];
 
 let exerciciosDB = {};
@@ -16,8 +19,8 @@ let regrasDB = {};
 
 async function init() {
   const [exRes, regrasRes] = await Promise.all([
-    fetch(`${DATA_PATH}exercicios.json`),
-    fetch(`${DATA_PATH}regras.json`)
+    fetch(EXERCICIOS_URL),
+    fetch(REGRAS_URL)
   ]);
 
   exerciciosDB = await exRes.json();
