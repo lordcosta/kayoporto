@@ -88,6 +88,17 @@ body {
   display: none;
 }
 
+.identificacao-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ficha-print {
+  font-style: italic;
+}
+
 /* ================= SEÇÕES ================= */
 .section {
   margin-bottom: 16px;
@@ -293,6 +304,10 @@ textarea {
     line-height: 1.3;
   }
 
+  .print-only-large {
+    font-size: 14px;
+  }
+
 }
 
 </style>
@@ -327,18 +342,17 @@ textarea {
 
 <!-- ================= IDENTIFICAÇÃO ================= -->
 <div class="section">
-  <h2>Identificação - Ficha: <span id="fichaTitulo"></span></h2>
+  <div class="identificacao-header">
+    <h2>Identificação</h2>
+    <span class="ficha-print" id="fichaTitulo"></span>
+  </div>
 
-  <div class="print-only" id="printNomeTelefone"></div>
+  <div class="print-only print-only-large" id="printNomeTelefone"></div>
 
   <input id="clienteNome" class="hide-on-print" placeholder="Nome do Cliente">
   <div class="section-spacer"></div>
 
-  <input id="clienteTelefone" class="hide-on-print" placeholder="Telefone">
-  <div class="section-spacer"></div>
-
-  <label><strong>Nome da ficha</strong></label>
-  <input id="fichaNome" placeholder="Ex: joao, maria, fernando">
+  <input id="clienteTelefone" class="hide-on-print" placeholder="Telefone" oninput="mascararTelefone(this)">
   <div class="section-spacer"></div>
 
   <label>Data</label>
@@ -351,6 +365,11 @@ textarea {
     <option>Intermediário</option>
     <option>Avançado</option>
   </select>
+</div>
+
+<div class="section">
+  <label><strong>Nome da ficha</strong></label>
+  <input id="fichaNome" placeholder="Ex: joao, maria, fernando">
 </div>
 
 <div class="section-spacer"></div>
@@ -513,18 +532,35 @@ function atualizarIdentificacao() {
   const ficha = document.getElementById("fichaNome").value.trim();
   const destinoNome = document.getElementById("printNomeTelefone");
   const destinoFicha = document.getElementById("fichaTitulo");
+  const telefoneFormatado = formatarTelefone(telefone);
 
   if (destinoNome) {
     if (nome && telefone) {
-      destinoNome.textContent = `${nome}   -   ${telefone}`;
+      destinoNome.textContent = `${nome}   -   ${telefoneFormatado}`;
     } else {
-      destinoNome.textContent = nome || telefone;
+      destinoNome.textContent = nome || telefoneFormatado;
     }
   }
 
   if (destinoFicha) {
-    destinoFicha.textContent = ficha ? ficha : "";
+    destinoFicha.textContent = ficha ? `Ficha: (${ficha})` : "";
   }
+}
+
+function formatarTelefone(valor) {
+  const numeros = valor.replace(/\D/g, "");
+  if (!numeros) return "";
+  if (numeros.length <= 2) return `(${numeros}`;
+  if (numeros.length <= 6) return `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+  if (numeros.length <= 10) {
+    return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 6)}-${numeros.slice(6, 10)}`;
+  }
+  return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7, 11)}`;
+}
+
+function mascararTelefone(campo) {
+  if (!campo) return;
+  campo.value = formatarTelefone(campo.value);
 }
 
 function atualizarDataImpressao() {
@@ -589,7 +625,7 @@ function importarDados(arquivo) {
   leitor.onload = () => {
     const dados = JSON.parse(leitor.result);
     document.getElementById("clienteNome").value = dados.clienteNome || "";
-    document.getElementById("clienteTelefone").value = dados.clienteTelefone || "";
+    document.getElementById("clienteTelefone").value = formatarTelefone(dados.clienteTelefone || "");
     document.getElementById("fichaNome").value = dados.fichaNome || "";
     document.getElementById("dataPlano").value = dados.dataPlano || "";
     document.getElementById("tipoPlano").value = dados.tipoPlano || "Inicial";
