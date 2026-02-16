@@ -86,6 +86,40 @@ button:hover {
   filter: brightness(1.05);
 }
 
+.equipamentos-field {
+  display: grid;
+  gap: .45rem;
+}
+
+.equipamentos-label {
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+.equipamentos-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+}
+
+.chip-equipamento {
+  width: auto;
+  border: 1px solid rgba(255,255,255,.15);
+  background: #1b233b;
+  color: var(--text);
+  border-radius: 999px;
+  padding: .45rem .8rem;
+  font-size: .82rem;
+  font-weight: 600;
+  transition: border-color .2s ease, background .2s ease, color .2s ease;
+}
+
+.chip-equipamento.is-active {
+  background: rgba(212,175,55,.2);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
 #resultado-treino {
   display: grid;
   gap: .8rem;
@@ -271,13 +305,16 @@ footer {
         <option value="resistencia">Resistência</option>
       </select>
 
-      <select id="equipamentos" multiple>
-        <option value="barra">Barra</option>
-        <option value="halter">Halter</option>
-        <option value="maquina">Máquina</option>
-        <option value="cabo">Cabo</option>
-        <option value="peso_corporal">Peso corporal</option>
-      </select>
+      <div class="equipamentos-field">
+        <span class="equipamentos-label">Equipamentos</span>
+        <div id="equipamentos" class="equipamentos-chips" role="group" aria-label="Seleção de equipamentos">
+          <button type="button" class="chip-equipamento" data-equipamento="barra" aria-pressed="false">Barra</button>
+          <button type="button" class="chip-equipamento" data-equipamento="halter" aria-pressed="false">Halter</button>
+          <button type="button" class="chip-equipamento" data-equipamento="maquina" aria-pressed="false">Máquina</button>
+          <button type="button" class="chip-equipamento" data-equipamento="cabo" aria-pressed="false">Cabo</button>
+          <button type="button" class="chip-equipamento" data-equipamento="peso_corporal" aria-pressed="false">Peso corporal</button>
+        </div>
+      </div>
 
       <button onclick="gerar()">🔥 Gerar Treino</button>
     </div>
@@ -303,6 +340,30 @@ footer {
 <script>
 let treinoEditado = null;
 let indiceDiaAberto = 0;
+let equipamentosSelecionados = [];
+
+function alternarEquipamento(equipamento, botao) {
+  const index = equipamentosSelecionados.indexOf(equipamento);
+  if (index >= 0) {
+    equipamentosSelecionados.splice(index, 1);
+  } else {
+    equipamentosSelecionados.push(equipamento);
+  }
+
+  const ativo = equipamentosSelecionados.includes(equipamento);
+  botao.classList.toggle("is-active", ativo);
+  botao.setAttribute("aria-pressed", ativo);
+}
+
+function iniciarSelecaoEquipamentos() {
+  const chips = document.querySelectorAll(".chip-equipamento");
+  chips.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      const equipamento = chip.dataset.equipamento;
+      alternarEquipamento(equipamento, chip);
+    });
+  });
+}
 
 function normalizarTreinoParaEdicao(semana) {
   return (semana || []).map((dia) => ({
@@ -498,9 +559,7 @@ async function gerar() {
   const divisao = document.getElementById("grupo").value;
   const nivel = document.getElementById("nivel").value;
   const objetivo = document.getElementById("objetivo").value;
-  const equipamentos = Array.from(
-    document.getElementById("equipamentos").selectedOptions
-  ).map((o) => o.value);
+  const equipamentos = [...equipamentosSelecionados];
 
   // 1-3: orquestrar a semana completa
   const semana = await SemanaEngine.gerarSemana({
@@ -542,6 +601,8 @@ async function gerar() {
   indiceDiaAberto = 0;
   renderTreino();
 }
+
+iniciarSelecaoEquipamentos();
 </script>
 
 </body>
