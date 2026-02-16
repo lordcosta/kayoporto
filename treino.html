@@ -161,17 +161,10 @@ button:hover {
   border-radius: 8px;
   padding: .8rem 1rem;
   display: grid;
-  grid-template-columns: 40px 1fr;
+  grid-template-columns: 1fr auto;
   gap: .8rem;
-  align-items: center;
+  align-items: start;
   border-left: 3px solid var(--gold);
-}
-
-.exercicio .ordem {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--gold);
-  text-align: center;
 }
 
 .exercicio .nome {
@@ -179,6 +172,55 @@ button:hover {
 }
 
 .exercicio .detalhes {
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+.exercicio-acoes {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+}
+
+.btn-secundario {
+  width: auto;
+  background: #26304f;
+  color: var(--text);
+  padding: .4rem .6rem;
+  font-size: .75rem;
+}
+
+.btn-perigo {
+  width: auto;
+  background: #4d1f2a;
+  color: #ffdfe5;
+  padding: .4rem .6rem;
+  font-size: .75rem;
+}
+
+.edicao-grid {
+  margin-top: .6rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: .5rem;
+}
+
+.edicao-grid label {
+  display: grid;
+  gap: .25rem;
+  font-size: .75rem;
+  color: var(--muted);
+}
+
+.edicao-grid input {
+  background: #1f2640;
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 6px;
+  padding: .45rem .55rem;
+}
+
+.sem-exercicios {
   font-size: .8rem;
   color: var(--muted);
 }
@@ -259,6 +301,199 @@ footer {
 <script type="module" src="./engine/mensagensEngine.js"></script>
 
 <script>
+let treinoEditado = null;
+let indiceDiaAberto = 0;
+
+function normalizarTreinoParaEdicao(semana) {
+  return (semana || []).map((dia) => ({
+    ...dia,
+    exercicios: (dia.exercicios || []).map((grupoInfo) => ({
+      ...grupoInfo,
+      lista: (grupoInfo.lista || []).map((item) => ({
+        ...item,
+        carga: item.carga || "",
+        _editando: false
+      }))
+    }))
+  }));
+}
+
+function atualizarAccordion() {
+  const cards = document.querySelectorAll(".dia-card");
+  cards.forEach((card, index) => {
+    const conteudo = card.querySelector(".dia-content");
+    const botao = card.querySelector(".dia-header");
+    const aberto = index === indiceDiaAberto;
+
+    conteudo.classList.toggle("is-open", aberto);
+    botao.setAttribute("aria-expanded", aberto);
+    botao.querySelector(".dia-toggle").textContent = aberto ? "Fechar" : "Abrir";
+  });
+}
+
+function atualizarCampoExercicio(diaIndex, grupoIndex, exercicioIndex, campo, valor) {
+  const exercicio = treinoEditado?.[diaIndex]?.exercicios?.[grupoIndex]?.lista?.[exercicioIndex];
+  if (!exercicio) {
+    return;
+  }
+  exercicio[campo] = valor;
+}
+
+function alternarEdicaoExercicio(diaIndex, grupoIndex, exercicioIndex, aberto) {
+  const exercicio = treinoEditado?.[diaIndex]?.exercicios?.[grupoIndex]?.lista?.[exercicioIndex];
+  if (!exercicio) {
+    return;
+  }
+  exercicio._editando = aberto;
+  renderTreino();
+}
+
+function removerExercicio(diaIndex, grupoIndex, exercicioIndex) {
+  const lista = treinoEditado?.[diaIndex]?.exercicios?.[grupoIndex]?.lista;
+  if (!Array.isArray(lista)) {
+    return;
+  }
+  lista.splice(exercicioIndex, 1);
+  renderTreino();
+}
+
+function renderTreino() {
+  const container = document.getElementById("resultado-treino");
+  container.innerHTML = "";
+
+  const accordion = document.createElement("div");
+  accordion.className = "treino-accordion";
+  container.appendChild(accordion);
+
+  const dias = treinoEditado || [];
+
+  dias.forEach((dia, diaIndex) => {
+    const card = document.createElement("div");
+    card.className = "dia-card";
+
+    const gruposTexto = Array.isArray(dia.grupos) ? dia.grupos.join(" + ") : "";
+    const tituloDia = gruposTexto ? `Dia ${dia.dia} — ${gruposTexto}` : `Dia ${dia.dia}`;
+
+    const header = document.createElement("button");
+    header.type = "button";
+    header.className = "dia-header";
+    header.setAttribute("aria-expanded", "false");
+    header.innerHTML = `
+      <span>${tituloDia}</span>
+      <span class="dia-toggle">Abrir</span>
+    `;
+    header.addEventListener("click", () => {
+      indiceDiaAberto = diaIndex;
+      atualizarAccordion();
+    });
+
+    const content = document.createElement("div");
+    content.className = "dia-content";
+
+    (dia.exercicios || []).forEach((grupoInfo, grupoIndex) => {
+      const grupoBloco = document.createElement("div");
+      grupoBloco.className = "grupo-bloco";
+
+      const nomeGrupo = grupoInfo?.grupo || grupoInfo?.nome || grupoInfo?.titulo || "Grupo";
+      grupoBloco.innerHTML = `<h3>${nomeGrupo}</h3>`;
+
+      const lista = document.createElement("div");
+      lista.className = "exercicios-lista";
+
+      const exercicios = grupoInfo.lista || [];
+      if (exercicios.length === 0) {
+        const vazio = document.createElement("div");
+        vazio.className = "sem-exercicios";
+        vazio.textContent = "Nenhum exercício neste grupo.";
+        lista.appendChild(vazio);
+      }
+
+      exercicios.forEach((item, exercicioIndex) => {
+        const div = document.createElement("div");
+        div.className = "exercicio";
+
+        const corpo = document.createElement("div");
+        const cargaTexto = item.carga ? ` · carga ${item.carga}` : "";
+        corpo.innerHTML = `
+          <div class="nome">${item.nome}</div>
+          <div class="detalhes">${item.series} séries · ${item.repeticoes} reps · descanso ${item.descanso}${cargaTexto}</div>
+        `;
+
+        const acoes = document.createElement("div");
+        acoes.className = "exercicio-acoes";
+
+        const botaoEditar = document.createElement("button");
+        botaoEditar.type = "button";
+        botaoEditar.className = "btn-secundario";
+        botaoEditar.textContent = item._editando ? "Salvar" : "Editar";
+        botaoEditar.addEventListener("click", () => {
+          alternarEdicaoExercicio(diaIndex, grupoIndex, exercicioIndex, !item._editando);
+        });
+
+        const botaoRemover = document.createElement("button");
+        botaoRemover.type = "button";
+        botaoRemover.className = "btn-perigo";
+        botaoRemover.textContent = "Remover";
+        botaoRemover.addEventListener("click", () => {
+          removerExercicio(diaIndex, grupoIndex, exercicioIndex);
+        });
+
+        acoes.appendChild(botaoEditar);
+        acoes.appendChild(botaoRemover);
+        div.appendChild(corpo);
+        div.appendChild(acoes);
+
+        if (item._editando) {
+          const edicao = document.createElement("div");
+          edicao.className = "edicao-grid";
+
+          const campos = [
+            { chave: "series", rotulo: "Séries" },
+            { chave: "repeticoes", rotulo: "Repetições" },
+            { chave: "descanso", rotulo: "Descanso" },
+            { chave: "carga", rotulo: "Carga (opcional)" }
+          ];
+
+          campos.forEach(({ chave, rotulo }) => {
+            const label = document.createElement("label");
+            label.textContent = rotulo;
+
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = item[chave] || "";
+            input.addEventListener("input", (evento) => {
+              atualizarCampoExercicio(
+                diaIndex,
+                grupoIndex,
+                exercicioIndex,
+                chave,
+                evento.target.value
+              );
+            });
+
+            label.appendChild(input);
+            edicao.appendChild(label);
+          });
+
+          corpo.appendChild(edicao);
+        }
+
+        lista.appendChild(div);
+      });
+
+      grupoBloco.appendChild(lista);
+      content.appendChild(grupoBloco);
+    });
+
+    card.appendChild(header);
+    card.appendChild(content);
+    accordion.appendChild(card);
+  });
+
+  indiceDiaAberto = Math.min(indiceDiaAberto, Math.max(dias.length - 1, 0));
+  atualizarAccordion();
+}
+
 async function gerar() {
   const divisao = document.getElementById("grupo").value;
   const nivel = document.getElementById("nivel").value;
@@ -302,94 +537,10 @@ async function gerar() {
     mensagens
   };
 
-  const container = document.getElementById("resultado-treino");
-  container.innerHTML = "";
-
-  const accordion = document.createElement("div");
-  accordion.className = "treino-accordion";
-  container.appendChild(accordion);
-
-  const dias = resultadoFinal.semana || [];
-
-  // Accordion: somente um dia aberto por vez.
-  const atualizarAccordion = (indiceAberto) => {
-    Array.from(accordion.children).forEach((card, index) => {
-      const conteudo = card.querySelector(".dia-content");
-      const botao = card.querySelector(".dia-header");
-      const aberto = index === indiceAberto;
-
-      conteudo.classList.toggle("is-open", aberto);
-      botao.setAttribute("aria-expanded", aberto);
-      botao.querySelector(".dia-toggle").textContent = aberto ? "Fechar" : "Abrir";
-    });
-  };
-
-  dias.forEach((dia, index) => {
-    const card = document.createElement("div");
-    card.className = "dia-card";
-
-    const gruposTexto = Array.isArray(dia.grupos) ? dia.grupos.join(" + ") : "";
-    const tituloDia = gruposTexto
-      ? `Dia ${dia.dia} — ${gruposTexto}`
-      : `Dia ${dia.dia}`;
-
-    const header = document.createElement("button");
-    header.type = "button";
-    header.className = "dia-header";
-    header.setAttribute("aria-expanded", "false");
-    header.innerHTML = `
-      <span>${tituloDia}</span>
-      <span class="dia-toggle">Abrir</span>
-    `;
-
-    const content = document.createElement("div");
-    content.className = "dia-content";
-
-    // Renderizar grupos e exercícios dentro do dia.
-    (dia.exercicios || []).forEach((grupoInfo) => {
-      const grupoBloco = document.createElement("div");
-      grupoBloco.className = "grupo-bloco";
-
-      const nomeGrupo =
-        grupoInfo?.grupo ||
-        grupoInfo?.nome ||
-        grupoInfo?.titulo ||
-        "Grupo";
-      grupoBloco.innerHTML = `<h3>${nomeGrupo}</h3>`;
-
-      const lista = document.createElement("div");
-      lista.className = "exercicios-lista";
-
-      (grupoInfo.lista || []).forEach((item) => {
-        const div = document.createElement("div");
-        div.className = "exercicio";
-        div.innerHTML = `
-          <div class="ordem"></div>
-          <div>
-            <div class="nome">${item.nome}</div>
-            <div class="detalhes">
-              ${item.series} séries · ${item.repeticoes} reps · descanso ${item.descanso}
-            </div>
-          </div>
-        `;
-        lista.appendChild(div);
-      });
-
-      grupoBloco.appendChild(lista);
-      content.appendChild(grupoBloco);
-    });
-
-    header.addEventListener("click", () => atualizarAccordion(index));
-
-    card.appendChild(header);
-    card.appendChild(content);
-    accordion.appendChild(card);
-  });
-
-  // Abrir somente o primeiro dia por padrão.
-  if (dias.length > 0) {
-    atualizarAccordion(0);
-  }
+  // Estado local editável (não altera retorno original da engine).
+  treinoEditado = normalizarTreinoParaEdicao(resultadoFinal.semana);
+  indiceDiaAberto = 0;
+  renderTreino();
 }
 </script>
 
