@@ -19,7 +19,14 @@ async function carregarDivisoes() {
   }
 
   if (!carregamentoEmAndamento) {
-    carregamentoEmAndamento = fetch(DIVISOES_URL).then((res) => res.json());
+    carregamentoEmAndamento = fetch(DIVISOES_URL)
+      .then((res) => {
+        if (!res?.ok) {
+          return {};
+        }
+        return res.json();
+      })
+      .catch(() => ({}));
   }
 
   divisoesDB = await carregamentoEmAndamento;
@@ -30,54 +37,87 @@ async function carregarDivisoes() {
    UTILITÁRIOS
    ================================ */
 
-function normalizarDivisao(divisao) {
+function normalizarChaveDivisao(divisao) {
   if (!divisao) {
     return "";
   }
-  return String(divisao).trim().toLowerCase();
+
+  // Remove separadores para permitir equivalências como:
+  // "Full Body", "full-body", "full_body" => "FULLBODY"
+  return String(divisao)
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9]/g, "")
+    .toUpperCase();
 }
 
 function criarMapaDeDivisoes(divisoes) {
   const mapa = {};
 
-  Object.values(divisoes || {}).forEach((grupo) => {
-    Object.entries(grupo || {}).forEach(([nome, dias]) => {
-      if (Array.isArray(dias)) {
-        mapa[nome.toUpperCase()] = dias;
+  Object.values(divisoes || {}).forEach((grupoPorNivel) => {
+    Object.entries(grupoPorNivel || {}).forEach(([nomeDivisao, dias]) => {
+      if (!Array.isArray(dias)) {
+        return;
       }
+
+      const chave = normalizarChaveDivisao(nomeDivisao);
+      if (!chave) {
+        return;
+      }
+
+      mapa[chave] = dias;
     });
   });
 
   return mapa;
 }
 
-function montarResposta(divisao, dias) {
-  const diasFormatados = (dias || []).map((grupos, index) => ({
+function montarDias(dias) {
+  return (dias || []).map((grupos, index) => ({
     dia: index + 1,
-    grupos
+    grupos: Array.isArray(grupos) ? grupos : []
   }));
+}
 
-  return {
-    divisao,
-    frequenciaSemanal: diasFormatados.length,
-    dias: diasFormatados
-  };
+function obterChaveFinal(chaveSolicitada, mapa) {
+  if (chaveSolicitada && mapa[chaveSolicitada]) {
+    return chaveSolicitada;
+  }
+
+  if (mapa.ABC) {
+    return "ABC";
+  }
+
+  return Object.keys(mapa)[0] || "ABC";
 }
 
 /* ================================
    MOTOR PRINCIPAL
    ================================ */
 
-async function executar(input) {
-  const { divisao } = input || {};
+async function obterDiasDaDivisao(divisao) {
   const divisoes = await carregarDivisoes();
   const mapa = criarMapaDeDivisoes(divisoes);
 
-  const chaveSolicitada = normalizarDivisao(divisao).toUpperCase();
-  const chaveFallback = mapa.ABC ? "ABC" : Object.keys(mapa)[0] || "ABC";
-  const chaveFinal = mapa[chaveSolicitada] ? chaveSolicitada : chaveFallback;
+  const chaveSolicitada = normalizarChaveDivisao(divisao);
+  const chaveFinal = obterChaveFinal(chaveSolicitada, mapa);
 
-  return montarResposta(chaveFinal, mapa[chaveFinal] || []);
+  return {
+    divisao: chaveFinal,
+    dias: montarDias(mapa[chaveFinal] || [])
+  };
+}
+
+async function executar(input) {
+  const { divisao } = input || {};
+  const resultado = await obterDiasDaDivisao(divisao);
+
+  return {
+    divisao: resultado.divisao,
+    frequenciaSemanal: resultado.dias.length,
+    dias: resultado.dias
+  };
 }
 
 /* ================================
@@ -85,5 +125,6 @@ async function executar(input) {
    ================================ */
 
 window.DivisorEngine = {
-  executar
+  executar,
+  obterDiasDaDivisao
 };
