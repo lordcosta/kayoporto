@@ -380,6 +380,7 @@ footer {
           <button type="button" class="chip-equipamento" data-equipamento="cabo" aria-pressed="false">Cabo</button>
           <button type="button" class="chip-equipamento" data-equipamento="peso_corporal" aria-pressed="false">Peso corporal</button>
         </div>
+        <div id="aviso-equipamentos" class="field-warning" style="display:none;">Selecione pelo menos um equipamento disponível.</div>
       </div>
 
       <button onclick="gerar()">🔥 Gerar Treino</button>
@@ -432,6 +433,16 @@ const diasEsperadosPorDivisao = {
   abc_2x: 6
 };
 
+function exibirAvisoEquipamentos() {
+  const aviso = document.getElementById("aviso-equipamentos");
+  aviso.style.display = "block";
+}
+
+function ocultarAvisoEquipamentos() {
+  const aviso = document.getElementById("aviso-equipamentos");
+  aviso.style.display = "none";
+}
+
 function alternarEquipamento(equipamento, botao) {
   const index = equipamentosSelecionados.indexOf(equipamento);
   if (index >= 0) {
@@ -443,6 +454,10 @@ function alternarEquipamento(equipamento, botao) {
   const ativo = equipamentosSelecionados.includes(equipamento);
   botao.classList.toggle("is-active", ativo);
   botao.setAttribute("aria-pressed", ativo);
+
+  if (equipamentosSelecionados.length > 0) {
+    ocultarAvisoEquipamentos();
+  }
 }
 
 function iniciarSelecaoEquipamentos() {
@@ -710,6 +725,13 @@ async function gerar() {
   const nivel = document.getElementById("nivel").value;
   const objetivo = document.getElementById("objetivo").value;
   const equipamentos = [...equipamentosSelecionados];
+
+  if (!equipamentos || equipamentos.length === 0) {
+    exibirAvisoEquipamentos();
+    return;
+  }
+
+  ocultarAvisoEquipamentos();
 
   // 1-3: orquestrar a semana completa
   const semana = await SemanaEngine.gerarSemana({
