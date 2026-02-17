@@ -20,6 +20,60 @@ function escolherAleatoria(lista) {
   return lista[indice];
 }
 
+function capitalizarTexto(texto) {
+  if (!texto) {
+    return "";
+  }
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+function ajustarConcordancia(texto, sexo) {
+  const mensagem = String(texto || "");
+  const sexoNormalizado = normalizarTexto(sexo);
+
+  if (!mensagem) {
+    return "";
+  }
+
+  if (sexoNormalizado === "feminino") {
+    return mensagem
+      .replace(/\bpreparado\b/gi, (palavra) => (palavra === "Preparado" ? "Preparada" : "preparada"))
+      .replace(/\balinhado\b/gi, (palavra) => (palavra === "Alinhado" ? "Alinhada" : "alinhada"))
+      .replace(/\bindicado\b/gi, (palavra) => (palavra === "Indicado" ? "Indicada" : "indicada"));
+  }
+
+  if (sexoNormalizado === "outro") {
+    return mensagem
+      .replace(/\bpreparado\b/gi, "preparado(a)")
+      .replace(/\balinhado\b/gi, "alinhado(a)")
+      .replace(/\bindicado\b/gi, "indicado(a)");
+  }
+
+  return mensagem;
+}
+
+function aplicarHumanizacaoMensagem(texto, { nomeAluno, sexo } = {}) {
+  const nome = String(nomeAluno || "").trim();
+  const base = String(texto || "").trim();
+
+  if (!base) {
+    return "";
+  }
+
+  let mensagem = base;
+
+  if (nome) {
+    mensagem = mensagem.replace(/\bNOME\b/g, nome);
+  }
+
+  if (nome && !/\bNOME\b/.test(base)) {
+    mensagem = `${nome}, ${mensagem.charAt(0).toLowerCase()}${mensagem.slice(1)}`;
+  }
+
+  mensagem = ajustarConcordancia(mensagem, sexo);
+  return capitalizarTexto(mensagem);
+}
+
 async function carregarMensagens() {
   if (mensagensCache) {
     return mensagensCache;
@@ -51,7 +105,9 @@ async function gerarMensagensCoerencia({
   estrategiaNutricional,
   enfaseTreino,
   nivelTreino,
-  diasTreino
+  diasTreino,
+  nomeAluno,
+  sexo
 } = {}) {
   const mensagensBase = await carregarMensagens();
   const mensagens = [];
@@ -85,10 +141,11 @@ async function gerarMensagensCoerencia({
     }
   }
 
-  return mensagens;
+  return mensagens.map((mensagem) => aplicarHumanizacaoMensagem(mensagem, { nomeAluno, sexo }));
 }
 
 window.CoherenceEngine = {
   carregarMensagens,
-  gerarMensagensCoerencia
+  gerarMensagensCoerencia,
+  ajustarConcordancia
 };
