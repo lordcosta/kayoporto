@@ -115,6 +115,51 @@ button:hover {
   padding: .45rem .6rem;
 }
 
+.metabolic-card {
+  border: 1px solid rgba(212,175,55,.22);
+}
+
+.metabolic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: .7rem;
+  margin-top: .85rem;
+}
+
+.metabolic-item {
+  background: #0f1426;
+  border-radius: 8px;
+  padding: .65rem .75rem;
+  border: 1px solid rgba(255,255,255,.06);
+}
+
+.metabolic-item strong {
+  display: block;
+  color: var(--gold);
+  font-size: .78rem;
+  margin-bottom: .2rem;
+}
+
+.metabolic-value {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.metabolic-footnote {
+  margin-top: .95rem;
+  padding-top: .85rem;
+  border-top: 1px solid rgba(255,255,255,.08);
+  color: var(--muted);
+  display: grid;
+  gap: .4rem;
+  font-size: .78rem;
+  line-height: 1.35;
+}
+
+.metabolic-footnote small {
+  font-size: .72rem;
+}
+
 .equipamentos-label {
   font-size: .8rem;
   color: var(--muted);
@@ -320,6 +365,11 @@ footer {
       </div>
 
       <div class="field-group">
+        <label for="aluno-nascimento">Data de nascimento</label>
+        <input id="aluno-nascimento" type="date" />
+      </div>
+
+      <div class="field-group">
         <label for="aluno-peso">Peso (kg)</label>
         <input id="aluno-peso" type="number" min="0" step="0.1" placeholder="Ex.: 78.5" />
       </div>
@@ -327,6 +377,25 @@ footer {
       <div class="field-group">
         <label for="aluno-altura">Altura (cm)</label>
         <input id="aluno-altura" type="number" min="0" step="0.1" placeholder="Ex.: 175" />
+      </div>
+
+      <div class="field-group">
+        <label for="aluno-atividade">Nível de atividade</label>
+        <select id="aluno-atividade">
+          <option value="1.2">Sedentário (1.2)</option>
+          <option value="1.375">Levemente ativo (1.375)</option>
+          <option value="1.55" selected>Moderado (1.55)</option>
+          <option value="1.725">Intenso (1.725)</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label for="objetivo-metabolico">Objetivo metabólico</label>
+        <select id="objetivo-metabolico">
+          <option value="hipertrofia">Hipertrofia</option>
+          <option value="emagrecimento">Emagrecimento</option>
+          <option value="manutencao">Manutenção</option>
+        </select>
       </div>
 
       <div class="field-group">
@@ -392,6 +461,11 @@ footer {
     <div id="resultado-treino"></div>
   </div>
 
+  <div class="card metabolic-card">
+    <h2>Avaliação Metabólica</h2>
+    <div id="resultado-metabolico">Preencha os dados do aluno para visualizar os cálculos metabólicos.</div>
+  </div>
+
 </div>
 
 <footer>
@@ -413,8 +487,11 @@ let equipamentosSelecionados = [];
 let dadosAlunoLocal = {
   nome: "",
   sexo: "masculino",
+  dataNascimento: "",
   peso: "",
   altura: "",
+  atividade: 1.55,
+  objetivoMetabolico: "hipertrofia",
   diasDisponiveis: 3
 };
 
@@ -499,14 +576,152 @@ function salvarDadosAlunoLocal() {
   dadosAlunoLocal = {
     nome: document.getElementById("aluno-nome").value.trim(),
     sexo: document.getElementById("aluno-sexo").value,
+    dataNascimento: document.getElementById("aluno-nascimento").value,
     peso: document.getElementById("aluno-peso").value,
     altura: document.getElementById("aluno-altura").value,
+    atividade: Number(document.getElementById("aluno-atividade").value),
+    objetivoMetabolico: document.getElementById("objetivo-metabolico").value,
     diasDisponiveis: Number(document.getElementById("dias-disponiveis").value)
+  };
+
+  renderAvaliacaoMetabolica();
+}
+
+// Calcula idade dinamicamente com ajuste de mês e dia.
+function calcularIdade(dataNascimento) {
+  if (!dataNascimento) {
+    return null;
+  }
+
+  const hoje = new Date();
+  const nascimento = new Date(`${dataNascimento}T00:00:00`);
+
+  if (Number.isNaN(nascimento.getTime()) || nascimento > hoje) {
+    return null;
+  }
+
+  let idade = hoje.getFullYear() - nascimento.getFullYear();
+  const mesAtual = hoje.getMonth();
+  const mesNascimento = nascimento.getMonth();
+
+  if (
+    mesAtual < mesNascimento
+    || (mesAtual === mesNascimento && hoje.getDate() < nascimento.getDate())
+  ) {
+    idade -= 1;
+  }
+
+  return idade;
+}
+
+function parseNumeroEntrada(valor) {
+  if (typeof valor !== "string") {
+    return Number(valor);
+  }
+  return Number(valor.replace(",", "."));
+}
+
+function classificarImc(imc) {
+  if (imc < 18.5) return "Abaixo do peso";
+  if (imc < 25) return "Peso normal";
+  if (imc < 30) return "Sobrepeso";
+  return "Obesidade";
+}
+
+function calcularMetaCalorica(get, objetivoMetabolico) {
+  if (objetivoMetabolico === "hipertrofia") return get + 400;
+  if (objetivoMetabolico === "emagrecimento") return get - 400;
+  return get;
+}
+
+function calcularProteinaRecomendada(peso, objetivoMetabolico) {
+  if (objetivoMetabolico === "hipertrofia") return peso * 2.0;
+  if (objetivoMetabolico === "emagrecimento") return peso * 2.2;
+  return peso * 1.6;
+}
+
+// Bloco pronto para futura persistência (payload limpo para backend).
+function montarPayloadMetabolico() {
+  const idade = calcularIdade(dadosAlunoLocal.dataNascimento);
+  const peso = parseNumeroEntrada(dadosAlunoLocal.peso);
+  const alturaCm = parseNumeroEntrada(dadosAlunoLocal.altura);
+  const atividade = Number(dadosAlunoLocal.atividade);
+
+  if (!idade || !peso || !alturaCm || !atividade) {
+    return null;
+  }
+
+  const alturaM = alturaCm / 100;
+  const imc = peso / (alturaM ** 2);
+  const classificacaoImc = classificarImc(imc);
+  const sexo = dadosAlunoLocal.sexo;
+  const tmbBase = (10 * peso) + (6.25 * alturaCm) - (5 * idade);
+  const tmb = sexo === "feminino" ? tmbBase - 161 : tmbBase + 5;
+  const get = tmb * atividade;
+  const metaCalorica = calcularMetaCalorica(get, dadosAlunoLocal.objetivoMetabolico);
+  const proteina = calcularProteinaRecomendada(peso, dadosAlunoLocal.objetivoMetabolico);
+
+  return {
+    idade,
+    imc,
+    classificacaoImc,
+    tmb,
+    get,
+    metaCalorica,
+    proteina
   };
 }
 
+function renderAvaliacaoMetabolica() {
+  const container = document.getElementById("resultado-metabolico");
+  const dadosMetabolicos = montarPayloadMetabolico();
+
+  if (!dadosMetabolicos) {
+    container.textContent = "Preencha data de nascimento, peso, altura e nível de atividade para calcular a avaliação metabólica.";
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="metabolic-grid">
+      <div class="metabolic-item">
+        <strong>IMC</strong>
+        <div class="metabolic-value">${dadosMetabolicos.imc.toFixed(1)} · ${dadosMetabolicos.classificacaoImc}</div>
+      </div>
+      <div class="metabolic-item">
+        <strong>TMB</strong>
+        <div class="metabolic-value">${Math.round(dadosMetabolicos.tmb)} kcal</div>
+      </div>
+      <div class="metabolic-item">
+        <strong>GET</strong>
+        <div class="metabolic-value">${Math.round(dadosMetabolicos.get)} kcal</div>
+      </div>
+      <div class="metabolic-item">
+        <strong>Meta calórica</strong>
+        <div class="metabolic-value">${Math.round(dadosMetabolicos.metaCalorica)} kcal</div>
+      </div>
+      <div class="metabolic-item">
+        <strong>Proteína recomendada</strong>
+        <div class="metabolic-value">${Math.round(dadosMetabolicos.proteina)} g/dia</div>
+      </div>
+    </div>
+    <div class="metabolic-footnote">
+      <div>Estimativas energéticas baseadas na equação de Mifflin-St Jeor, amplamente adotada na literatura científica como padrão ouro para cálculo da Taxa Metabólica Basal.</div>
+      <small>Resultados estimativos. Ajustes individuais devem ser realizados por profissional habilitado.</small>
+    </div>
+  `;
+}
+
 function iniciarDadosAlunoEDivisao() {
-  const camposAluno = ["aluno-nome", "aluno-sexo", "aluno-peso", "aluno-altura", "dias-disponiveis"];
+  const camposAluno = [
+    "aluno-nome",
+    "aluno-sexo",
+    "aluno-nascimento",
+    "aluno-peso",
+    "aluno-altura",
+    "aluno-atividade",
+    "objetivo-metabolico",
+    "dias-disponiveis"
+  ];
 
   camposAluno.forEach((idCampo) => {
     const elemento = document.getElementById(idCampo);
@@ -528,6 +743,7 @@ function iniciarDadosAlunoEDivisao() {
   document.getElementById("divisao").value = obterSugestaoDivisao(Number(document.getElementById("dias-disponiveis").value));
   salvarDadosAlunoLocal();
   atualizarAvisoIncoerencia();
+  renderAvaliacaoMetabolica();
 }
 
 function normalizarTreinoParaEdicao(semana) {
