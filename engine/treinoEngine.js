@@ -128,14 +128,16 @@ function gerarTreino(input) {
 
   // 5. Aplicar quantidade definida em regras.json
   // 6. Aplicar fallback seguro se não houver exercícios suficientes
-  const listaFallback = ordenarPorPrioridade(listaBase);
+  const listaFallback = ordenarPorPrioridade(
+    filtrarPorEquipamento(listaBase, equipamentos)
+  );
   const selecionados = garantirQuantidade(listaFiltrada, quantidade, listaFallback);
 
-  // 7. Nunca retornar array vazio
-  const fallbackExercicio = listaFallback[0] || { nome: "Exercício" };
-  const treinoBase = selecionados.length > 0 ? selecionados : [fallbackExercicio];
+  if (selecionados.length === 0) {
+    return [];
+  }
 
-  return treinoBase.map((exercicio) => ({
+  return selecionados.map((exercicio) => ({
     nome: exercicio.nome,
     series,
     repeticoes,
