@@ -7,8 +7,8 @@ async function gerarSemana(input) {
   const {
     divisao,
     nivel = "iniciante",
-    equipamentos = [],
-    objetivo = ""
+    objetivo = "",
+    equipamentos = []
   } = input || {};
 
   // Garantir dados carregados no TreinoEngine
@@ -16,9 +16,20 @@ async function gerarSemana(input) {
     await TreinoEngine.init();
   }
 
-  // 1. Chamar DivisorEngine.executar({ divisao })
-  const estrutura = await DivisorEngine.executar({ divisao });
-  const diasSemana = Array.isArray(estrutura?.dias) ? estrutura.dias : [];
+  // Obtém os dias dinamicamente do divisor selecionado.
+  // Mantém compatibilidade com versões anteriores do DivisorEngine.
+  let diasSemana = [];
+  try {
+    if (typeof DivisorEngine?.obterDiasDaDivisao === "function") {
+      const estrutura = await DivisorEngine.obterDiasDaDivisao(divisao);
+      diasSemana = Array.isArray(estrutura?.dias) ? estrutura.dias : [];
+    } else {
+      const estrutura = await DivisorEngine.executar({ divisao });
+      diasSemana = Array.isArray(estrutura?.dias) ? estrutura.dias : [];
+    }
+  } catch {
+    diasSemana = [];
+  }
 
   const semana = [];
   let ultimoExtra = null;
@@ -28,7 +39,7 @@ async function gerarSemana(input) {
     const gruposDia = Array.isArray(diaInfo?.grupos) ? diaInfo.grupos : [];
     const exerciciosDia = [];
 
-    // 2. Para cada grupo muscular do dia -> TreinoEngine.gerarTreino()
+    // Para cada grupo muscular do dia -> TreinoEngine.gerarTreino()
     gruposDia.forEach((grupo) => {
       const lista = TreinoEngine.gerarTreino({
         grupoMuscular: grupo,
@@ -43,7 +54,7 @@ async function gerarSemana(input) {
       });
     });
 
-    // 4. Injetar abdômen e/ou lombar (sem dia exclusivo e sem repetição consecutiva)
+    // Extra opcional de core/lombar (mantido para compatibilidade atual)
     const jaTemExtra = gruposDia.includes("abdomen") || gruposDia.includes("lombar");
     if (!jaTemExtra && gruposDia.length > 0) {
       const proximoExtra = extrasPossiveis.find((extra) => extra !== ultimoExtra);
@@ -65,7 +76,6 @@ async function gerarSemana(input) {
       }
     }
 
-    // 3. Agregar os exercícios por dia
     semana.push({
       dia: `Dia ${diaInfo?.dia ?? index + 1}`,
       grupos: gruposDia,
