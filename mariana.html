@@ -1,3 +1,470 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Orientação de Exercícios Seguros • Osteoporose • Kayo Porto</title>
+
+  <style>
+    /* ================= CONFIGURAÇÃO DE PÁGINA ================= */
+    @page { size: A4; margin: 18mm; }
+
+    :root{
+      --text:#1a1a1a;
+      --muted:#5a5a5a;
+      --line:#e5e5e5;
+      --chip:#f4f4f4;
+      --okbg:#eaf7ee;
+      --okbd:#bfe6ca;
+      --warnbg:#fff3e6;
+      --warnbd:#ffd1a6;
+      --badbg:#fdecec;
+      --badbd:#f5b5b5;
+      --brand:#111;
+    }
+
+    body{
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      color: var(--text);
+      margin: 0;
+      background:#fff;
+    }
+
+    /* ================= CABEÇALHO ================= */
+    .header{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding-bottom:10px;
+      border-bottom: 3px solid var(--brand);
+      margin-bottom: 14px;
+    }
+    .logo{
+      width: 120px;
+      height: 44px;
+      border:1px dashed var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:10px;
+      color:var(--muted);
+    }
+    .head-txt{ flex:1; }
+    .title{
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: .2px;
+      margin: 0 0 3px 0;
+    }
+    .subtitle{
+      margin:0;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .meta{
+      text-align:right;
+      font-size: 10px;
+      color: var(--muted);
+      min-width: 180px;
+    }
+
+    /* ================= BLOCO BASE ================= */
+    .card{
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      margin: 10px 0;
+    }
+    .card h2{
+      margin:0 0 8px 0;
+      font-size: 13px;
+      letter-spacing:.2px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .pill{
+      background: var(--chip);
+      border:1px solid var(--line);
+      padding: 6px 8px;
+      border-radius: 999px;
+      font-size: 10.5px;
+    }
+    .small{
+      font-size: 10.5px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+    .hr{
+      height:1px;
+      background: var(--line);
+      margin: 10px 0;
+    }
+
+    /* ================= ALERTAS ================= */
+    .alert{
+      border-radius: 10px;
+      padding: 10px 12px;
+      border:1px solid var(--line);
+      margin: 10px 0;
+    }
+    .ok{ background: var(--okbg); border-color: var(--okbd); }
+    .warn{ background: var(--warnbg); border-color: var(--warnbd); }
+    .bad{ background: var(--badbg); border-color: var(--badbd); }
+
+    .alert strong{ display:block; margin-bottom:4px; }
+
+    /* ================= LISTAS ================= */
+    ul{ margin: 6px 0 0 18px; padding:0; }
+    li{ margin: 4px 0; }
+
+    .two-cols{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* ================= TABELA ================= */
+    table{
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+    th, td{
+      border: 1px solid var(--line);
+      padding: 7px 8px;
+      vertical-align: top;
+    }
+    th{
+      text-align:left;
+      background:#fafafa;
+    }
+
+    /* ================= RODAPÉ / ASSINATURA ================= */
+    .signature{
+      margin-top: 14px;
+      display:flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items:flex-end;
+    }
+    .sign-box{
+      border-top: 1px solid var(--line);
+      padding-top: 8px;
+      width: 55%;
+      font-size: 11px;
+    }
+    .sign-box strong{ font-size: 12px; }
+    .foot{
+      margin-top: 10px;
+      font-size: 10px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      padding-top: 8px;
+      line-height: 1.35;
+    }
+
+    /* ================= IMPRESSÃO ================= */
+    .no-print{ margin: 10px 0; }
+    @media print{
+      .no-print{ display:none; }
+      .card{ break-inside: avoid; }
+      .alert{ break-inside: avoid; }
+      table{ break-inside: avoid; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- ================= CABEÇALHO ================= -->
+  <div class="header">
+    <div class="logo">LOGO<br/>Kayo Porto</div>
+    <div class="head-txt">
+      <p class="title">Orientação de Exercícios Seguros • Osteoporose</p>
+      <p class="subtitle">Plano de segurança e condicionamento — foco em prevenção de quedas e manutenção óssea</p>
+    </div>
+    <div class="meta">
+      <div><strong>Profissional:</strong> Kayo Porto</div>
+      <div><strong>Documento:</strong> Orientação para treino</div>
+      <div><strong>Data:</strong> ____/____/______</div>
+    </div>
+  </div>
+
+  <!-- ================= IDENTIFICAÇÃO ================= -->
+  <div class="card">
+    <h2>1) Identificação (preencher)</h2>
+    <div class="grid">
+      <div>
+        <div class="row">
+          <span class="pill"><strong>Aluno(a):</strong> ____________________________</span>
+          <span class="pill"><strong>Idade:</strong> ______</span>
+        </div>
+        <div class="row">
+          <span class="pill"><strong>Local de treino:</strong> ( ) Academia ( ) Casa ( ) Ambos</span>
+          <span class="pill"><strong>Frequência:</strong> ______x/sem</span>
+        </div>
+        <p class="small">
+          Observações relevantes: dor lombar? histórico de quedas? uso de medicamentos? fraturas prévias?
+          _______________________________________________________________________________________________
+        </p>
+      </div>
+      <div>
+        <div class="row">
+          <span class="pill"><strong>Condição:</strong> Osteoporose (alto risco)</span>
+          <span class="pill"><strong>Base:</strong> Densitometria (DMO)</span>
+        </div>
+        <p class="small">
+          Este documento traduz o exame em orientações práticas de treino seguro. O acompanhamento médico permanece essencial.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= RESUMO DO EXAME ================= -->
+  <div class="card">
+    <h2>2) Leitura técnica do exame (síntese objetiva)</h2>
+
+    <div class="alert warn">
+      <strong>Achado central do exame</strong>
+      T-scores em torno de <strong>-3,3 (coluna)</strong> e <strong>-3,1 (fêmur)</strong> sugerem osteoporose importante e
+      <strong>maior risco de fratura</strong>. O foco do treino deve ser: <strong>segurança + força leve + equilíbrio</strong>.
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Região avaliada</th>
+          <th>DMO (BMD)</th>
+          <th>T-score</th>
+          <th>Z-score</th>
+          <th>Interpretação prática (treino)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Coluna lombar (L1–L4)</strong></td>
+          <td>0,788 g/cm²</td>
+          <td><strong>-3,3</strong></td>
+          <td>-0,9</td>
+          <td>Priorizar <strong>coluna neutra</strong>, evitar flexões/torções do tronco e impactos.</td>
+        </tr>
+        <tr>
+          <td><strong>Fêmur total (médias)</strong></td>
+          <td>0,633 g/cm²</td>
+          <td><strong>-3,1</strong></td>
+          <td>-1,4</td>
+          <td>Fortalecer MMII com <strong>máquinas leves</strong>, foco em estabilidade e prevenção de quedas.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="hr"></div>
+
+    <div class="alert ok">
+      <strong>Regra de ouro do treino (profissional)</strong>
+      <strong>Coluna sempre neutra</strong>. Se um movimento exige curvar ou torcer o tronco, ele deve ser <strong>adaptado ou evitado</strong>.
+    </div>
+  </div>
+
+  <!-- ================= EXERCÍCIOS SEGUROS ================= -->
+  <div class="card">
+    <h2>3) Exercícios recomendados (baixo risco e alta utilidade)</h2>
+
+    <div class="two-cols">
+      <div class="alert ok">
+        <strong>A) Cardiorrespiratório seguro</strong>
+        <ul>
+          <li><strong>Caminhada em terreno plano</strong> (preferencial): 20–40 min, ritmo confortável.</li>
+          <li><strong>Esteira</strong> com baixa inclinação (se houver boa adaptação e segurança).</li>
+          <li><strong>Bicicleta ergométrica</strong> (boa opção em dias de maior insegurança para caminhar).</li>
+        </ul>
+        <p class="small">
+          Observação: impacto leve e constante da caminhada tende a ser útil ao osso e ao equilíbrio, desde que sem dor e sem instabilidade.
+        </p>
+      </div>
+
+      <div class="alert ok">
+        <strong>B) Fortalecimento seguro (preferir máquinas / apoio)</strong>
+        <ul>
+          <li><strong>Extensora</strong> (leve, controle total do movimento).</li>
+          <li><strong>Flexora</strong> (leve, sem “tranco”).</li>
+          <li><strong>Leg press</strong> <em>muito leve</em> e com amplitude curta (sem tirar quadril do banco).</li>
+          <li><strong>Puxada frontal</strong> (leve) e <strong>remada baixa</strong> (leve).</li>
+          <li><strong>Panturilha</strong> no aparelho (leve) ou em pé com apoio.</li>
+        </ul>
+        <p class="small">
+          Diretriz: “carga que fortalece” sem gerar compensações. Movimento lento, respirando, sem prender o ar.
+        </p>
+      </div>
+    </div>
+
+    <div class="alert ok">
+      <strong>C) Equilíbrio (prioridade máxima para prevenir fratura)</strong>
+      <ul>
+        <li><strong>Sentar e levantar</strong> da cadeira com controle (usar apoio se necessário).</li>
+        <li><strong>Apoio unipodal</strong> segurando em uma superfície firme (10–30s cada lado).</li>
+        <li><strong>Caminhar em linha</strong> (passos curtos, olhando para frente), próximo a apoio.</li>
+      </ul>
+      <p class="small">
+        A maioria das fraturas em osteoporose acontece por <strong>queda</strong>, não por “exercício em si”.
+        Por isso, equilíbrio e força de pernas são determinantes.
+      </p>
+    </div>
+
+    <div class="alert ok">
+      <strong>D) Opções excelentes (quando bem orientadas)</strong>
+      <ul>
+        <li><strong>Hidroginástica</strong> (impacto zero, segurança alta).</li>
+        <li><strong>Pilates clínico</strong> (somente com profissional que domine adaptações para osteoporose).</li>
+        <li><strong>Mobilidade leve</strong> (quadril/tornozelo/ombro) com coluna neutra.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================= EVITAR ================= -->
+  <div class="card">
+    <h2>4) Exercícios e movimentos a evitar (alto risco)</h2>
+
+    <div class="two-cols">
+      <div class="alert bad">
+        <strong>PROIBIR: flexões do tronco e abdominais clássicos</strong>
+        <ul>
+          <li>Abdominal tradicional (crunch/sit-up).</li>
+          <li>Tocar os pés / “descer para frente” com coluna arredondada.</li>
+          <li>Exercícios que curvam a lombar com carga.</li>
+        </ul>
+        <p class="small">
+          Motivo: aumenta o risco de fratura vertebral em pessoas com osteoporose importante.
+        </p>
+      </div>
+
+      <div class="alert bad">
+        <strong>PROIBIR: torções fortes e impactos</strong>
+        <ul>
+          <li>Torções intensas do tronco (rotações bruscas).</li>
+          <li>Corrida, saltos, jump, pular corda.</li>
+          <li>Treinos “explosivos” (ex.: cross training intenso).</li>
+        </ul>
+        <p class="small">
+          Motivo: combinações de impacto + rotação + instabilidade aumentam risco de queda/fratura.
+        </p>
+      </div>
+    </div>
+
+    <div class="alert warn">
+      <strong>Evitar também (salvo liberação e adaptação rigorosa)</strong>
+      <ul>
+        <li><strong>Peso livre pesado</strong> (agachamento com barra, levantamento terra, etc.).</li>
+        <li><strong>Movimentos com “tranco”</strong> ou amplitude forçada.</li>
+        <li><strong>Prender a respiração</strong> para fazer força (manobra de Valsalva).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================= ROTINA SUGERIDA ================= -->
+  <div class="card">
+    <h2>5) Rotina semanal sugerida (segura e eficiente)</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Dia</th>
+          <th>Conteúdo</th>
+          <th>Duração</th>
+          <th>Observações de segurança</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>2–4x/sem</strong></td>
+          <td>Caminhada em terreno plano + mobilidade leve</td>
+          <td>20–40 min</td>
+          <td>Ritmo confortável; evitar irregularidades; atenção total ao ambiente.</td>
+        </tr>
+        <tr>
+          <td><strong>2–3x/sem</strong></td>
+          <td>Treino de força leve (máquinas) + equilíbrio</td>
+          <td>35–55 min</td>
+          <td>Coluna neutra; sem dor; sem “tranco”; pausas completas.</td>
+        </tr>
+        <tr>
+          <td><strong>Opcional</strong></td>
+          <td>Hidroginástica / Pilates clínico adaptado</td>
+          <td>30–50 min</td>
+          <td>Somente com profissional que entenda osteoporose e respeite limitações.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert ok">
+      <strong>Intensidade certa (regra simples e segura)</strong>
+      A aluna deve sair da sessão <strong>melhor do que entrou</strong>. Se sair exausta, com dor ou insegura, o treino está acima do ideal.
+    </div>
+  </div>
+
+  <!-- ================= CHECKLIST ================= -->
+  <div class="card">
+    <h2>6) Checklist de segurança (antes e durante o treino)</h2>
+
+    <div class="two-cols">
+      <div class="alert ok">
+        <strong>Antes</strong>
+        <ul>
+          <li>Calçado estável (solado firme) e ambiente sem obstáculos.</li>
+          <li>Hidratação e alimentação adequadas.</li>
+          <li>Sem tontura, fraqueza ou dor aguda.</li>
+          <li>Preferir treinar com supervisão / apoio por perto.</li>
+        </ul>
+      </div>
+      <div class="alert warn">
+        <strong>Durante</strong>
+        <ul>
+          <li>Coluna neutra o tempo todo; movimentos lentos.</li>
+          <li>Respirar (não prender o ar).</li>
+          <li>Parar se houver dor “pontual”, estalo ou insegurança.</li>
+          <li>Evitar mudanças rápidas de posição (levantar de repente).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="alert bad">
+      <strong>Interromper e comunicar imediatamente</strong>
+      Dor forte na coluna/quadril, queda, tontura intensa, falta de ar fora do padrão, fraqueza súbita, ou qualquer sinal neurológico.
+    </div>
+  </div>
+
+  <!-- ================= ASSINATURA ================= -->
+  <div class="signature">
+    <div class="sign-box">
+      <strong>Kayo Porto</strong><br/>
+      Personal Trainer • Orientação de Treino Seguro<br/>
+      <span class="small">Assinatura: _____________________________</span>
+    </div>
+    <div style="width:40%; text-align:right;">
+      <div class="pill"><strong>Revisão/Retorno:</strong> ____/____/______</div>
+      <div class="pill" style="margin-top:6px;"><strong>Recomendação do laudo:</strong> repetir DMO em ~12 meses</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <strong>Nota importante:</strong> Este material tem finalidade educacional e de orientação de treino seguro, não substitui avaliação médica.
+    Em osteoporose importante, a prioridade é <strong>prevenção de quedas</strong>, fortalecimento progressivo e proteção da coluna.
+  </div>
+
+  <div class="no-print small">
+    Dica: no navegador, pressione <strong>Ctrl+P</strong> → destino <strong>Salvar em PDF</strong> → margens “padrão” → escala “ajustar à página”.
+  </div>
+
 <!-- ================= SUPORTE NUTRICIONAL / SUPLEMENTAÇÃO ================= -->
 <div class="card">
   <h2>7) Suporte nutricional e suplementação (apoio ao treino e ao osso)</h2>
@@ -121,4 +588,6 @@
     <strong>necessidade, dose e ausência de duplicidade</strong> com as medicações existentes.
   </div>
 </div>
+  </body>
+</html>
 <!-- ================= FIM SUPORTE NUTRICIONAL / SUPLEMENTAÇÃO ================= -->
