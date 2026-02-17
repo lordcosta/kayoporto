@@ -20,11 +20,16 @@ function escolherAleatoria(lista) {
   return lista[indice];
 }
 
-function capitalizarTexto(texto) {
-  if (!texto) {
-    return "";
+function ajustarInicioAposNome(texto) {
+  const mensagem = String(texto || "");
+
+  // Só aplica minúscula inicial quando for padrão "Em", "Para", etc.
+  // Evita quebrar siglas no início da frase, como "IMC".
+  if (/^[A-ZÀ-Ý][a-zà-ý]/.test(mensagem)) {
+    return mensagem.charAt(0).toLowerCase() + mensagem.slice(1);
   }
-  return texto.charAt(0).toUpperCase() + texto.slice(1);
+
+  return mensagem;
 }
 
 function ajustarConcordancia(texto, sexo) {
@@ -44,9 +49,9 @@ function ajustarConcordancia(texto, sexo) {
 
   if (sexoNormalizado === "outro") {
     return mensagem
-      .replace(/\bpreparado\b/gi, "preparado(a)")
-      .replace(/\balinhado\b/gi, "alinhado(a)")
-      .replace(/\bindicado\b/gi, "indicado(a)");
+      .replace(/\bpreparado\b/gi, "com preparo")
+      .replace(/\balinhado\b/gi, "em alinhamento")
+      .replace(/\bindicado\b/gi, "recomendável");
   }
 
   return mensagem;
@@ -67,11 +72,10 @@ function aplicarHumanizacaoMensagem(texto, { nomeAluno, sexo } = {}) {
   }
 
   if (nome && !/\bNOME\b/.test(base)) {
-    mensagem = `${nome}, ${mensagem.charAt(0).toLowerCase()}${mensagem.slice(1)}`;
+    mensagem = `${nome}, ${ajustarInicioAposNome(mensagem)}`;
   }
 
-  mensagem = ajustarConcordancia(mensagem, sexo);
-  return capitalizarTexto(mensagem);
+  return ajustarConcordancia(mensagem, sexo);
 }
 
 async function carregarMensagens() {
