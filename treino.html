@@ -62,6 +62,31 @@ header h1 {
   gap: .8rem;
 }
 
+.tech-layout {
+  display: grid;
+  gap: 1rem;
+}
+
+.tech-row-primary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .8rem;
+}
+
+.tech-row-secondary {
+  display: grid;
+  gap: .5rem;
+}
+
+.tech-row-action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.botao-gerar {
+  width: min(100%, 260px);
+}
+
 select, input, button {
   width: 100%;
   padding: .6rem .7rem;
@@ -169,6 +194,20 @@ button:hover {
   display: flex;
   flex-wrap: wrap;
   gap: .45rem;
+}
+
+@media (max-width: 760px) {
+  .tech-row-primary {
+    grid-template-columns: 1fr;
+  }
+
+  .tech-row-action {
+    justify-content: center;
+  }
+
+  .botao-gerar {
+    width: 100%;
+  }
 }
 
 .chip-equipamento {
@@ -412,58 +451,70 @@ footer {
     </div>
   </div>
 
+  <div class="card metabolic-card">
+    <h2>Avaliação Metabólica</h2>
+    <div id="resultado-metabolico">Preencha os dados do aluno para visualizar os cálculos metabólicos.</div>
+  </div>
+
   <div class="card">
     <h2>Configuração Técnica</h2>
 
-    <div class="controls">
-      <div class="field-group">
-        <label for="divisao">Divisão semanal</label>
-        <select id="divisao">
-          <option value="fullbody">Full Body</option>
-          <option value="abc" selected>ABC</option>
-          <option value="abcd">ABCD</option>
-          <option value="abcde">ABCDE</option>
-          <option value="abc_2x">ABC (2x)</option>
-        </select>
-        <div id="aviso-divisao" class="field-warning" style="display:none;"></div>
-      </div>
-
-      <select id="nivel">
-        <option value="iniciante">Iniciante</option>
-        <option value="intermediario">Intermediário</option>
-        <option value="avancado">Avançado</option>
-      </select>
-
-      <select id="objetivo">
-        <option value="hipertrofia">Hipertrofia</option>
-        <option value="forca">Força</option>
-        <option value="resistencia">Resistência</option>
-      </select>
-
-      <div class="equipamentos-field">
-        <span class="equipamentos-label">Equipamentos</span>
-        <div id="equipamentos" class="equipamentos-chips" role="group" aria-label="Seleção de equipamentos">
-          <button type="button" class="chip-equipamento" data-equipamento="barra" aria-pressed="false">Barra</button>
-          <button type="button" class="chip-equipamento" data-equipamento="halter" aria-pressed="false">Halter</button>
-          <button type="button" class="chip-equipamento" data-equipamento="maquina" aria-pressed="false">Máquina</button>
-          <button type="button" class="chip-equipamento" data-equipamento="cabo" aria-pressed="false">Cabo</button>
-          <button type="button" class="chip-equipamento" data-equipamento="peso_corporal" aria-pressed="false">Peso corporal</button>
+    <div class="tech-layout">
+      <div class="tech-row-primary">
+        <div class="field-group">
+          <label for="divisao">Divisão semanal</label>
+          <select id="divisao">
+            <option value="fullbody">Full Body</option>
+            <option value="abc" selected>ABC</option>
+            <option value="abcd">ABCD</option>
+            <option value="abcde">ABCDE</option>
+            <option value="abc_2x">ABC (2x)</option>
+          </select>
+          <div id="aviso-divisao" class="field-warning" style="display:none;"></div>
         </div>
-        <div id="aviso-equipamentos" class="field-warning" style="display:none;">Selecione pelo menos um equipamento disponível.</div>
+
+        <div class="field-group">
+          <label for="nivel">Nível de treino</label>
+          <select id="nivel">
+            <option value="iniciante">Iniciante</option>
+            <option value="intermediario">Intermediário</option>
+            <option value="avancado">Avançado</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label for="objetivo">Objetivo do treino</label>
+          <select id="objetivo">
+            <option value="hipertrofia">Hipertrofia</option>
+            <option value="forca">Força</option>
+            <option value="resistencia">Resistência</option>
+          </select>
+        </div>
       </div>
 
-      <button onclick="gerar()">🔥 Gerar Treino</button>
+      <div class="tech-row-secondary">
+        <div class="equipamentos-field">
+          <span class="equipamentos-label">Equipamentos</span>
+          <div id="equipamentos" class="equipamentos-chips" role="group" aria-label="Seleção de equipamentos">
+            <button type="button" class="chip-equipamento" data-equipamento="barra" aria-pressed="false">Barra</button>
+            <button type="button" class="chip-equipamento" data-equipamento="halter" aria-pressed="false">Halter</button>
+            <button type="button" class="chip-equipamento" data-equipamento="maquina" aria-pressed="false">Máquina</button>
+            <button type="button" class="chip-equipamento" data-equipamento="cabo" aria-pressed="false">Cabo</button>
+            <button type="button" class="chip-equipamento" data-equipamento="peso_corporal" aria-pressed="false">Peso corporal</button>
+          </div>
+          <div id="aviso-equipamentos" class="field-warning" style="display:none;">Selecione pelo menos um equipamento disponível.</div>
+        </div>
+      </div>
+
+      <div class="tech-row-action">
+        <button class="botao-gerar" onclick="gerar()">🔥 Gerar Treino</button>
+      </div>
     </div>
   </div>
 
   <div class="card">
     <h2>Treino Gerado</h2>
     <div id="resultado-treino"></div>
-  </div>
-
-  <div class="card metabolic-card">
-    <h2>Avaliação Metabólica</h2>
-    <div id="resultado-metabolico">Preencha os dados do aluno para visualizar os cálculos metabólicos.</div>
   </div>
 
 </div>
