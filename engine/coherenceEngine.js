@@ -20,6 +20,64 @@ function escolherAleatoria(lista) {
   return lista[indice];
 }
 
+function ajustarInicioAposNome(texto) {
+  const mensagem = String(texto || "");
+
+  // Só aplica minúscula inicial quando for padrão "Em", "Para", etc.
+  // Evita quebrar siglas no início da frase, como "IMC".
+  if (/^[A-ZÀ-Ý][a-zà-ý]/.test(mensagem)) {
+    return mensagem.charAt(0).toLowerCase() + mensagem.slice(1);
+  }
+
+  return mensagem;
+}
+
+function ajustarConcordancia(texto, sexo) {
+  const mensagem = String(texto || "");
+  const sexoNormalizado = normalizarTexto(sexo);
+
+  if (!mensagem) {
+    return "";
+  }
+
+  if (sexoNormalizado === "feminino") {
+    return mensagem
+      .replace(/\bpreparado\b/gi, (palavra) => (palavra === "Preparado" ? "Preparada" : "preparada"))
+      .replace(/\balinhado\b/gi, (palavra) => (palavra === "Alinhado" ? "Alinhada" : "alinhada"))
+      .replace(/\bindicado\b/gi, (palavra) => (palavra === "Indicado" ? "Indicada" : "indicada"));
+  }
+
+  if (sexoNormalizado === "outro") {
+    return mensagem
+      .replace(/\bpreparado\b/gi, "com preparo")
+      .replace(/\balinhado\b/gi, "em alinhamento")
+      .replace(/\bindicado\b/gi, "recomendável");
+  }
+
+  return mensagem;
+}
+
+function aplicarHumanizacaoMensagem(texto, { nomeAluno, sexo } = {}) {
+  const nome = String(nomeAluno || "").trim();
+  const base = String(texto || "").trim();
+
+  if (!base) {
+    return "";
+  }
+
+  let mensagem = base;
+
+  if (nome) {
+    mensagem = mensagem.replace(/\bNOME\b/g, nome);
+  }
+
+  if (nome && !/\bNOME\b/.test(base)) {
+    mensagem = `${nome}, ${ajustarInicioAposNome(mensagem)}`;
+  }
+
+  return ajustarConcordancia(mensagem, sexo);
+}
+
 async function carregarMensagens() {
   if (mensagensCache) {
     return mensagensCache;
@@ -51,7 +109,9 @@ async function gerarMensagensCoerencia({
   estrategiaNutricional,
   enfaseTreino,
   nivelTreino,
-  diasTreino
+  diasTreino,
+  nomeAluno,
+  sexo
 } = {}) {
   const mensagensBase = await carregarMensagens();
   const mensagens = [];
@@ -85,10 +145,11 @@ async function gerarMensagensCoerencia({
     }
   }
 
-  return mensagens;
+  return mensagens.map((mensagem) => aplicarHumanizacaoMensagem(mensagem, { nomeAluno, sexo }));
 }
 
 window.CoherenceEngine = {
   carregarMensagens,
-  gerarMensagensCoerencia
+  gerarMensagensCoerencia,
+  ajustarConcordancia
 };
