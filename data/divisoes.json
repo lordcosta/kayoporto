@@ -1,5 +1,9 @@
 {
+<<<<<<< codex/restructure-data/divisoes.json-format-4u9uuw
+  "FULLBODY": [
+=======
   "Full Body": [
+>>>>>>> main
     ["peitorais", "costas", "pernas", "ombros", "abdomen"]
   ],
   "ABC": [

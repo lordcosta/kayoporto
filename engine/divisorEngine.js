@@ -42,12 +42,13 @@ function normalizarChaveDivisao(divisao) {
     return "";
   }
 
-  // Remove separadores para permitir equivalências como:
-  // "Full Body", "full-body", "full_body" => "FULLBODY"
+  // Requisito: remover espaços + uppercase.
+  // Mantemos robustez para pequenas variações (hífen/underscore/acentos).
   return String(divisao)
     .trim()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s/g, "")
     .replace(/[^a-zA-Z0-9]/g, "")
     .toUpperCase();
 }
@@ -55,19 +56,19 @@ function normalizarChaveDivisao(divisao) {
 function criarMapaDeDivisoes(divisoes) {
   const mapa = {};
 
-  Object.values(divisoes || {}).forEach((grupoPorNivel) => {
-    Object.entries(grupoPorNivel || {}).forEach(([nomeDivisao, dias]) => {
-      if (!Array.isArray(dias)) {
-        return;
-      }
+  // Estrutura atual (top-level):
+  // { "FULLBODY": [...], "ABC": [...], ... }
+  Object.entries(divisoes || {}).forEach(([nomeDivisao, dias]) => {
+    if (!Array.isArray(dias)) {
+      return;
+    }
 
-      const chave = normalizarChaveDivisao(nomeDivisao);
-      if (!chave) {
-        return;
-      }
+    const chave = normalizarChaveDivisao(nomeDivisao);
+    if (!chave) {
+      return;
+    }
 
-      mapa[chave] = dias;
-    });
+    mapa[chave] = dias;
   });
 
   return mapa;
@@ -85,6 +86,7 @@ function obterChaveFinal(chaveSolicitada, mapa) {
     return chaveSolicitada;
   }
 
+  // Fallback seguro obrigatório.
   if (mapa.ABC) {
     return "ABC";
   }
