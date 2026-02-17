@@ -62,7 +62,7 @@ header h1 {
   gap: .8rem;
 }
 
-select, button {
+select, input, button {
   width: 100%;
   padding: .6rem .7rem;
   border-radius: 6px;
@@ -70,9 +70,13 @@ select, button {
   font-size: .9rem;
 }
 
-select {
+select, input {
   background: #1f2640;
   color: var(--text);
+}
+
+input::placeholder {
+  color: var(--muted);
 }
 
 button {
@@ -89,6 +93,26 @@ button:hover {
 .equipamentos-field {
   display: grid;
   gap: .45rem;
+}
+
+.field-group {
+  display: grid;
+  gap: .35rem;
+}
+
+.field-group label {
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+.field-warning {
+  margin-top: .5rem;
+  font-size: .78rem;
+  color: #ffd178;
+  background: rgba(255, 209, 120, .08);
+  border: 1px solid rgba(255, 209, 120, .3);
+  border-radius: 6px;
+  padding: .45rem .6rem;
 }
 
 .equipamentos-label {
@@ -278,20 +302,62 @@ footer {
 <div class="container">
 
   <div class="card">
-    <h2>Configuração do Treino</h2>
+    <h2>Dados do Aluno</h2>
 
     <div class="controls">
-      <select id="grupo">
-        <option value="peitorais">Peitorais</option>
-        <option value="costas">Costas</option>
-        <option value="ombros">Ombros</option>
-        <option value="biceps">Bíceps</option>
-        <option value="triceps">Tríceps</option>
-        <option value="pernas">Pernas</option>
-        <option value="abdomen">Abdômen</option>
-        <option value="antebraco">Antebraço</option>
-        <option value="lombar">Lombar</option>
-      </select>
+      <div class="field-group">
+        <label for="aluno-nome">Nome</label>
+        <input id="aluno-nome" type="text" placeholder="Nome completo" />
+      </div>
+
+      <div class="field-group">
+        <label for="aluno-sexo">Sexo</label>
+        <select id="aluno-sexo">
+          <option value="masculino">Masculino</option>
+          <option value="feminino">Feminino</option>
+          <option value="outro">Outro</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label for="aluno-peso">Peso (kg)</label>
+        <input id="aluno-peso" type="number" min="0" step="0.1" placeholder="Ex.: 78.5" />
+      </div>
+
+      <div class="field-group">
+        <label for="aluno-altura">Altura (cm)</label>
+        <input id="aluno-altura" type="number" min="0" step="0.1" placeholder="Ex.: 175" />
+      </div>
+
+      <div class="field-group">
+        <label for="dias-disponiveis">Dias disponíveis para treino</label>
+        <select id="dias-disponiveis">
+          <option value="2">2 dias</option>
+          <option value="3" selected>3 dias</option>
+          <option value="4">4 dias</option>
+          <option value="5">5 dias</option>
+          <option value="6">6 dias</option>
+          <option value="7">7 dias</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Configuração Técnica</h2>
+
+    <div class="controls">
+      <div class="field-group">
+        <label for="divisao">Divisão semanal</label>
+        <select id="divisao">
+          <option value="fullbody">Full Body</option>
+          <option value="abc" selected>ABC</option>
+          <option value="abcd">ABCD</option>
+          <option value="abcde">ABCDE</option>
+          <option value="abc_2x">ABC (2x)</option>
+        </select>
+        <div id="aviso-divisao" class="field-warning" style="display:none;"></div>
+      </div>
 
       <select id="nivel">
         <option value="iniciante">Iniciante</option>
@@ -342,6 +408,30 @@ let treinoEditado = null;
 let indiceDiaAberto = 0;
 let equipamentosSelecionados = [];
 
+// Estado local dos dados do aluno (reservado para exportação futura).
+let dadosAlunoLocal = {
+  nome: "",
+  sexo: "masculino",
+  peso: "",
+  altura: "",
+  diasDisponiveis: 3
+};
+
+const sugestoesPorDias = {
+  2: "fullbody",
+  3: "abc",
+  4: "abcd",
+  5: "abcde"
+};
+
+const diasEsperadosPorDivisao = {
+  fullbody: 2,
+  abc: 3,
+  abcd: 4,
+  abcde: 5,
+  abc_2x: 6
+};
+
 function alternarEquipamento(equipamento, botao) {
   const index = equipamentosSelecionados.indexOf(equipamento);
   if (index >= 0) {
@@ -363,6 +453,66 @@ function iniciarSelecaoEquipamentos() {
       alternarEquipamento(equipamento, chip);
     });
   });
+}
+
+// Sugestão automática baseada na disponibilidade semanal.
+function obterSugestaoDivisao(diasDisponiveis) {
+  if (diasDisponiveis >= 6) {
+    return "abc_2x";
+  }
+  return sugestoesPorDias[diasDisponiveis] || "abc";
+}
+
+function atualizarAvisoIncoerencia() {
+  const aviso = document.getElementById("aviso-divisao");
+  const diasDisponiveis = Number(document.getElementById("dias-disponiveis").value);
+  const divisaoSelecionada = document.getElementById("divisao").value;
+  const diasEsperados = diasEsperadosPorDivisao[divisaoSelecionada];
+
+  if (!diasEsperados || diasDisponiveis === diasEsperados) {
+    aviso.style.display = "none";
+    aviso.textContent = "";
+    return;
+  }
+
+  const nomeDivisao = document.getElementById("divisao").selectedOptions[0]?.textContent || divisaoSelecionada.toUpperCase();
+  aviso.style.display = "block";
+  aviso.textContent = `A divisão ${nomeDivisao} normalmente requer ${diasEsperados} dias semanais.`;
+}
+
+function salvarDadosAlunoLocal() {
+  dadosAlunoLocal = {
+    nome: document.getElementById("aluno-nome").value.trim(),
+    sexo: document.getElementById("aluno-sexo").value,
+    peso: document.getElementById("aluno-peso").value,
+    altura: document.getElementById("aluno-altura").value,
+    diasDisponiveis: Number(document.getElementById("dias-disponiveis").value)
+  };
+}
+
+function iniciarDadosAlunoEDivisao() {
+  const camposAluno = ["aluno-nome", "aluno-sexo", "aluno-peso", "aluno-altura", "dias-disponiveis"];
+
+  camposAluno.forEach((idCampo) => {
+    const elemento = document.getElementById(idCampo);
+    elemento.addEventListener("input", salvarDadosAlunoLocal);
+    elemento.addEventListener("change", salvarDadosAlunoLocal);
+  });
+
+  // Ao alterar dias disponíveis, sugerir divisão automaticamente sem bloquear edição manual.
+  document.getElementById("dias-disponiveis").addEventListener("change", () => {
+    const diasDisponiveis = Number(document.getElementById("dias-disponiveis").value);
+    document.getElementById("divisao").value = obterSugestaoDivisao(diasDisponiveis);
+    salvarDadosAlunoLocal();
+    atualizarAvisoIncoerencia();
+  });
+
+  document.getElementById("divisao").addEventListener("change", atualizarAvisoIncoerencia);
+
+  // Estado inicial sincronizado na carga da página.
+  document.getElementById("divisao").value = obterSugestaoDivisao(Number(document.getElementById("dias-disponiveis").value));
+  salvarDadosAlunoLocal();
+  atualizarAvisoIncoerencia();
 }
 
 function normalizarTreinoParaEdicao(semana) {
@@ -556,7 +706,7 @@ function renderTreino() {
 }
 
 async function gerar() {
-  const divisao = document.getElementById("grupo").value;
+  const divisao = document.getElementById("divisao").value;
   const nivel = document.getElementById("nivel").value;
   const objetivo = document.getElementById("objetivo").value;
   const equipamentos = [...equipamentosSelecionados];
@@ -603,6 +753,7 @@ async function gerar() {
 }
 
 iniciarSelecaoEquipamentos();
+iniciarDadosAlunoEDivisao();
 </script>
 
 </body>
