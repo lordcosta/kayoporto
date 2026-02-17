@@ -1,24 +1,23 @@
 {
-  "iniciante": {
-    "fullbody": [
-      ["peitorais", "costas", "pernas", "ombros", "abdomen"]
-    ]
-  },
-
-  "intermediario": {
-    "abc": [
-      ["peitorais", "triceps"],
-      ["costas", "biceps"],
-      ["pernas", "ombros", "abdomen"]
-    ]
-  },
-
-  "avancado": {
-    "abcd": [
-      ["peitorais"],
-      ["costas"],
-      ["pernas"],
-      ["ombros", "biceps", "triceps"]
-    ]
-  }
+  "Full Body": [
+    ["peitorais", "costas", "pernas", "ombros", "abdomen"]
+  ],
+  "ABC": [
+    ["peitorais", "triceps"],
+    ["costas", "biceps"],
+    ["pernas", "ombros", "abdomen"]
+  ],
+  "ABCD": [
+    ["peitorais"],
+    ["costas"],
+    ["pernas"],
+    ["ombros", "biceps", "triceps"]
+  ],
+  "ABCDE": [
+    ["peitorais"],
+    ["costas"],
+    ["pernas"],
+    ["ombros"],
+    ["biceps", "triceps", "abdomen"]
+  ]
 }
