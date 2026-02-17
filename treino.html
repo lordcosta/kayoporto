@@ -185,6 +185,32 @@ button:hover {
   font-size: .72rem;
 }
 
+.coherence-box {
+  margin-top: .85rem;
+  padding: .8rem .9rem;
+  border-radius: 8px;
+  border: 1px solid rgba(212,175,55,.2);
+  background: rgba(15,20,38,.8);
+  display: grid;
+  gap: .5rem;
+}
+
+.coherence-box-title {
+  font-size: .8rem;
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.coherence-list {
+  margin: 0;
+  padding-left: 1rem;
+  display: grid;
+  gap: .35rem;
+  color: var(--muted);
+  font-size: .8rem;
+  line-height: 1.35;
+}
+
 .equipamentos-label {
   font-size: .8rem;
   color: var(--muted);
@@ -454,6 +480,7 @@ footer {
   <div class="card metabolic-card">
     <h2>Avaliação Metabólica</h2>
     <div id="resultado-metabolico">Preencha os dados do aluno para visualizar os cálculos metabólicos.</div>
+    <div id="mensagens-coerencia" style="display:none;"></div>
   </div>
 
   <div class="card">
@@ -528,6 +555,7 @@ footer {
 <script type="module" src="./engine/divisorEngine.js"></script>
 <script type="module" src="./engine/semanaEngine.js"></script>
 <script type="module" src="./engine/mensagensEngine.js"></script>
+<script type="module" src="./engine/coherenceEngine.js"></script>
 
 <script>
 let treinoEditado = null;
@@ -691,6 +719,61 @@ function calcularProteinaRecomendada(peso, objetivoMetabolico) {
   return peso * 1.6;
 }
 
+function obterEstrategiaNutricional(objetivoMetabolico) {
+  if (objetivoMetabolico === "emagrecimento") return "Déficit calórico";
+  if (objetivoMetabolico === "hipertrofia") return "Superávit calórico";
+  return "Manutenção calórica";
+}
+
+function obterEnfaseTreino(objetivoTreino) {
+  if (objetivoTreino === "hipertrofia") return "Hipertrofia";
+  if (objetivoTreino === "forca") return "Força";
+  if (objetivoTreino === "resistencia") return "Resistência";
+  return "Treino geral";
+}
+
+async function renderMensagensCoerencia(dadosMetabolicos) {
+  const container = document.getElementById("mensagens-coerencia");
+  if (!container) {
+    return;
+  }
+
+  if (!dadosMetabolicos || !window.CoherenceEngine) {
+    container.style.display = "none";
+    container.innerHTML = "";
+    return;
+  }
+
+  try {
+    const mensagens = await window.CoherenceEngine.gerarMensagensCoerencia({
+      imc: dadosMetabolicos.imc,
+      estrategiaNutricional: obterEstrategiaNutricional(dadosAlunoLocal.objetivoMetabolico),
+      enfaseTreino: obterEnfaseTreino(document.getElementById("objetivo").value),
+      nivelTreino: document.getElementById("nivel").value,
+      diasTreino: dadosAlunoLocal.diasDisponiveis
+    });
+
+    if (!Array.isArray(mensagens) || mensagens.length === 0) {
+      container.style.display = "none";
+      container.innerHTML = "";
+      return;
+    }
+
+    container.style.display = "block";
+    container.innerHTML = `
+      <div class="coherence-box">
+        <div class="coherence-box-title">Notas de coerência clínica</div>
+        <ul class="coherence-list">
+          ${mensagens.map((mensagem) => `<li>${mensagem}</li>`).join("")}
+        </ul>
+      </div>
+    `;
+  } catch (erro) {
+    container.style.display = "none";
+    container.innerHTML = "";
+  }
+}
+
 // Bloco pronto para futura persistência (payload limpo para backend).
 function montarPayloadMetabolico() {
   const idade = calcularIdade(dadosAlunoLocal.dataNascimento);
@@ -729,6 +812,7 @@ function renderAvaliacaoMetabolica() {
 
   if (!dadosMetabolicos) {
     container.textContent = "Preencha data de nascimento, peso, altura e nível de atividade para calcular a avaliação metabólica.";
+    renderMensagensCoerencia(null);
     return;
   }
 
@@ -760,6 +844,8 @@ function renderAvaliacaoMetabolica() {
       <small>Resultados estimativos. Ajustes individuais devem ser realizados por profissional habilitado.</small>
     </div>
   `;
+
+  renderMensagensCoerencia(dadosMetabolicos);
 }
 
 function iniciarDadosAlunoEDivisao() {
@@ -789,6 +875,8 @@ function iniciarDadosAlunoEDivisao() {
   });
 
   document.getElementById("divisao").addEventListener("change", atualizarAvisoIncoerencia);
+  document.getElementById("objetivo").addEventListener("change", renderAvaliacaoMetabolica);
+  document.getElementById("nivel").addEventListener("change", renderAvaliacaoMetabolica);
 
   // Estado inicial sincronizado na carga da página.
   document.getElementById("divisao").value = obterSugestaoDivisao(Number(document.getElementById("dias-disponiveis").value));

@@ -1,0 +1,38 @@
+{
+  "deficit_hipertrofia": {
+    "iniciante": [
+      "Em contexto de déficit energético, adaptações musculares tendem a ocorrer de forma mais gradual.",
+      "Déficit calórico pode reduzir a taxa máxima de hipertrofia, especialmente em fases iniciais de adaptação.",
+      "A combinação de déficit energético e estímulo hipertrófico requer atenção especial à ingestão proteica.",
+      "Protocolos de hipertrofia em déficit podem favorecer recomposição corporal em fases iniciais."
+    ],
+    "intermediario": [
+      "Em ambiente hipocalórico, ganhos musculares tendem a ser mais graduais, exigindo maior controle de volume.",
+      "Déficit energético pode moderar o potencial hipertrófico dependendo do histórico de treino.",
+      "Estratégias de treino em déficit requerem ajuste fino de recuperação e progressão de carga.",
+      "A resposta hipertrófica pode ser otimizada com controle preciso de intensidade e ingestão proteica."
+    ],
+    "avancado": [
+      "Para praticantes avançados, déficit energético pode limitar significativamente estímulos hipertróficos máximos.",
+      "Em fases avançadas de treinamento, ambiente hipocalórico reduz potencial anabólico absoluto.",
+      "Protocolos hipertróficos em déficit exigem monitoramento rigoroso de desempenho e recuperação.",
+      "A síntese proteica pode ser parcialmente comprometida em déficit energético prolongado."
+    ]
+  },
+  "imc_elevado_superavit": {
+    "default": [
+      "Considerar alinhamento entre composição corporal atual e estratégia energética adotada.",
+      "Em perfis com maior percentual de gordura, recomposição corporal pode ser estratégia inicial eficiente.",
+      "Aplicação de superávit calórico em contextos de IMC elevado requer avaliação estratégica individual.",
+      "Estratégia energética deve ser compatível com o perfil metabólico atual."
+    ]
+  },
+  "alta_frequencia": {
+    "default": [
+      "Frequência semanal elevada pode otimizar estímulo metabólico quando bem distribuída.",
+      "Protocolos de alta frequência exigem controle rigoroso de volume total e recuperação.",
+      "Distribuição estratégica dos grupos musculares é fundamental em programas de maior frequência.",
+      "Treinos frequentes favorecem consistência quando acompanhados de recuperação adequada."
+    ]
+  }
+}
